@@ -4,6 +4,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.IsWidget;
 import org.jboss.errai.ioc.client.container.IOC;
 import org.uberfire.client.mvp.UberView;
+import org.uberfire.mvp.Command;
 
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
@@ -14,7 +15,7 @@ import java.util.List;
 public class LayoutContainerPresenter {
 
     private final View view;
-    private List<RowPresenter> rows = new ArrayList<RowPresenter>(  );
+    private List<RowPresenter> rows = new ArrayList<RowPresenter>();
 
     public interface View extends UberView<LayoutContainerPresenter> {
 
@@ -26,7 +27,21 @@ public class LayoutContainerPresenter {
     public LayoutContainerPresenter( final View view ) {
         this.view = view;
         view.init( this );
-        createDefaultRow();
+        createDropRow();
+//        createDefaultRow();
+    }
+
+    private void createDropRow() {
+        final RowPresenter dropRow =
+                IOC.getBeanManager().lookupBean( RowPresenter.class ).getInstance();
+        dropRow.addDropCommand(new Command(){
+            @Override
+            public void execute() {
+                Window.alert( "drop");
+            }
+        });
+        rows.add( dropRow );
+        view.addRow( dropRow.getView() );
     }
 
     private void createDefaultRow() {
@@ -39,4 +54,5 @@ public class LayoutContainerPresenter {
     public UberView<LayoutContainerPresenter> getView() {
         return view;
     }
+
 }
