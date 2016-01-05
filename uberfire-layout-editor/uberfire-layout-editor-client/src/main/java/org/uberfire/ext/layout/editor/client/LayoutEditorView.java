@@ -20,8 +20,10 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 import org.gwtbootstrap3.client.ui.Anchor;
 import org.gwtbootstrap3.client.ui.PanelBody;
@@ -35,6 +37,7 @@ import org.uberfire.ext.layout.editor.client.components.LayoutDragComponentGroup
 import org.uberfire.ext.layout.editor.client.components.DynamicLayoutDraggableGroup;
 import org.uberfire.ext.layout.editor.client.dnd.DragGridElement;
 import org.uberfire.ext.layout.editor.client.dnd.DropRowPanel;
+import org.uberfire.ext.layout.editor.client.novo.LayoutContainerPresenter;
 import org.uberfire.ext.layout.editor.client.row.RowView;
 import org.uberfire.ext.layout.editor.client.structure.EditorWidget;
 import org.uberfire.ext.layout.editor.client.structure.LayoutEditorWidget;
@@ -72,6 +75,15 @@ public class LayoutEditorView extends Composite
 
     @UiField
     FlowPanel container;
+
+    @UiField
+    FlowPanel newContainer;
+
+    @Override
+    public void setupNewContainer( UberView<LayoutContainerPresenter> view ) {
+        newContainer.add( view );
+    }
+
 
     //needed to setup ids
     @UiField
@@ -222,4 +234,6 @@ public class LayoutEditorView extends Composite
 
         if (group != null) group.removeDraggable( componentId );
     }
+
+
 }

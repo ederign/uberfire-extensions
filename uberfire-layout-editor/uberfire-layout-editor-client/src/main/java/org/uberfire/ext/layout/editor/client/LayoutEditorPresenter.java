@@ -19,15 +19,19 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.errai.ioc.client.container.IOC;
 import org.uberfire.client.mvp.UberView;
 import org.uberfire.ext.layout.editor.api.editor.LayoutTemplate;
 import org.uberfire.ext.layout.editor.client.components.LayoutDragComponentGroup;
+import org.uberfire.ext.layout.editor.client.novo.LayoutContainerPresenter;
+import org.uberfire.ext.layout.editor.client.novo.RowPresenter;
 import org.uberfire.ext.layout.editor.client.structure.EditorWidget;
 import org.uberfire.ext.layout.editor.client.components.GridLayoutDragComponent;
 import org.uberfire.ext.layout.editor.client.components.LayoutDragComponent;
@@ -41,6 +45,12 @@ public class LayoutEditorPresenter {
 
     @Inject
     private Event<NotificationEvent> ufNotification;
+
+    @Inject
+    LayoutContainerPresenter layoutContainerPresenter;
+
+//    @Inject
+//    RowPresenter rowPresenter;
 
     private final View view;
 
@@ -82,11 +92,21 @@ public class LayoutEditorPresenter {
 
         void removeDraggableComponentFromGroup( String groupId, String componentId );
 
+        void setupNewContainer( UberView<LayoutContainerPresenter> view );
     }
+
     @Inject
-    public LayoutEditorPresenter( final View view ) {
+    public LayoutEditorPresenter( final View view, LayoutContainerPresenter layoutContainerPresenter ) {
         this.view = view;
         view.init( this );
+        this.layoutContainerPresenter = layoutContainerPresenter;
+//        this.rowPresenter = rowPresenter;
+
+    }
+
+    @PostConstruct
+    public void initNew(){
+        view.setupNewContainer(layoutContainerPresenter.getView());
     }
 
     public UberView<LayoutEditorPresenter> getView() {

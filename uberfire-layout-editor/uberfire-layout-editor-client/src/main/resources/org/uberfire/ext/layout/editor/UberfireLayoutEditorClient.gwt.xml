@@ -21,6 +21,8 @@
   <source path='client'/>
 
   <inherits name="com.google.gwt.i18n.I18N"/>
+  <inherits name="org.jboss.errai.ui.UI" />
+
 
   <inherits name="org.uberfire.ext.layout.editor.UberfireLayoutEditorAPI"/>
   <inherits name="org.uberfire.UberfireClientAll"/>
