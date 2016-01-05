@@ -4,7 +4,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.IsWidget;
 import org.jboss.errai.ioc.client.container.IOC;
 import org.uberfire.client.mvp.UberView;
-import org.uberfire.mvp.Command;
+import org.uberfire.mvp.ParameterizedCommand;
 
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
@@ -15,7 +15,7 @@ import java.util.List;
 public class LayoutContainerPresenter {
 
     private final View view;
-    private List<RowPresenter> rows = new ArrayList<RowPresenter>();
+    private List<DropRowPresenter> rows = new ArrayList<DropRowPresenter>();
 
     public interface View extends UberView<LayoutContainerPresenter> {
 
@@ -27,28 +27,20 @@ public class LayoutContainerPresenter {
     public LayoutContainerPresenter( final View view ) {
         this.view = view;
         view.init( this );
-        createDropRow();
-//        createDefaultRow();
+        createDefaultDropRow();
     }
 
-    private void createDropRow() {
-        final RowPresenter dropRow =
-                IOC.getBeanManager().lookupBean( RowPresenter.class ).getInstance();
-        dropRow.addDropCommand(new Command(){
+    private void createDefaultDropRow() {
+        final DropRowPresenter dropRow =
+                IOC.getBeanManager().lookupBean( DropRowPresenter.class ).getInstance();
+        dropRow.addDropCommand( new ParameterizedCommand<String>() {
             @Override
-            public void execute() {
-                Window.alert( "drop");
+            public void execute( String parameter ) {
+                Window.alert( parameter );
             }
-        });
+        } );
         rows.add( dropRow );
         view.addRow( dropRow.getView() );
-    }
-
-    private void createDefaultRow() {
-        final RowPresenter defaultRow =
-                IOC.getBeanManager().lookupBean( RowPresenter.class ).getInstance();
-        rows.add( defaultRow );
-        view.addRow( defaultRow.getView() );
     }
 
     public UberView<LayoutContainerPresenter> getView() {

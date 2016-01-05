@@ -17,15 +17,16 @@
 package org.uberfire.ext.layout.editor.client.dnd;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.DragStartEvent;
-import com.google.gwt.event.dom.client.DragStartHandler;
+import com.google.gwt.event.dom.client.*;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Element;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
 import org.gwtbootstrap3.client.ui.InputGroup;
 import org.uberfire.ext.layout.editor.client.components.LayoutDragComponent;
+import org.uberfire.ext.layout.editor.client.novo.DndController;
 import org.uberfire.ext.layout.editor.client.resources.i18n.CommonConstants;
 
 public class DragGridElement extends Composite {
@@ -60,10 +61,12 @@ public class DragGridElement extends Composite {
         move.getElement().setDraggable( Element.DRAGGABLE_TRUE );
     }
 
+
     void createDragStart( DragStartEvent event,
                           LayoutDragComponent type ) {
 
-        event.setData( LayoutDragComponent.FORMAT,  converter.generateDragComponentJSON( type ) );
+        DndController.dragged = converter.generateDragComponentJSON( type );
+        event.setData( LayoutDragComponent.FORMAT, converter.generateDragComponentJSON( type ) );
 
         event.getDataTransfer().setDragImage( move.getElement(), 10, 10 );
     }
