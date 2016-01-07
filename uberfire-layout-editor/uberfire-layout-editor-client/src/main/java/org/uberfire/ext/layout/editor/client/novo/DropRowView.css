@@ -1,0 +1,20 @@
+.temp {
+    background-color: red;
+}
+
+.temp1 {
+    background-color: yellow;
+}
+
+.temp2 {
+    border-color: #cdcdcd;
+}
+
+.dropColumn {
+    height: 10px;
+}
+
+.dropRow {
+    height: 10px;
+    border-color:black;
+}

@@ -79,11 +79,16 @@ public class LayoutEditorView extends Composite
     @UiField
     FlowPanel newContainer;
 
+
     @Override
     public void setupNewContainer( UberView<LayoutContainerPresenter> view ) {
         newContainer.add( view );
     }
 
+    @Override
+    public void setupNewContainer2( Widget view ) {
+        newContainer.add( view );
+    }
 
     //needed to setup ids
     @UiField

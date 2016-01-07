@@ -6,7 +6,9 @@ import org.jboss.errai.ioc.client.container.IOC;
 import org.uberfire.client.mvp.UberView;
 import org.uberfire.mvp.ParameterizedCommand;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +18,9 @@ public class LayoutContainerPresenter {
 
     private final View view;
     private List<DropRowPresenter> rows = new ArrayList<DropRowPresenter>();
+
+    @Inject
+    private Instance<DropRowPresenter> instance;
 
     public interface View extends UberView<LayoutContainerPresenter> {
 
@@ -27,12 +32,16 @@ public class LayoutContainerPresenter {
     public LayoutContainerPresenter( final View view ) {
         this.view = view;
         view.init( this );
-        createDefaultDropRow();
+
+    }
+
+    @PostConstruct
+    public void post(){
+//        createDefaultDropRow();
     }
 
     private void createDefaultDropRow() {
-        final DropRowPresenter dropRow =
-                IOC.getBeanManager().lookupBean( DropRowPresenter.class ).getInstance();
+        final DropRowPresenter dropRow =instance.get();
         dropRow.addDropCommand( new ParameterizedCommand<String>() {
             @Override
             public void execute( String parameter ) {
@@ -41,6 +50,7 @@ public class LayoutContainerPresenter {
         } );
         rows.add( dropRow );
         view.addRow( dropRow.getView() );
+        Window.alert( "yo" );
     }
 
     public UberView<LayoutContainerPresenter> getView() {

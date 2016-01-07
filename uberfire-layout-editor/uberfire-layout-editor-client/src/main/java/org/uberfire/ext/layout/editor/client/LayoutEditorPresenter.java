@@ -23,11 +23,14 @@ import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.Widget;
 import org.jboss.errai.ioc.client.container.IOC;
 import org.uberfire.client.mvp.UberView;
 import org.uberfire.ext.layout.editor.api.editor.LayoutTemplate;
 import org.uberfire.ext.layout.editor.client.components.LayoutDragComponentGroup;
 import org.uberfire.ext.layout.editor.client.novo.LayoutContainerPresenter;
+import org.uberfire.ext.layout.editor.client.novo.Test;
 import org.uberfire.ext.layout.editor.client.structure.EditorWidget;
 import org.uberfire.ext.layout.editor.client.components.GridLayoutDragComponent;
 import org.uberfire.ext.layout.editor.client.components.LayoutDragComponent;
@@ -41,8 +44,11 @@ public class LayoutEditorPresenter {
     @Inject
     private Event<NotificationEvent> ufNotification;
 
-    @Inject
-    LayoutContainerPresenter layoutContainerPresenter;
+//    @Inject
+//    LayoutContainerPresenter layoutContainerPresenter;
+
+//    Test test;
+//    private final LayoutContainerPresenter layoutContainerPresenter;
 
 //    @Inject
 //    RowPresenter rowPresenter;
@@ -52,6 +58,8 @@ public class LayoutEditorPresenter {
     private List<LayoutDragComponent> addedGridSystemComponents = new ArrayList<LayoutDragComponent>( );
 
     public interface View extends UberView<LayoutEditorPresenter> {
+
+        void setupNewContainer2( Widget view );
 
         void setupGridSystem( List<LayoutDragComponent> layoutDragComponents );
 
@@ -91,17 +99,20 @@ public class LayoutEditorPresenter {
     }
 
     @Inject
-    public LayoutEditorPresenter( final View view, LayoutContainerPresenter layoutContainerPresenter ) {
+    public LayoutEditorPresenter( final View view ) {
         this.view = view;
+//        this.test = test;
+//        this.layoutContainerPresenter = layoutContainerPresenter;
         view.init( this );
-        this.layoutContainerPresenter = layoutContainerPresenter;
 //        this.rowPresenter = rowPresenter;
 
     }
 
     @PostConstruct
     public void initNew(){
-        view.setupNewContainer(layoutContainerPresenter.getView());
+//        view.setupNewContainer2( test.asWidget() );
+//        view.setupNewContainer(layoutContainerPresenter.getView());
+        view.setupNewContainer2( new Label( "asdlfjasd") );
     }
 
     public UberView<LayoutEditorPresenter> getView() {
