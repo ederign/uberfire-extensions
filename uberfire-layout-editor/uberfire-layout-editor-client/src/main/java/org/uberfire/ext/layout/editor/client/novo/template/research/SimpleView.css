@@ -1,0 +1,37 @@
+.color1 {
+    background-color: red;
+}
+
+.color2 {
+    background-color: bisque;
+}
+
+.color3 {
+    background-color: black;
+}
+
+.content{
+    /*float:left;*/
+    background-color: green;
+    /*text-align: center;*/
+}
+.slider {
+    /*width: 20px;*/
+    /*height: 100%;*/
+    background-color: peru;
+    /*float:right;*/
+}
+.column-wrapper{
+    /*overflow:auto;*/
+    /*padding-right: 0 !important;*/
+}
+
+.demo{
+    margin-bottom: -99999px;
+    padding-bottom: 99999px;
+    background-color:#efefef;
+}
+
+#equalheight {
+    overflow: hidden;
+}

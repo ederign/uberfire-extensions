@@ -31,6 +31,8 @@ import org.uberfire.ext.layout.editor.api.editor.LayoutTemplate;
 import org.uberfire.ext.layout.editor.client.components.LayoutDragComponentGroup;
 import org.uberfire.ext.layout.editor.client.novo.LayoutContainerPresenter;
 import org.uberfire.ext.layout.editor.client.novo.Test;
+import org.uberfire.ext.layout.editor.client.novo.template.research.Simple;
+import org.uberfire.ext.layout.editor.client.novo.template.research.SimplePresenter;
 import org.uberfire.ext.layout.editor.client.structure.EditorWidget;
 import org.uberfire.ext.layout.editor.client.components.GridLayoutDragComponent;
 import org.uberfire.ext.layout.editor.client.components.LayoutDragComponent;
@@ -40,20 +42,14 @@ import org.uberfire.workbench.events.NotificationEvent;
 public class LayoutEditorPresenter {
 
     public static final String[] SPANS = {"12", "6 6", "4 4 4"};
+    private final Simple simple;
 
     @Inject
     private Event<NotificationEvent> ufNotification;
 
-//    @Inject
-//    LayoutContainerPresenter layoutContainerPresenter;
-
-//    Test test;
-//    private final LayoutContainerPresenter layoutContainerPresenter;
-
-//    @Inject
-//    RowPresenter rowPresenter;
 
     private final View view;
+    private SimplePresenter simplePresenter;
 
     private List<LayoutDragComponent> addedGridSystemComponents = new ArrayList<LayoutDragComponent>( );
 
@@ -95,24 +91,23 @@ public class LayoutEditorPresenter {
 
         void removeDraggableComponentFromGroup( String groupId, String componentId );
 
-        void setupNewContainer( UberView<LayoutContainerPresenter> view );
+        void setupNewContainer( UberView<SimplePresenter> view );
     }
 
     @Inject
-    public LayoutEditorPresenter( final View view ) {
+    public LayoutEditorPresenter( final View view, Simple simple, SimplePresenter simplePresenter ) {
         this.view = view;
-//        this.test = test;
-//        this.layoutContainerPresenter = layoutContainerPresenter;
+        this.simplePresenter = simplePresenter;
+        this.simple = simple;
         view.init( this );
-//        this.rowPresenter = rowPresenter;
 
     }
 
     @PostConstruct
     public void initNew(){
-//        view.setupNewContainer2( test.asWidget() );
-//        view.setupNewContainer(layoutContainerPresenter.getView());
         view.setupNewContainer2( new Label( "asdlfjasd") );
+        view.setupNewContainer2( simple );
+        view.setupNewContainer( simplePresenter.getView() );
     }
 
     public UberView<LayoutEditorPresenter> getView() {
