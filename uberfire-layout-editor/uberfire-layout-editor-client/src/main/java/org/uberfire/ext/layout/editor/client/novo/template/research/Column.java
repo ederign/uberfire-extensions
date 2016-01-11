@@ -10,13 +10,12 @@ import javax.inject.Inject;
 public class Column {
 
     private final View view;
+
     private String size;
 
     public interface View extends UberView<Column> {
-
         void setSize( String size );
     }
-
     @Inject
     public Column( final View view ) {
         this.view = view;
@@ -25,7 +24,6 @@ public class Column {
     @PostConstruct
     public void post(){
         view.init( this );
-
     }
 
     public UberView<Column> getView() {

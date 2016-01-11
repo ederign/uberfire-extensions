@@ -30,7 +30,7 @@ public class Row {
     public void post(){
         view.init( this );
         createColumn();
-        createColumn();
+//        createColumn();
     }
 
     @PreDestroy
@@ -40,7 +40,7 @@ public class Row {
 
     private void createColumn() {
         final Column column = columnInstance.get();
-        column.setSize("6");
+        column.setSize("12");
         view.addColumn( column.getView());
     }
 

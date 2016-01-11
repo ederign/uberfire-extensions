@@ -21,12 +21,13 @@ public class ResizeManager {
     public void begin( Element beginElement, int beginX ) {
         this.beginElement = beginElement;
         this.beginX = beginX;
+        GWT.log("begin");
     }
 
     public void end( Element endElement, int endX ) {
         this.endElement = endElement;
         this.endX = endX;
-
+        GWT.log("end");
         if(beginElement==endElement){
             //TODO
             GWT.log("TODO: dnd in same event");

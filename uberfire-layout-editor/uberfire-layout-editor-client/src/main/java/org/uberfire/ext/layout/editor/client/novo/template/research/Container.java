@@ -28,7 +28,7 @@ public class Container {
     @PostConstruct
     public void post(){
         view.init( this );
-        createRow();
+//        createRow();
         createRow();
     }
 

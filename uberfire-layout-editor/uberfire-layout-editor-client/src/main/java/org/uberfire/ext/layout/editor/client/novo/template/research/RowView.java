@@ -1,10 +1,15 @@
 package org.uberfire.ext.layout.editor.client.novo.template.research;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.DivElement;
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.MouseOverEvent;
+import com.google.gwt.event.dom.client.MouseUpEvent;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Composite;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
+import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.uberfire.client.mvp.UberView;
 
@@ -32,4 +37,12 @@ public class RowView extends Composite
     public void addColumn( UberView<Column> view ) {
         DivElement.as( row ).appendChild( view.asWidget().getElement() );
     }
+
+    @EventHandler( "row" )
+    public void rowClick( ClickEvent e ) {
+        e.preventDefault();
+        GWT.log("click row");
+    }
 }
+
+
