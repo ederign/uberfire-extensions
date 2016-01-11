@@ -1,9 +1,9 @@
 package org.uberfire.ext.layout.editor.client.novo.template.research;
 
-import com.google.gwt.dom.client.DivElement;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style;
-import com.google.gwt.event.dom.client.*;
+import com.google.gwt.event.dom.client.MouseDownEvent;
+import com.google.gwt.event.dom.client.MouseUpEvent;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Composite;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
@@ -12,6 +12,7 @@ import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.uberfire.client.mvp.UberView;
 
 import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
 
 @Dependent
 @Templated
@@ -19,202 +20,96 @@ public class SimpleView extends Composite
         implements UberView<SimplePresenter>,
         SimplePresenter.View {
 
-    @DataField
-    private Element simpleDiv = DOM.createDiv();
-
-    @DataField
-    private Element slider = DOM.createDiv();
-
-    @DataField
-    private Element slider2 = DOM.createDiv();
-
-    @DataField
-    private Element column1 = DOM.createDiv();
-
-    @DataField
-    private Element column2 = DOM.createDiv();
-
-    @DataField
-    private Element column3 = DOM.createDiv();
-
     private SimplePresenter presenter;
 
-    private boolean mouseDown1;
-    private boolean mouseDown2;
+    @DataField
+    private Element container = DOM.createDiv();
+
+    @DataField
+    private Element row1 = DOM.createDiv();
+
+    @DataField
+    private Element row1col1 = DOM.createDiv();
+
+    @DataField
+    private Element row1col2 = DOM.createDiv();
+
+    @DataField
+    private Element row1col3 = DOM.createDiv();
+
+    @DataField
+    private Element row1col1Content = DOM.createDiv();
+
+    @DataField
+    private Element row1col2Content = DOM.createDiv();
+
+    @DataField
+    private Element row1col3Content = DOM.createDiv();
+
+    @Inject
+    ResizeManager dnd;
 
     @Override
     public void init( SimplePresenter presenter ) {
         this.presenter = presenter;
 
-        slider.getStyle().setCursor( Style.Cursor.COL_RESIZE );
-        slider2.getStyle().setCursor( Style.Cursor.COL_RESIZE );
+        row1col1Content.getStyle().setCursor( Style.Cursor.DEFAULT );
+        row1col1.getStyle().setCursor( Style.Cursor.COL_RESIZE );
+
+        row1col2Content.getStyle().setCursor( Style.Cursor.DEFAULT );
+        row1col2.getStyle().setCursor( Style.Cursor.COL_RESIZE );
+
+        row1col3Content.getStyle().setCursor( Style.Cursor.DEFAULT );
+        row1col3.getStyle().setCursor( Style.Cursor.COL_RESIZE );
+
+        dnd.registerRow(row1, row1col1, row1col2, row1col3);
     }
 
-    @EventHandler( "simpleDiv" )
-    public void dragLeave( DropEvent e ) {
-        consoleLog( "dragLeave" );
+    @EventHandler( "row1col1" )
+    public void row1col1Up( MouseUpEvent e ) {
+        e.preventDefault();
+        consoleLog( "MouseUpEvent row1col1 " + e.getClientX() );
+        dnd.end( row1col1, e.getClientX() );
     }
 
-    @EventHandler( "simpleDiv" )
-    public void dropEvent( DropEvent e ) {
-        consoleLog( "dropEvent" );
+    @EventHandler( "row1col1" )
+    public void row1col1Down( MouseDownEvent e ) {
+        e.preventDefault();
+        consoleLog( "MouseDownEvent row1col1 " + e.getClientX() );
+        dnd.begin( row1col1, e.getClientX() );
     }
 
-    @EventHandler( "simpleDiv" )
-    public void dragOver( DragOverEvent e ) {
-        consoleLog( "dragOver" );
+    @EventHandler( "row1col2" )
+    public void row1col2Down( MouseDownEvent e ) {
+        e.preventDefault();
+        dnd.begin( row1col2, e.getClientX() );
+        consoleLog( "MouseDownEvent row1col2 " + e.getClientX() );
     }
 
-    @EventHandler( "slider" )
-    public void onMouseOver( MouseOverEvent e ) {
-        consoleLog( "MouseOverEvent" );
+    @EventHandler( "row1col2" )
+    public void row1col2rMouseUp( MouseUpEvent e ) {
+        e.preventDefault();
+        dnd.end( row1col2, e.getClientX() );
+        consoleLog( "MouseUpEvent row1col2 " + e.getClientX() );
     }
 
-    @EventHandler( "slider" )
-    public void onMouseOut( MouseOutEvent e ) {
-        consoleLog( "MouseOutEvent" );
-        //deve ir soh no mouse out do container inteiro
-        this.mouseDown1 = false;
+    @EventHandler( "row1col3" )
+    public void row1col3rMouseUp( MouseUpEvent e ) {
+        e.preventDefault();
+        dnd.end( row1col3, e.getClientX() );
+        consoleLog( "MouseUpEvent row1col3 " + e.getClientX() );
     }
 
-    @EventHandler( "slider2" )
-    public void onMouseOut2( MouseOutEvent e ) {
-        consoleLog( "MouseOutEvent" );
-        //deve ir soh no mouse out do container inteiro
-        this.mouseDown2 = false;
+    @EventHandler( "row1col3" )
+    public void row1col3rMouseDown( MouseDownEvent e ) {
+        e.preventDefault();
+        dnd.begin( row1col3, e.getClientX() );
+        consoleLog( "MouseDownEvent row1col3 " + e.getClientX() );
     }
 
-    @EventHandler( "slider" )
-    public void MouseDownEvent( MouseDownEvent e ) {
-        consoleLog( "MouseDownEvent" );
-        this.mouseDown1 = true;
-    }
-    @EventHandler( "slider2" )
-    public void MouseDownEvent2( MouseDownEvent e ) {
-        consoleLog( "MouseDownEvent" );
-        this.mouseDown2 = true;
-    }
-
-    @EventHandler( "slider" )
-    public void MouseUpEvent( MouseUpEvent e ) {
-        consoleLog( "MouseUpEvent" );
-        this.mouseDown1 = false;
-    }
-
-    @EventHandler( "slider2" )
-    public void MouseUpEven2t( MouseUpEvent e ) {
-        consoleLog( "MouseUpEvent" );
-        this.mouseDown2 = false;
-    }
-
-    @EventHandler( "slider" )
-    public void MouseMoveEvent( MouseMoveEvent e ) {
-        if ( mouseDown1 ) {
-            //just one movement per mouse down should also remove mouse
-
-            final int mouse = e.getClientX();
-            final int left = slider.getAbsoluteLeft();
-            final int right = slider.getAbsoluteRight();
-            final int delta = slider.getClientWidth() / 10;
-
-            if ( left + delta >= mouse ) {
-//                this.mouseDown1 = false;
-                consoleLog( "resize left" );
-                String t = column1.getAttribute( "class" );
-
-                int i = t.indexOf( " " );
-                String columnSize1Str = String.valueOf(t.charAt( i-1 ));
-                Integer columnSize1 = Integer.valueOf( columnSize1Str ) - 1;
-
-
-                t = column2.getAttribute( "class" );
-
-                i = t.indexOf( " " );
-                String columnSize2Str = String.valueOf(t.charAt( i-1 ));
-                Integer columnSize2 = Integer.valueOf( columnSize2Str ) + 1;
-
-                column1.setAttribute( "class", "col-md-"+columnSize1.toString() + " color1" );
-                column2.setAttribute( "class", "col-md-"+columnSize2.toString() + " color2" );
-
-            }
-
-            if ( right - delta <= mouse ) {
-//                this.mouseDown1 = false;
-                consoleLog( "resize right" );
-                String t = column2.getAttribute( "class" );
-                int i = t.indexOf( " " );
-                String columnSize2Str = String.valueOf(t.charAt( i-1 ));
-                Integer columnSize2 = Integer.valueOf( columnSize2Str ) - 1;
-
-
-                t = column1.getAttribute( "class" );
-                i = t.indexOf( " " );
-                String columnSize1Str = String.valueOf(t.charAt( i-1 ));
-
-                Integer columnSize1 = Integer.valueOf( columnSize1Str ) + 1;
-
-                column1.setAttribute( "class", "col-md-"+columnSize1.toString() + " color1" );
-                column2.setAttribute( "class", "col-md-"+columnSize2.toString() + " color2" );
-            }
-        }
-    }
-
-
-    @EventHandler( "slider2" )
-    public void MouseMoveEvent2( MouseMoveEvent e ) {
-        if ( mouseDown2 ) {
-            //just one movement per mouse down should also remove mouse
-
-            final int mouse = e.getClientX();
-            final int left = slider2.getAbsoluteLeft();
-            final int right = slider2.getAbsoluteRight();
-            final int delta = slider2.getClientWidth() / 10;
-
-            if ( left + delta >= mouse ) {
-//                this.mouseDown1 = false;
-                consoleLog( "resize left" );
-                String t = column2.getAttribute( "class" );
-
-                int i = t.indexOf( " " );
-                String columnSize2Str = String.valueOf(t.charAt( i-1 ));
-                Integer columnSize2 = Integer.valueOf( columnSize2Str ) - 1;
-
-
-                t = column3.getAttribute( "class" );
-
-                i = t.indexOf( " " );
-                String columnSize3Str = String.valueOf(t.charAt( i-1 ));
-                Integer columnSize3 = Integer.valueOf( columnSize3Str ) + 1;
-
-                column2.setAttribute( "class", "col-md-"+columnSize2.toString() + " color2" );
-                column3.setAttribute( "class", "col-md-"+columnSize3.toString() + " color3" );
-
-            }
-
-            if ( right - delta <= mouse ) {
-//                this.mouseDown1 = false;
-                consoleLog( "resize right" );
-                String t = column3.getAttribute( "class" );
-                int i = t.indexOf( " " );
-                String columnSize3Str = String.valueOf(t.charAt( i-1 ));
-                Integer columnSize3 = Integer.valueOf( columnSize3Str ) - 1;
-
-
-                t = column2.getAttribute( "class" );
-                i = t.indexOf( " " );
-                String columnSize2Str = String.valueOf(t.charAt( i-1 ));
-
-                Integer columnSize2 = Integer.valueOf( columnSize2Str ) + 1;
-
-                column2.setAttribute( "class", "col-md-"+columnSize2.toString() + " color2" );
-                column3.setAttribute( "class", "col-md-"+columnSize3.toString() + " color3" );
-            }
-        }
-    }
 
     native void consoleLog( String message ) /*-{
         console.log("log:" + message);
     }-*/;
-
 
 }

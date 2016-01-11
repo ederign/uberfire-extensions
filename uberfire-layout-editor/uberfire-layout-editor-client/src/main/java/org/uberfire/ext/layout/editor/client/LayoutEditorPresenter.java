@@ -31,6 +31,7 @@ import org.uberfire.ext.layout.editor.api.editor.LayoutTemplate;
 import org.uberfire.ext.layout.editor.client.components.LayoutDragComponentGroup;
 import org.uberfire.ext.layout.editor.client.novo.LayoutContainerPresenter;
 import org.uberfire.ext.layout.editor.client.novo.Test;
+import org.uberfire.ext.layout.editor.client.novo.template.research.Container;
 import org.uberfire.ext.layout.editor.client.novo.template.research.Simple;
 import org.uberfire.ext.layout.editor.client.novo.template.research.SimplePresenter;
 import org.uberfire.ext.layout.editor.client.structure.EditorWidget;
@@ -42,13 +43,13 @@ import org.uberfire.workbench.events.NotificationEvent;
 public class LayoutEditorPresenter {
 
     public static final String[] SPANS = {"12", "6 6", "4 4 4"};
-    private final Simple simple;
 
     @Inject
     private Event<NotificationEvent> ufNotification;
 
 
     private final View view;
+    private Container container;
     private SimplePresenter simplePresenter;
 
     private List<LayoutDragComponent> addedGridSystemComponents = new ArrayList<LayoutDragComponent>( );
@@ -95,19 +96,20 @@ public class LayoutEditorPresenter {
     }
 
     @Inject
-    public LayoutEditorPresenter( final View view, Simple simple, SimplePresenter simplePresenter ) {
+    public LayoutEditorPresenter( final View view, Container container, SimplePresenter simplePresenter ) {
         this.view = view;
+        this.container = container;
         this.simplePresenter = simplePresenter;
-        this.simple = simple;
         view.init( this );
 
     }
 
     @PostConstruct
     public void initNew(){
-        view.setupNewContainer2( new Label( "asdlfjasd") );
-        view.setupNewContainer2( simple );
+        view.setupNewContainer2( new Label( "Simple Presenter") );
         view.setupNewContainer( simplePresenter.getView() );
+        view.setupNewContainer2( new Label( "Container") );
+        view.setupNewContainer2( container.getView().asWidget());
     }
 
     public UberView<LayoutEditorPresenter> getView() {
