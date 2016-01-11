@@ -1,0 +1,32 @@
+.column1 {
+    border-color: #0076b7;
+    border-style: solid;
+}
+
+.column2 {
+    border-color: #bbbbbb;
+    border-style: solid;
+}
+
+.column3 {
+    border-color: #0099d3;
+    border-style: solid;
+}
+
+.content1 {
+    background-color: #b94a48;
+    border-style: solid;
+}
+
+.content11 {
+    background-color: #0076b7;
+    border-style: solid;
+}
+.content2 {
+    background-color: #ffffcc;
+    border-style: solid;
+}
+.content3 {
+    background-color: #0099d3;
+    border-style: solid;
+}
