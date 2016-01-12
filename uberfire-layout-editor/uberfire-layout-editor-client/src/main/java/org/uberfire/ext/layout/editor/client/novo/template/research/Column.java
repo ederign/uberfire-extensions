@@ -14,7 +14,7 @@ public class Column {
 
     private Integer size;
 
-    private ParameterizedCommand<String> dropCommand;
+    private ParameterizedCommand<ColumnDrop> dropCommand;
 
     public interface View extends UberView<Column> {
 
@@ -35,7 +35,7 @@ public class Column {
         return view;
     }
 
-    public void setup( Integer size, ParameterizedCommand<String> dropCommand ) {
+    public void setup( Integer size, ParameterizedCommand<ColumnDrop> dropCommand ) {
         this.size = size;
         this.dropCommand = dropCommand;
         view.setSize( size.toString() );
@@ -47,10 +47,11 @@ public class Column {
 
     public void setSize( Integer size ) {
         this.size = size;
+        view.setSize( size.toString() );
     }
 
-    public void onDrop() {
-        dropCommand.execute( hashCode() + "" );
+    public void onDrop( int dropPosition, int columnMiddleX ) {
+        dropCommand.execute( new ColumnDrop( hashCode(), dropPosition , columnMiddleX) );
     }
 
 }

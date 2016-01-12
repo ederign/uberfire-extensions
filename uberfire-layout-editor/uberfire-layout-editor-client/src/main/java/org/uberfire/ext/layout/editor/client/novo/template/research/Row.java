@@ -36,8 +36,8 @@ public class Row {
     @PostConstruct
     public void post() {
         view.init( this );
-        createDefaultColumns( 12 );
-//        createDefaultColumns( 6, 6 );
+//        createDefaultColumns( 12 );
+        createDefaultColumns( 6, 6 );
     }
 
     @PreDestroy
@@ -45,15 +45,15 @@ public class Row {
         //TODO destroy all get instances
     }
 
-    ParameterizedCommand<String> dropCommand() {
-        return new ParameterizedCommand<String>() {
+    ParameterizedCommand<ColumnDrop> dropCommand() {
+        return new ParameterizedCommand<ColumnDrop>() {
             @Override
-            public void execute( String hash ) {
+            public void execute( ColumnDrop drop ) {
                 view.clearColumns();
 
-                List<Column> newRow = new ArrayList<Column>(  );
+                List<Column> newRow = new ArrayList<Column>();
                 for ( Column column : columns ) {
-                    if ( hash.equalsIgnoreCase( column.hashCode() + "" ) ) {
+                    if ( drop.hash == column.hashCode() ) {
                         //TODO write a better algo
                         final Integer originalSize = column.getSize();
                         final Integer newColumnSize = originalSize / 2;
@@ -63,13 +63,24 @@ public class Row {
                         } else {
                             column.setSize( newColumnSize + 1 );
                         }
-                        newRow.add( column );
 
-                        final Column newColumn = columnInstance.get();
-                        newColumn.setup( newColumnSize, dropCommand() );
-                        newRow.add( newColumn );
-                    }
-                    else{
+
+                        if (drop.dropXPosition > drop.columnMiddleX ){
+                            final Column newColumn = columnInstance.get();
+                            newColumn.setup( newColumnSize, dropCommand() );
+                            newRow.add( newColumn );
+                            newRow.add( column );
+
+                        }
+                        else{
+                            newRow.add( column );
+                            final Column newColumn = columnInstance.get();
+                            newColumn.setup( newColumnSize, dropCommand() );
+                            newRow.add( newColumn );
+                        }
+
+
+                    } else {
                         newRow.add( column );
                     }
                 }
@@ -94,5 +105,6 @@ public class Row {
     public UberView<Row> getView() {
         return view;
     }
+
 
 }

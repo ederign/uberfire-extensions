@@ -5,15 +5,14 @@ import com.google.gwt.dom.client.DivElement;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
-import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.*;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.uberfire.client.mvp.UberView;
 
 import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
 
 @Dependent
 @Templated
@@ -24,26 +23,31 @@ public class RowView extends Composite
     private Row presenter;
 
 
+    @Inject
     @DataField
-    private Element row = DOM.createDiv();
+    private SimplePanel row;
+
+    FlowPanel wrapper = new FlowPanel(  );
 
 
     @Override
     public void init( Row presenter ) {
         this.presenter = presenter;
+        row.add( wrapper );
 
     }
 
     @Override
     public void addColumn( UberView<Column> view ) {
-        onAttachNative( view.asWidget() );
-        RootPanel.detachOnWindowClose( view.asWidget() );
-        DivElement.as( row ).appendChild( view.asWidget().getElement() );
+        wrapper.add( view );
+//        onAttachNative( view.asWidget() );
+//        RootPanel.detachOnWindowClose( view.asWidget() );
+//        DivElement.as( row ).appendChild( view.asWidget().getElement() );
     }
 
     @Override
     public void clearColumns() {
-        row.removeAllChildren();
+        wrapper.clear();
     }
 
     private static native void onAttachNative( Widget w ) /*-{

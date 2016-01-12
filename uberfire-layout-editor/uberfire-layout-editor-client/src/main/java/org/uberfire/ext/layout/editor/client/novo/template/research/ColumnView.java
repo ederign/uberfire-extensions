@@ -42,15 +42,12 @@ public class ColumnView extends Composite
         this.presenter = presenter;
         content.getStyle().setCursor( Style.Cursor.DEFAULT );
         col.getStyle().setCursor( Style.Cursor.COL_RESIZE );
+        test();
     }
 
     @Override
     public void setSize( String size ) {
         col.addClassName( "col-md-" + size );
-
-        //// FIXME: 1/12/16
-        test();
-
     }
 
     public void test() {
@@ -77,7 +74,13 @@ public class ColumnView extends Composite
     public void yo( DropEvent e ) {
 //        GWT.log( "drop on content" );
         e.preventDefault();
-        presenter.onDrop();
+        presenter.onDrop( e.getNativeEvent().getClientX(), calculateMiddle() );
+    }
+
+    private int calculateMiddle() {
+        GWT.log( getAbsoluteLeft()+" left" );
+        GWT.log( getOffsetWidth() + " width" );
+        return getAbsoluteLeft()+(getOffsetWidth()/2);
     }
 
     @EventHandler( "col" )
