@@ -1,13 +1,15 @@
 package org.uberfire.ext.layout.editor.client.novo.template.research;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.DivElement;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.MouseDownEvent;
-import com.google.gwt.event.dom.client.MouseUpEvent;
+import com.google.gwt.event.dom.client.*;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.Widget;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
@@ -45,34 +47,43 @@ public class ColumnView extends Composite
     @Override
     public void setSize( String size ) {
         col.addClassName( "col-md-" + size );
+
+        //// FIXME: 1/12/16
+        test();
+
     }
+
+    public void test() {
+        DivElement.as( content ).appendChild( new Label( hashCode() + "" ).getElement() );
+    }
+
+    private static native void onAttachNative( Widget w ) /*-{
+        w.@com.google.gwt.user.client.ui.Widget::onAttach()();
+    }-*/;
 
     @EventHandler( "col" )
-    public void mouseUp( MouseUpEvent e ) {
-        GWT.log("UP");
-        e.preventDefault();
-        dnd.end( col, e.getClientX() );
-    }
-
-
-    @EventHandler( "content" )
-    public void click( ClickEvent e ) {
-        consoleLog( "sdafsd" );
-        GWT.log("click");
-        e.preventDefault();
-//        dnd.end( col, e.getClientX() );
-    }
-
-
-    @EventHandler( "col" )
-    public void mouseDown( MouseDownEvent e ) {
-        GWT.log("DOWN");
+    public void dndBeginOnMouseDown( MouseDownEvent e ) {
         e.preventDefault();
         dnd.begin( col, e.getClientX() );
     }
 
-    native void consoleLog( String message ) /*-{
-        console.log("log:" + message);
-    }-*/;
+    @EventHandler( "col" )
+    public void dndEndOnMouseUp( MouseUpEvent e ) {
+        e.preventDefault();
+        dnd.end( col, e.getClientX() );
+    }
+
+    @EventHandler( "col" )
+    public void yo( DropEvent e ) {
+//        GWT.log( "drop on content" );
+        e.preventDefault();
+        presenter.onDrop();
+    }
+
+    @EventHandler( "col" )
+    public void col( DragOverEvent e ) {
+        e.preventDefault();
+//        presenter.onDrop();
+    }
 
 }

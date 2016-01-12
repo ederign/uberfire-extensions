@@ -21,13 +21,12 @@ public class ResizeManager {
     public void begin( Element beginElement, int beginX ) {
         this.beginElement = beginElement;
         this.beginX = beginX;
-        GWT.log("begin");
+        GWT.log("begin resize");
     }
 
     public void end( Element endElement, int endX ) {
         this.endElement = endElement;
         this.endX = endX;
-        GWT.log("end");
         if(beginElement==endElement){
             //TODO
             GWT.log("TODO: dnd in same event");
@@ -35,6 +34,7 @@ public class ResizeManager {
         else{
             handle();
         }
+        GWT.log("end resize");
     }
 
     private void handle() {
@@ -54,19 +54,24 @@ public class ResizeManager {
 
     private void expand( Element column ) {
         GWT.log("TODO: precisa funcionar o algoritmo para 2 digitos");
+        //TODO write real parser
         String t = column.getAttribute( "class" );
-        int i = t.indexOf( " " );
-        String columnSize1Str = String.valueOf( t.charAt( i - 1 ) );
-        String css = " " + t.substring( i );
+//        int i = t.indexOf( " " );
+        String columnSize1Str = String.valueOf( t.charAt( t.length() - 1 ) );
+//        String columnSize1Str = String.valueOf( t.charAt( i - 1 ) );
+//        String css = " " + t.substring( i );
+        String css = "";
         Integer columnSize1 = Integer.valueOf( columnSize1Str ) + 1;
         column.setAttribute( "class", "col-md-" + columnSize1.toString() + css );
     }
 
     private void reduce( Element column ) {
         String t = column.getAttribute( "class" );
-        int i = t.indexOf( " " );
-        String columnSize1Str = String.valueOf( t.charAt( i - 1 ) );
-        String css = " " + t.substring( i );
+//        int i = t.indexOf( " " );
+//        String columnSize1Str = String.valueOf( t.charAt( i - 1 ) );
+        String columnSize1Str = String.valueOf( t.charAt( t.length() - 1 ) );
+//        String css = " " + t.substring( i );
+        String css = "";
         Integer columnSize1 = Integer.valueOf( columnSize1Str ) - 1;
         column.setAttribute( "class", "col-md-" + columnSize1.toString() + css );
     }

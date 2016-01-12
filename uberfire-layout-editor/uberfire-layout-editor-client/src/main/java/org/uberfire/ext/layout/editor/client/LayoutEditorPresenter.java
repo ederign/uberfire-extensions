@@ -21,6 +21,7 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 import com.google.gwt.user.client.ui.Label;
@@ -32,7 +33,7 @@ import org.uberfire.ext.layout.editor.client.components.LayoutDragComponentGroup
 import org.uberfire.ext.layout.editor.client.novo.LayoutContainerPresenter;
 import org.uberfire.ext.layout.editor.client.novo.Test;
 import org.uberfire.ext.layout.editor.client.novo.template.research.Container;
-import org.uberfire.ext.layout.editor.client.novo.template.research.Simple;
+import org.uberfire.ext.layout.editor.client.novo.template.research.Row;
 import org.uberfire.ext.layout.editor.client.novo.template.research.SimplePresenter;
 import org.uberfire.ext.layout.editor.client.structure.EditorWidget;
 import org.uberfire.ext.layout.editor.client.components.GridLayoutDragComponent;
@@ -50,7 +51,9 @@ public class LayoutEditorPresenter {
 
     private final View view;
     private Container container;
+    private Row row;
     private SimplePresenter simplePresenter;
+
 
     private List<LayoutDragComponent> addedGridSystemComponents = new ArrayList<LayoutDragComponent>( );
 
@@ -96,8 +99,9 @@ public class LayoutEditorPresenter {
     }
 
     @Inject
-    public LayoutEditorPresenter( final View view, Container container, SimplePresenter simplePresenter ) {
+    public LayoutEditorPresenter( final View view, Row row, Container container, SimplePresenter simplePresenter ) {
         this.view = view;
+        this.row = row;
         this.container = container;
         this.simplePresenter = simplePresenter;
         view.init( this );
@@ -113,6 +117,7 @@ public class LayoutEditorPresenter {
     }
 
     public UberView<LayoutEditorPresenter> getView() {
+
         return view;
     }
 

@@ -53,6 +53,8 @@ public class SimpleView extends Composite
     public void init( SimplePresenter presenter ) {
         this.presenter = presenter;
 
+
+
         row1col1Content.getStyle().setCursor( Style.Cursor.DEFAULT );
         row1col1.getStyle().setCursor( Style.Cursor.COL_RESIZE );
 
