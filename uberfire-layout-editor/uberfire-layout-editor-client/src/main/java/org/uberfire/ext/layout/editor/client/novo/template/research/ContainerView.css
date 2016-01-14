@@ -1,9 +1,6 @@
-.rowColor{
-    /*border-style: solid;*/
-    /*border-color: red;*/
-
-    /*same height*/
-    /*overflow: hidden;*/
+.container-border{
+    border-style: solid;
+    border-color: blue;
 }
 
 .columnColor1{

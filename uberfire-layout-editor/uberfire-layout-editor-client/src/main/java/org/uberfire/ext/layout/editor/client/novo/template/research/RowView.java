@@ -2,9 +2,7 @@ package org.uberfire.ext.layout.editor.client.novo.template.research;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.MouseDownEvent;
-import com.google.gwt.event.dom.client.MouseUpEvent;
+import com.google.gwt.event.dom.client.*;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -53,7 +51,7 @@ public class RowView extends Composite
     }
 
     @Override
-    public void clearColumns() {
+    public void clear() {
         wrapper.clear();
     }
 
@@ -65,6 +63,22 @@ public class RowView extends Composite
     public void rowClick( ClickEvent e ) {
         e.preventDefault();
         GWT.log( "click row" );
+    }
+
+    @EventHandler( "row" )
+    public void mouseOver( MouseOverEvent e ) {
+        e.preventDefault();
+        if ( ( getAbsoluteLeft() < e.getClientX() ) || ( e.getClientX() <= getAbsoluteLeft() + 20 ) ) {
+            row.getElement().getStyle().setCursor( Style.Cursor.MOVE );
+        }
+        else{
+            row.getElement().getStyle().setCursor( Style.Cursor.DEFAULT );
+        }
+    }
+
+    @EventHandler( "row" )
+    public void rowrOut( MouseOutEvent e ) {
+        presenter.rowOut();
     }
 
     @EventHandler( "row" )

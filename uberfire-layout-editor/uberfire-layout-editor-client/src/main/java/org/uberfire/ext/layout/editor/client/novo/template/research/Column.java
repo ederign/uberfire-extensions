@@ -10,11 +10,36 @@ import javax.inject.Inject;
 @Dependent
 public class Column {
 
+    @Inject
+    ColumnResizeManager columnResizeManager;
+
     private final View view;
 
     private Integer size;
 
     private ParameterizedCommand<ColumnDrop> dropCommand;
+
+    public void beginResize( int xPosition ) {
+        columnResizeManager.begin( hashCode(), xPosition );
+    }
+
+    public void endResize( int xPosition ) {
+        columnResizeManager.end( hashCode(), xPosition );
+    }
+
+    public boolean canReduceSize() {
+        return this.size > 1;
+    }
+
+    public void reduzeSize() {
+        final int newSize = this.size - 1;
+        setSize( newSize );
+    }
+
+    public void incrementSize() {
+        final int newSize = this.size + 1;
+        setSize( newSize );
+    }
 
     public interface View extends UberView<Column> {
 
@@ -51,7 +76,7 @@ public class Column {
     }
 
     public void onDrop( int dropPosition, int columnMiddleX ) {
-        dropCommand.execute( new ColumnDrop( hashCode(), dropPosition , columnMiddleX) );
+        dropCommand.execute( new ColumnDrop( hashCode(), dropPosition, columnMiddleX ) );
     }
 
 }

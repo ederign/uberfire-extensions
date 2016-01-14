@@ -1,3 +1,21 @@
-.border{
+.no-padding{
+    padding:0px !important
+}
+.left{
+    float: left;
+    width: 5%;
     border-style:solid;
+    border-color: yellow;
+}
+.right{
+    float: right;
+    width: 5%;
+    border-style:solid;
+    border-color: green;
+}
+.center{
+    display: inline-block;
+    width: 95%;
+    border-style:solid;
+    border-color: magenta;
 }

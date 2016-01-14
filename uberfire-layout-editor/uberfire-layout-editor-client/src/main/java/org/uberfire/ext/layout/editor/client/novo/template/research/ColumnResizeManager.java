@@ -4,56 +4,74 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 
 import javax.enterprise.context.ApplicationScoped;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
 
 @ApplicationScoped
 public class ColumnResizeManager {
 
+    @Inject
+    Event<ColumnResizeEvent> columnResizeEvent;
 
-    private Element beginElement;
     private int beginX;
-    private Element endElement;
-    private int endX;
 
-    public void begin( Element beginElement, int beginX ) {
-        this.beginElement = beginElement;
+    private int columnHashCodeBegin;
+    private int columnHashCodeEnd;
+    private boolean isOnDnD;
+
+
+    public void begin( int columnHashCodeBegin, int beginX ) {
+        GWT.log( "begin resize" );
+        this.columnHashCodeBegin = columnHashCodeBegin;
         this.beginX = beginX;
-        GWT.log("begin resize");
+        this.isOnDnD = true;
     }
 
-    public void end( Element endElement, int endX ) {
-        this.endElement = endElement;
-        this.endX = endX;
-        if(beginElement==endElement){
-            //TODO
-            GWT.log("TODO: columnResizeManager in same event");
+    public void end( int columnHashCodeEnd, int endX ) {
+        if ( isOnDnD ) {
+            //check if is in the not same column
+            if ( columnHashCodeBegin == columnHashCodeEnd ) {
+                GWT.log( "TODO: columnResizeManager in same event or in the same column" );
+            } else {
+                handle( endX );
+            }
         }
-        else{
-            handle();
-        }
-        GWT.log("end resize");
+        this.columnHashCodeEnd = columnHashCodeEnd;
+        GWT.log( "end resize" );
     }
 
-    private void handle() {
+    public boolean isOnDnD() {
+        return isOnDnD;
+    }
+
+    public void reset() {
+        if ( isOnDnD() ) {
+            GWT.log( "row out" );
+            this.isOnDnD = false;
+            this.columnHashCodeBegin = -1;
+            this.beginX = -1;
+        }
+    }
+
+    private void handle( int endX ) {
         //check if begin and end are thee same element
-        if ( left() ) {
-            reduce( endElement );
-            expand( beginElement );
+        if ( left( endX ) ) {
+            columnResizeEvent.fire( new ColumnResizeEvent( columnHashCodeBegin, columnHashCodeEnd ).left() );
+//            reduce( endElement );
+//            expand( beginElement );
         } else {
-            reduce( endElement );
-            expand( beginElement );
+            columnResizeEvent.fire( new ColumnResizeEvent( columnHashCodeBegin, columnHashCodeEnd ).right() );
+//            reduce( endElement );
+//            expand( beginElement );
         }
     }
 
-    private boolean left() {
+    private boolean left( int endX ) {
         return endX < beginX;
     }
 
     private void expand( Element column ) {
-        GWT.log("TODO: precisa funcionar o algoritmo para 2 digitos");
+        GWT.log( "TODO: precisa funcionar o algoritmo para 2 digitos" );
         //TODO write real parser
         String t = column.getAttribute( "class" );
 //        int i = t.indexOf( " " );
@@ -82,5 +100,4 @@ public class ColumnResizeManager {
     native void consoleLog( String message ) /*-{
         console.log("log:" + message);
     }-*/;
-
 }

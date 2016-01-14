@@ -20,16 +20,19 @@ public class Container {
     @Inject
     Instance<Row> rowInstance;
 
+    @Inject
+    RowDndManager dndManager;
+
     List<Row> rows = new ArrayList<Row>();
 
     private final View view;
 
     public interface View extends UberView<Container> {
+
         void addRow( UberView<Row> view );
-
         void clear();
-    }
 
+    }
     @Inject
     public Container( final View view ) {
         this.view = view;
@@ -38,9 +41,9 @@ public class Container {
     @PostConstruct
     public void post() {
         view.init( this );
-        addRow( 6, 6 );
-        addRow( 12 );
-        addRow( 4, 4, 4 );
+        addRows( 6, 6 );
+        addRows( 12 );
+        addRows( 4, 4, 4 );
     }
 
     @PreDestroy
@@ -48,35 +51,51 @@ public class Container {
         //TODO destroy all rows instances
     }
 
+    public void containerOut() {
+        dndManager.reset();
+    }
 
-    private void addRow( Integer... colSpans ) {
+
+    private void addRows( Integer... colSpans ) {
         final Row row = rowInstance.get();
         row.init( colSpans );
         rows.add( row );
         view.addRow( row.getView() );
     }
 
-    public void handle( @Observes RowDnDEvent rowDndEvent ) {
+    public void handleRowDnD( @Observes RowDnDEvent rowDndEvent ) {
+        GWT.log("rowDndEvent");
+        swapRows( rowDndEvent );
+        updateView();
+
+    }
+
+    private void updateView() {
+        clearView();
+        for ( Row row : rows ) {
+            view.addRow( row.getView() );
+        }
+    }
+
+    private void clearView() {
         view.clear();
+    }
+
+    private void swapRows( @Observes RowDnDEvent rowDndEvent ) {
         int begin = -1;
         int end = -1;
 
         for ( int i = 0; i < rows.size(); i++ ) {
             Row actual = rows.get( i );
 
-            if ( actual.hashCode() == rowDndEvent.getRowHashCodeStart() ) {
+            if ( actual.hashCode() == rowDndEvent.getRowHashCodeBegin() ) {
                 begin = i;
             }
             if ( actual.hashCode() == rowDndEvent.getRowHashCodeEnd() ) {
                 end = i;
             }
         }
-        GWT.log(begin + " " + end);
         Collections.swap( rows, begin, end );
-        for ( Row row : rows ) {
-            view.addRow( row.getView() );
-        }
-
     }
 
     public UberView<Container> getView() {

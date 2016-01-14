@@ -15,7 +15,6 @@ import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.uberfire.client.mvp.UberView;
 
 import javax.enterprise.context.Dependent;
-import javax.inject.Inject;
 
 @Dependent
 @Templated
@@ -23,6 +22,7 @@ public class ColumnView extends Composite
         implements UberView<Column>,
         Column.View {
 
+    public static final String COL_CSS_CLASS = "col-md-";
     private Column presenter;
 
     @DataField
@@ -31,10 +31,7 @@ public class ColumnView extends Composite
     @DataField
     private Element content = DOM.createDiv();
 
-    //FIXME move to presenter
-    @Inject
-    ColumnResizeManager columnColumnResizeManager;
-
+    String cssSize = "";
 
     @Override
     public void init( Column presenter ) {
@@ -46,7 +43,12 @@ public class ColumnView extends Composite
 
     @Override
     public void setSize( String size ) {
-        col.addClassName( "col-md-" + size );
+        if(!col.getClassName().isEmpty()){
+            col.removeClassName( cssSize );
+        }
+        cssSize = COL_CSS_CLASS + size;
+        col.addClassName( cssSize );
+        col.addClassName( "no-padding" );
     }
 
     public void test() {
@@ -60,15 +62,13 @@ public class ColumnView extends Composite
     @EventHandler( "col" )
     public void dndBeginOnMouseDown( MouseDownEvent e ) {
         e.preventDefault();
-        //move to presenter
-        columnColumnResizeManager.begin( col, e.getClientX() );
+        presenter.beginResize( e.getClientX());
     }
 
     @EventHandler( "col" )
     public void dndEndOnMouseUp( MouseUpEvent e ) {
         e.preventDefault();
-        //move to presenter
-        columnColumnResizeManager.end( col, e.getClientX() );
+        presenter.endResize( e.getClientX());
     }
 
     @EventHandler( "col" )

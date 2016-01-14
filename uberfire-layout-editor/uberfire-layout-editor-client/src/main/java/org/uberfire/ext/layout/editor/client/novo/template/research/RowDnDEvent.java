@@ -4,25 +4,23 @@ import org.jboss.errai.common.client.api.annotations.Portable;
 
 @Portable
 public class RowDnDEvent {
-    private final int rowHashCodeStart;
-    private final int rowHashCodeEnd;
+    private int rowHashCodeBegin;
+    private int rowHashCodeEnd;
 
-    public RowDnDEvent( int rowHashCodeStart, int rowHashCodeEnd ) {
+    public RowDnDEvent( int rowHashCodeBegin, int rowHashCodeEnd ) {
 
-        this.rowHashCodeStart = rowHashCodeStart;
+        this.rowHashCodeBegin = rowHashCodeBegin;
         this.rowHashCodeEnd = rowHashCodeEnd;
     }
 
-    @Override
-    public String toString() {
-        return rowHashCodeStart + " " + rowHashCodeEnd;
-    }
-
-    public int getRowHashCodeStart() {
-        return rowHashCodeStart;
+    public int getRowHashCodeBegin() {
+        return rowHashCodeBegin;
     }
 
     public int getRowHashCodeEnd() {
         return rowHashCodeEnd;
     }
+
+
+    public RowDnDEvent(){}
 }

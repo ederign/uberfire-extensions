@@ -71,41 +71,41 @@ public class SimpleView extends Composite
     public void row1col1Up( MouseUpEvent e ) {
         e.preventDefault();
         consoleLog( "MouseUpEvent row1col1 " + e.getClientX() );
-        dnd.end( row1col1, e.getClientX() );
+//        dnd.end( row1col1, e.getClientX() );
     }
 
     @EventHandler( "row1col1" )
     public void row1col1Down( MouseDownEvent e ) {
         e.preventDefault();
         consoleLog( "MouseDownEvent row1col1 " + e.getClientX() );
-        dnd.begin( row1col1, e.getClientX() );
+//        dnd.begin( row1col1, e.getClientX() );
     }
 
     @EventHandler( "row1col2" )
     public void row1col2Down( MouseDownEvent e ) {
         e.preventDefault();
-        dnd.begin( row1col2, e.getClientX() );
+//        dnd.begin( row1col2, e.getClientX() );
         consoleLog( "MouseDownEvent row1col2 " + e.getClientX() );
     }
 
     @EventHandler( "row1col2" )
     public void row1col2rMouseUp( MouseUpEvent e ) {
         e.preventDefault();
-        dnd.end( row1col2, e.getClientX() );
+//        dnd.end( row1col2, e.getClientX() );
         consoleLog( "MouseUpEvent row1col2 " + e.getClientX() );
     }
 
     @EventHandler( "row1col3" )
     public void row1col3rMouseUp( MouseUpEvent e ) {
         e.preventDefault();
-        dnd.end( row1col3, e.getClientX() );
+//        dnd.end( row1col3, e.getClientX() );
         consoleLog( "MouseUpEvent row1col3 " + e.getClientX() );
     }
 
     @EventHandler( "row1col3" )
     public void row1col3rMouseDown( MouseDownEvent e ) {
         e.preventDefault();
-        dnd.begin( row1col3, e.getClientX() );
+//        dnd.begin( row1col3, e.getClientX() );
         consoleLog( "MouseDownEvent row1col3 " + e.getClientX() );
     }
 

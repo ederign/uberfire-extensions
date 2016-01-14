@@ -1,0 +1,7 @@
+org.uberfire.ext.security.management.client.navbar.AppNavBar
+org.uberfire.ext.security.management.client.perspectives.HomePerspectiveActivity
+org.uberfire.ext.security.management.client.screens.HomeScreen
+org.uberfire.ext.security.management.client.screens.HomeScreenActivity
+org.uberfire.ext.security.management.client.perspectives.HomePerspective
+org.uberfire.ext.security.management.backend.ApplicationScopedProducer
+org.uberfire.ext.security.management.client.ShowcaseEntryPoint

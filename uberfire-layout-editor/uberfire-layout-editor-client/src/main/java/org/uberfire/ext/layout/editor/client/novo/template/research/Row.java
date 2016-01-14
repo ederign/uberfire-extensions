@@ -1,11 +1,13 @@
 package org.uberfire.ext.layout.editor.client.novo.template.research;
 
+import com.google.gwt.core.client.GWT;
 import org.uberfire.client.mvp.UberView;
 import org.uberfire.mvp.ParameterizedCommand;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.Dependent;
+import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -19,13 +21,16 @@ public class Row {
     @Inject
     Instance<Column> columnInstance;
 
-        List<Column> columns = new ArrayList<Column>();
+    List<Column> columns = new ArrayList<Column>();
+
+    @Inject
+    ColumnResizeManager columnResizeManager;
 
     public interface View extends UberView<Row> {
 
         void addColumn( UberView<Column> view );
 
-        void clearColumns();
+        void clear();
 
     }
 
@@ -43,6 +48,10 @@ public class Row {
         view.init( this );
     }
 
+    public void rowOut() {
+        columnResizeManager.reset();
+    }
+
     @PreDestroy
     public void preDestroy() {
         //TODO destroy all get instances
@@ -52,7 +61,7 @@ public class Row {
         return new ParameterizedCommand<ColumnDrop>() {
             @Override
             public void execute( ColumnDrop drop ) {
-                view.clearColumns();
+                view.clear();
                 List<Column> newRow = new ArrayList<Column>();
                 for ( Column column : columns ) {
                     if ( drop.hash == column.hashCode() ) {
@@ -99,6 +108,51 @@ public class Row {
             final Column column = columnInstance.get();
             column.setup( colSpan, dropCommand() );
             columns.add( column );
+        }
+        updateView();
+    }
+
+    public void resizeColumns( @Observes ColumnResizeEvent resize ) {
+        Column beginResize = null;
+        Column endResize = null;
+        for ( Column column : columns ) {
+
+            if ( resize.getColumnHashCodeBegin() == column.hashCode() ) {
+                beginResize = column;
+            }
+
+            if ( resize.getColumnHashCodeEnd() == column.hashCode() ) {
+                endResize = column;
+            }
+        }
+
+        if ( beginResize != null && endResize != null ) {
+            GWT.log( resize.toString() );
+            GWT.log( beginResize + "" );
+            GWT.log( endResize + "" );
+            if ( resize.isLeft() ) {
+                GWT.log( "YAAAY" );
+                if ( beginResize.canReduceSize() ) {
+                    GWT.log( "YAAAY1" );
+                    beginResize.incrementSize();
+                    endResize.reduzeSize();
+                    updateView();
+                }
+            } else {
+                GWT.log( "YAAAY2" );
+                if ( endResize.canReduceSize() ) {
+                    GWT.log( "YAAAY3" );
+                    beginResize.incrementSize();
+                    endResize.reduzeSize();
+                    updateView();
+                }
+            }
+        }
+    }
+
+    private void updateView() {
+        view.clear();
+        for ( Column column : columns ) {
             view.addColumn( column.getView() );
         }
     }
