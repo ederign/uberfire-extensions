@@ -1,11 +1,14 @@
 package org.uberfire.ext.layout.editor.client.novo.template.research;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.DivElement;
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Element;
-import com.google.gwt.user.client.ui.*;
+import com.google.gwt.event.dom.client.MouseDownEvent;
+import com.google.gwt.event.dom.client.MouseUpEvent;
+import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.Widget;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
@@ -27,14 +30,18 @@ public class RowView extends Composite
     @DataField
     private SimplePanel row;
 
-    FlowPanel wrapper = new FlowPanel(  );
+    //move to presenter
+    @Inject
+    RowDndManager dndManager;
+
+    FlowPanel wrapper = new FlowPanel();
 
 
     @Override
     public void init( Row presenter ) {
         this.presenter = presenter;
         row.add( wrapper );
-
+        row.getElement().getStyle().setCursor( Style.Cursor.MOVE );
     }
 
     @Override
@@ -59,6 +66,21 @@ public class RowView extends Composite
         e.preventDefault();
         GWT.log( "click row" );
     }
+
+    @EventHandler( "row" )
+    public void dndBeginOnMouseDown( MouseDownEvent e ) {
+        e.preventDefault();
+        //move to presenter
+        dndManager.begin( presenter.hashCode() );
+    }
+
+    @EventHandler( "row" )
+    public void dndEndOnMouseUp( MouseUpEvent e ) {
+        e.preventDefault();
+        //move to presenter
+        dndManager.end( presenter.hashCode() );
+    }
+
 }
 
 

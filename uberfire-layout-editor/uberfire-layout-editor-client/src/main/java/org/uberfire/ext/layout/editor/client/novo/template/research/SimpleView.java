@@ -47,7 +47,7 @@ public class SimpleView extends Composite
     private Element row1col3Content = DOM.createDiv();
 
     @Inject
-    ResizeManager dnd;
+    ColumnResizeManager dnd;
 
     @Override
     public void init( SimplePresenter presenter ) {

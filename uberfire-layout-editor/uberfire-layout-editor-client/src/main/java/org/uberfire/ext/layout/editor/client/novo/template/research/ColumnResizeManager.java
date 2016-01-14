@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 @ApplicationScoped
-public class ResizeManager {
+public class ColumnResizeManager {
 
 
     private Element beginElement;
@@ -29,7 +29,7 @@ public class ResizeManager {
         this.endX = endX;
         if(beginElement==endElement){
             //TODO
-            GWT.log("TODO: dnd in same event");
+            GWT.log("TODO: columnResizeManager in same event");
         }
         else{
             handle();

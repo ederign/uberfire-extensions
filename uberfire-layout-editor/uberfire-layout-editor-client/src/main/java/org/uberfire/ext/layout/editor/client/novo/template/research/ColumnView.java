@@ -8,7 +8,6 @@ import com.google.gwt.event.dom.client.*;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
@@ -34,7 +33,7 @@ public class ColumnView extends Composite
 
     //FIXME move to presenter
     @Inject
-    ResizeManager dnd;
+    ColumnResizeManager columnColumnResizeManager;
 
 
     @Override
@@ -61,13 +60,15 @@ public class ColumnView extends Composite
     @EventHandler( "col" )
     public void dndBeginOnMouseDown( MouseDownEvent e ) {
         e.preventDefault();
-        dnd.begin( col, e.getClientX() );
+        //move to presenter
+        columnColumnResizeManager.begin( col, e.getClientX() );
     }
 
     @EventHandler( "col" )
     public void dndEndOnMouseUp( MouseUpEvent e ) {
         e.preventDefault();
-        dnd.end( col, e.getClientX() );
+        //move to presenter
+        columnColumnResizeManager.end( col, e.getClientX() );
     }
 
     @EventHandler( "col" )

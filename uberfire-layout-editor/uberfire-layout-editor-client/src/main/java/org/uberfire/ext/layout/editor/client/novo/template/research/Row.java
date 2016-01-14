@@ -19,13 +19,14 @@ public class Row {
     @Inject
     Instance<Column> columnInstance;
 
-    List<Column> columns = new ArrayList<Column>();
+        List<Column> columns = new ArrayList<Column>();
 
     public interface View extends UberView<Row> {
 
         void addColumn( UberView<Column> view );
 
         void clearColumns();
+
     }
 
     @Inject
@@ -33,11 +34,13 @@ public class Row {
         this.view = view;
     }
 
+    public void init( Integer[] colSpans ) {
+        createDefaultColumns( colSpans );
+    }
+
     @PostConstruct
     public void post() {
         view.init( this );
-//        createDefaultColumns( 12 );
-        createDefaultColumns( 6, 6 );
     }
 
     @PreDestroy
@@ -50,7 +53,6 @@ public class Row {
             @Override
             public void execute( ColumnDrop drop ) {
                 view.clearColumns();
-
                 List<Column> newRow = new ArrayList<Column>();
                 for ( Column column : columns ) {
                     if ( drop.hash == column.hashCode() ) {
@@ -65,14 +67,13 @@ public class Row {
                         }
 
 
-                        if (drop.dropXPosition > drop.columnMiddleX ){
+                        if ( drop.dropXPosition > drop.columnMiddleX ) {
                             final Column newColumn = columnInstance.get();
                             newColumn.setup( newColumnSize, dropCommand() );
                             newRow.add( newColumn );
                             newRow.add( column );
 
-                        }
-                        else{
+                        } else {
                             newRow.add( column );
                             final Column newColumn = columnInstance.get();
                             newColumn.setup( newColumnSize, dropCommand() );

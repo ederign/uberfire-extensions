@@ -41,6 +41,11 @@ public class ContainerView extends Composite
 //        DivElement.as( container ).appendChild( view.asWidget().getElement() );
     }
 
+    @Override
+    public void clear() {
+        wrapper.clear();
+    }
+
     private static native void onAttachNative( Widget w ) /*-{
         w.@com.google.gwt.user.client.ui.Widget::onAttach()();
     }-*/;
