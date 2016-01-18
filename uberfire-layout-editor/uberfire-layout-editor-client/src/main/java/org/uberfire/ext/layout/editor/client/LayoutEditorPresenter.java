@@ -113,6 +113,8 @@ public class LayoutEditorPresenter {
         view.setupNewContainer2( new Label( "Simple Presenter") );
         view.setupNewContainer( simplePresenter.getView() );
         view.setupNewContainer2( new Label( "Container") );
+        container.init();
+        container.load();
         view.setupNewContainer2( container.getView().asWidget());
     }
 

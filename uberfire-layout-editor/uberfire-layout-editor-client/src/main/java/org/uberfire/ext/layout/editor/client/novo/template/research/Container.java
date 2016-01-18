@@ -27,6 +27,14 @@ public class Container {
 
     private final View view;
 
+    public void init() {
+
+    }
+
+    public void load() {
+        //TODO
+    }
+
     public interface View extends UberView<Container> {
 
         void addRow( UberView<Row> view );
