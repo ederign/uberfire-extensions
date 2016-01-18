@@ -93,7 +93,7 @@ public class LayoutEditorView extends Composite
         newContainer.add( view );
     }
 
-    //needed to setup ids
+    //needed to init ids
     @UiField
     PanelGroup accordion;
 

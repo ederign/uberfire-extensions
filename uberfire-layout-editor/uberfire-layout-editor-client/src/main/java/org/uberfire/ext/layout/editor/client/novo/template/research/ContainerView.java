@@ -55,7 +55,7 @@ public class ContainerView extends Composite
     }-*/;
 
 
-    @EventHandler( "container" )
+//    @EventHandler( "container" )
     public void containerOut( MouseOutEvent e ) {
         presenter.containerOut();
     }

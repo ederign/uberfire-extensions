@@ -15,7 +15,12 @@
 }
 .center{
     display: inline-block;
-    width: 95%;
+    /*width: 94%;*/
+    width: 100%;
     border-style:solid;
     border-color: magenta;
+}
+.cursorResize{
+    cursor: copy;
+    background-color: black;
 }

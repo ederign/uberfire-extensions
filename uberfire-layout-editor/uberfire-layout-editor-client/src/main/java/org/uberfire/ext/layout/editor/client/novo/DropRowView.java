@@ -41,7 +41,7 @@ public class DropRowView extends Composite
 
 
 //    @PostConstruct
-//    void setup() {
+//    void init() {
 ////        previewRow.getStyle().setProperty( "display", "none" );
 //    }
 //

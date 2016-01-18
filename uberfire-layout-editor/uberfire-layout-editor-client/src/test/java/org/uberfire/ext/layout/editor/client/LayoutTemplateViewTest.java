@@ -45,7 +45,7 @@
 //    LayoutEditorView view;
 //
 //    @Before
-//    public void setup() {
+//    public void initDemo() {
 //        layoutEditorWidget = new LayoutEditorWidget();
 //        view = new LayoutEditorView( layoutEditorWidget );
 //        LayoutEditorPresenter presenter = new LayoutEditorPresenter( view );
@@ -124,7 +124,7 @@
 //        view = createViewMock( layoutDragComponent );
 //
 //        LayoutEditorPresenter presenter = new LayoutEditorPresenter( view );
-//        view.init( presenter );
+//        view.initDemo( presenter );
 //
 //        LayoutTemplate layout = LayoutTemplate.defaultLayout( "layout" );
 //        LayoutRow row = layout.getRows().get( 0 );

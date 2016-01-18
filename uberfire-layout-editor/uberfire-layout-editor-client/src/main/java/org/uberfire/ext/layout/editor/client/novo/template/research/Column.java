@@ -41,9 +41,18 @@ public class Column {
         setSize( newSize );
     }
 
+    public void defaultEmptyColumn( ParameterizedCommand<ColumnDrop> columnDropParameterizedCommand ) {
+        this.size = 12;
+        this.dropCommand = columnDropParameterizedCommand;
+        view.setSize( size.toString() );
+        view.setContent( "Drop your first component here..." );
+    }
+
     public interface View extends UberView<Column> {
 
         void setSize( String size );
+
+        void setContent( String contentLabel );
     }
 
     @Inject
@@ -60,10 +69,11 @@ public class Column {
         return view;
     }
 
-    public void setup( Integer size, ParameterizedCommand<ColumnDrop> dropCommand ) {
+    public void init( Integer size, ParameterizedCommand<ColumnDrop> dropCommand ) {
         this.size = size;
         this.dropCommand = dropCommand;
         view.setSize( size.toString() );
+        view.setContent( hashCode()+"" );
     }
 
     public Integer getSize() {

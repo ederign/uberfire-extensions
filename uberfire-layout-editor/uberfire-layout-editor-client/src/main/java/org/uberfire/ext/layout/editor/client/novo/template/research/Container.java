@@ -28,11 +28,18 @@ public class Container {
     private final View view;
 
     public void init() {
+        createDefaultRow();
+    }
 
+    private void createDefaultRow() {
+        final Row row = rowInstance.get();
+        row.defaultEmptyRow( );
+        rows.add( row );
+        view.addRow( row.getView() );
     }
 
     public void load() {
-        //TODO
+        //TODO load a existent layout
     }
 
     public interface View extends UberView<Container> {
@@ -49,9 +56,9 @@ public class Container {
     @PostConstruct
     public void post() {
         view.init( this );
-        addRows( 6, 6 );
-        addRows( 12 );
-        addRows( 4, 4, 4 );
+//        addRows( 6, 6 );
+//        addRows( 12 );
+//        addRows( 4, 4, 4 );
     }
 
     @PreDestroy
@@ -66,7 +73,7 @@ public class Container {
 
     private void addRows( Integer... colSpans ) {
         final Row row = rowInstance.get();
-        row.init( colSpans );
+        row.initDemo( colSpans );
         rows.add( row );
         view.addRow( row.getView() );
     }
@@ -75,7 +82,6 @@ public class Container {
         GWT.log("rowDndEvent");
         swapRows( rowDndEvent );
         updateView();
-
     }
 
     private void updateView() {

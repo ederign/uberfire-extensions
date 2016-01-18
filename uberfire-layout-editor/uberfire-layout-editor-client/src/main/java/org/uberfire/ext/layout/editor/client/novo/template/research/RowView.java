@@ -59,13 +59,13 @@ public class RowView extends Composite
         w.@com.google.gwt.user.client.ui.Widget::onAttach()();
     }-*/;
 
-    @EventHandler( "row" )
-    public void rowClick( ClickEvent e ) {
+//    @EventHandler( "row" )
+    public void rowClick( DropEvent e ) {
+        GWT.log( "drop Row" );
         e.preventDefault();
-        GWT.log( "click row" );
     }
 
-    @EventHandler( "row" )
+//    @EventHandler( "row" )
     public void mouseOver( MouseOverEvent e ) {
         e.preventDefault();
         if ( ( getAbsoluteLeft() < e.getClientX() ) || ( e.getClientX() <= getAbsoluteLeft() + 20 ) ) {
@@ -76,12 +76,12 @@ public class RowView extends Composite
         }
     }
 
-    @EventHandler( "row" )
+//    @EventHandler( "row" )
     public void rowrOut( MouseOutEvent e ) {
         presenter.rowOut();
     }
 
-    @EventHandler( "row" )
+//    @EventHandler( "row" )
     public void dndBeginOnMouseDown( MouseDownEvent e ) {
         e.preventDefault();
         //move to presenter
@@ -91,10 +91,18 @@ public class RowView extends Composite
     @EventHandler( "row" )
     public void dndEndOnMouseUp( MouseUpEvent e ) {
         e.preventDefault();
+        GWT.log( "ROW MOUSE UP" );
         //move to presenter
-        dndManager.end( presenter.hashCode() );
+//        dndManager.end( presenter.hashCode() );
     }
 
+    @EventHandler( "row" )
+    public void dndEndOnMouseDown( MouseDownEvent e ) {
+        e.preventDefault();
+        GWT.log( "ROW MOUSE DOWN" );
+        //move to presenter
+//        dndManager.end( presenter.hashCode() );
+    }
 }
 
 

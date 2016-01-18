@@ -23,8 +23,18 @@ public class Row {
 
     List<Column> columns = new ArrayList<Column>();
 
+    Column defaultEmptyColumn;
+
     @Inject
     ColumnResizeManager columnResizeManager;
+
+    public void defaultEmptyRow() {
+        final Column column = columnInstance.get();
+        column.defaultEmptyColumn( defaultEmptyRowDropCommand() );
+        defaultEmptyColumn = column;
+        columns.add( defaultEmptyColumn );
+        updateView();
+    }
 
     public interface View extends UberView<Row> {
 
@@ -39,8 +49,9 @@ public class Row {
         this.view = view;
     }
 
-    public void init( Integer[] colSpans ) {
-        createDefaultColumns( colSpans );
+    //old one
+    public void initDemo( Integer[] colSpans ) {
+        createColumns( colSpans );
     }
 
     @PostConstruct
@@ -57,6 +68,18 @@ public class Row {
         //TODO destroy all get instances
     }
 
+    private ParameterizedCommand<ColumnDrop> defaultEmptyRowDropCommand() {
+        return new ParameterizedCommand<ColumnDrop>() {
+            @Override
+            public void execute( ColumnDrop parameter ) {
+                view.clear();
+                columns = new ArrayList<Column>();
+                createColumns( 12 );
+                updateView();
+            }
+        };
+    }
+
     ParameterizedCommand<ColumnDrop> dropCommand() {
         return new ParameterizedCommand<ColumnDrop>() {
             @Override
@@ -64,28 +87,31 @@ public class Row {
                 view.clear();
                 List<Column> newRow = new ArrayList<Column>();
                 for ( Column column : columns ) {
-                    if ( drop.hash == column.hashCode() ) {
-                        //TODO write a better algo
-                        final Integer originalSize = column.getSize();
-                        final Integer newColumnSize = originalSize / 2;
+                    //TODO dont drop if the column size == 1
+                    if ( dropIsOn( drop, column ) && column.getSize() != 1) {
+
+                        Integer originalSize = column.getSize();
+                        Integer newColumnSize = originalSize / 2;
 
                         if ( originalSize % 2 == 0 ) {
                             column.setSize( newColumnSize );
+                            GWT.log( "both" + newColumnSize );
                         } else {
+                            GWT.log( "actual" + newColumnSize );
                             column.setSize( newColumnSize + 1 );
+                            GWT.log( "new" + newColumnSize );
                         }
 
-
-                        if ( drop.dropXPosition > drop.columnMiddleX ) {
+                        if ( drop.dropXPosition < drop.columnMiddleX ) {
                             final Column newColumn = columnInstance.get();
-                            newColumn.setup( newColumnSize, dropCommand() );
+                            newColumn.init( newColumnSize, dropCommand() );
                             newRow.add( newColumn );
                             newRow.add( column );
 
                         } else {
                             newRow.add( column );
                             final Column newColumn = columnInstance.get();
-                            newColumn.setup( newColumnSize, dropCommand() );
+                            newColumn.init( newColumnSize, dropCommand() );
                             newRow.add( newColumn );
                         }
 
@@ -102,14 +128,17 @@ public class Row {
         };
     }
 
+    private boolean dropIsOn( ColumnDrop drop, Column column ) {
+        return drop.hash == column.hashCode();
+    }
 
-    private void createDefaultColumns( Integer... colSpans ) {
+
+    private void createColumns( Integer... colSpans ) {
         for ( Integer colSpan : colSpans ) {
             final Column column = columnInstance.get();
-            column.setup( colSpan, dropCommand() );
+            column.init( colSpan, dropCommand() );
             columns.add( column );
         }
-        updateView();
     }
 
     public void resizeColumns( @Observes ColumnResizeEvent resize ) {
