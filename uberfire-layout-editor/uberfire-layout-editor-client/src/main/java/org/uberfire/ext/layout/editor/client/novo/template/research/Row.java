@@ -28,6 +28,9 @@ public class Row {
     @Inject
     ColumnResizeManager columnResizeManager;
 
+    @Inject
+    DnDManager dndManager;
+
     public void defaultEmptyRow() {
         final Column column = columnInstance.get();
         column.defaultEmptyColumn( defaultEmptyRowDropCommand() );
@@ -60,7 +63,7 @@ public class Row {
     }
 
     public void rowOut() {
-        columnResizeManager.reset();
+        dndManager.resetColumnResize();
     }
 
     @PreDestroy
@@ -86,9 +89,11 @@ public class Row {
             public void execute( ColumnDrop drop ) {
                 view.clear();
                 List<Column> newRow = new ArrayList<Column>();
-                for ( Column column : columns ) {
+                for ( int i = 0; i < columns.size(); i++ ) {
+                    Column column = columns.get( i );
+                    Column.Type type = getColumnType( i );
                     //TODO dont drop if the column size == 1
-                    if ( dropIsOn( drop, column ) && column.getSize() != 1) {
+                    if ( dropIsOn( drop, column ) && column.getSize() != 1 ) {
 
                         Integer originalSize = column.getSize();
                         Integer newColumnSize = originalSize / 2;
@@ -104,14 +109,14 @@ public class Row {
 
                         if ( drop.dropXPosition < drop.columnMiddleX ) {
                             final Column newColumn = columnInstance.get();
-                            newColumn.init( newColumnSize, dropCommand() );
+                            newColumn.init( type, newColumnSize, dropCommand() );
                             newRow.add( newColumn );
                             newRow.add( column );
 
                         } else {
                             newRow.add( column );
                             final Column newColumn = columnInstance.get();
-                            newColumn.init( newColumnSize, dropCommand() );
+                            newColumn.init( type, newColumnSize, dropCommand() );
                             newRow.add( newColumn );
                         }
 
@@ -134,49 +139,50 @@ public class Row {
 
 
     private void createColumns( Integer... colSpans ) {
-        for ( Integer colSpan : colSpans ) {
+        for ( int i = 0; i < colSpans.length; i++ ) {
+            Integer colSpan = colSpans[i];
             final Column column = columnInstance.get();
-            column.init( colSpan, dropCommand() );
+            Column.Type type = getColumnType( i );
+            column.init( type, colSpan, dropCommand() );
             columns.add( column );
         }
     }
 
+    private Column.Type getColumnType( int i ) {
+        Column.Type type;
+        if ( i == 0 ) {
+            type = Column.Type.FIRST;
+        } else {
+            type = Column.Type.MIDDLE;
+        }
+        return type;
+    }
+
     public void resizeColumns( @Observes ColumnResizeEvent resize ) {
-        Column beginResize = null;
-        Column endResize = null;
-        for ( Column column : columns ) {
+        Column resizeColumn = getColumn( resize );
 
-            if ( resize.getColumnHashCodeBegin() == column.hashCode() ) {
-                beginResize = column;
-            }
+        if ( resizeColumn != null ) {
+            Column affectedColumn = columns.get( columns.indexOf( resizeColumn ) - 1 );
 
-            if ( resize.getColumnHashCodeEnd() == column.hashCode() ) {
-                endResize = column;
-            }
-        }
-
-        if ( beginResize != null && endResize != null ) {
-            GWT.log( resize.toString() );
-            GWT.log( beginResize + "" );
-            GWT.log( endResize + "" );
             if ( resize.isLeft() ) {
-                GWT.log( "YAAAY" );
-                if ( beginResize.canReduceSize() ) {
-                    GWT.log( "YAAAY1" );
-                    beginResize.incrementSize();
-                    endResize.reduzeSize();
-                    updateView();
-                }
+                resizeColumn.incrementSize();
+                affectedColumn.reduzeSize();
             } else {
-                GWT.log( "YAAAY2" );
-                if ( endResize.canReduceSize() ) {
-                    GWT.log( "YAAAY3" );
-                    beginResize.incrementSize();
-                    endResize.reduzeSize();
-                    updateView();
-                }
+                affectedColumn.incrementSize();
+                resizeColumn.reduzeSize();
             }
         }
+        updateView();
+    }
+
+
+    private Column getColumn( ColumnResizeEvent resize ) {
+        for ( Column column : columns ) {
+            if ( resize.getColumnHashCode() == column.hashCode() ) {
+                return column;
+            }
+        }
+        return null;
     }
 
     private void updateView() {

@@ -13,7 +13,6 @@ public class ColumnResizeManager {
     @Inject
     Event<ColumnResizeEvent> columnResizeEvent;
 
-    private int beginX;
 
     private int columnHashCodeBegin;
     private int columnHashCodeEnd;
@@ -21,9 +20,9 @@ public class ColumnResizeManager {
 
 
     public void begin( int columnHashCodeBegin, int beginX ) {
-        GWT.log( "begin resize" );
+        GWT.log( "beginColumnResize resize" );
         this.columnHashCodeBegin = columnHashCodeBegin;
-        this.beginX = beginX;
+//        this.beginX = beginX;
         this.isOnDnD = true;
     }
 
@@ -37,7 +36,7 @@ public class ColumnResizeManager {
             }
         }
         this.columnHashCodeEnd = columnHashCodeEnd;
-        GWT.log( "end resize" );
+        GWT.log( "endColumnResize resize" );
     }
 
     public boolean isOnDnD() {
@@ -48,26 +47,27 @@ public class ColumnResizeManager {
         if ( isOnDnD() ) {
             GWT.log( "row out" );
             this.isOnDnD = false;
-            this.columnHashCodeBegin = -1;
-            this.beginX = -1;
+//            this.columnHashCodeBegin = -1;
+//            this.beginX = -1;
         }
     }
 
     private void handle( int endX ) {
-        //check if begin and end are thee same element
+        //check if beginColumnResize and endColumnResize are thee same element
         if ( left( endX ) ) {
-            columnResizeEvent.fire( new ColumnResizeEvent( columnHashCodeBegin, columnHashCodeEnd ).left() );
+//            columnResizeEvent.fire( new ColumnResizeEvent( columnHashCodeBegin, columnHashCodeEnd ).left() );
 //            reduce( endElement );
 //            expand( beginElement );
         } else {
-            columnResizeEvent.fire( new ColumnResizeEvent( columnHashCodeBegin, columnHashCodeEnd ).right() );
+//            columnResizeEvent.fire( new ColumnResizeEvent( columnHashCodeBegin, columnHashCodeEnd ).right() );
 //            reduce( endElement );
 //            expand( beginElement );
         }
     }
 
     private boolean left( int endX ) {
-        return endX < beginX;
+//        return endX < beginX;
+        return false;
     }
 
     private void expand( Element column ) {

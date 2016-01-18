@@ -88,20 +88,20 @@ public class RowView extends Composite
         dndManager.begin( presenter.hashCode() );
     }
 
-    @EventHandler( "row" )
+//    @EventHandler( "row" )
     public void dndEndOnMouseUp( MouseUpEvent e ) {
         e.preventDefault();
         GWT.log( "ROW MOUSE UP" );
         //move to presenter
-//        dndManager.end( presenter.hashCode() );
+//        dndManager.endColumnResize( presenter.hashCode() );
     }
 
-    @EventHandler( "row" )
+//    @EventHandler( "row" )
     public void dndEndOnMouseDown( MouseDownEvent e ) {
         e.preventDefault();
         GWT.log( "ROW MOUSE DOWN" );
         //move to presenter
-//        dndManager.end( presenter.hashCode() );
+//        dndManager.endColumnResize( presenter.hashCode() );
     }
 }
 

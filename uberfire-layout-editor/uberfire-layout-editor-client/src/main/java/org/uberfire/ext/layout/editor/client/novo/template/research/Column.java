@@ -13,7 +13,12 @@ public class Column {
     @Inject
     ColumnResizeManager columnResizeManager;
 
+    @Inject
+    DnDManager dndManager;
+
     private final View view;
+
+    private Type columnType;
 
     private Integer size;
 
@@ -43,9 +48,18 @@ public class Column {
 
     public void defaultEmptyColumn( ParameterizedCommand<ColumnDrop> columnDropParameterizedCommand ) {
         this.size = 12;
+        this.columnType = Type.DnD;
         this.dropCommand = columnDropParameterizedCommand;
         view.setSize( size.toString() );
         view.setContent( "Drop your first component here..." );
+    }
+
+    public void onMouseUp( int xPosition ) {
+        dndManager.endColumnResize( xPosition );
+    }
+
+    public void onMouseDown( int xPosition ) {
+        dndManager.beginColumnResize( hashCode(), xPosition );
     }
 
     public interface View extends UberView<Column> {
@@ -69,11 +83,12 @@ public class Column {
         return view;
     }
 
-    public void init( Integer size, ParameterizedCommand<ColumnDrop> dropCommand ) {
+    public void init( Type columnType, Integer size, ParameterizedCommand<ColumnDrop> dropCommand ) {
+        this.columnType = columnType;
         this.size = size;
         this.dropCommand = dropCommand;
         view.setSize( size.toString() );
-        view.setContent( hashCode()+"" );
+        view.setContent( hashCode() + "" );
     }
 
     public Integer getSize() {
@@ -89,4 +104,8 @@ public class Column {
         dropCommand.execute( new ColumnDrop( hashCode(), dropPosition, columnMiddleX ) );
     }
 
+
+    public enum Type {
+        FIRST, MIDDLE, DnD;
+    }
 }

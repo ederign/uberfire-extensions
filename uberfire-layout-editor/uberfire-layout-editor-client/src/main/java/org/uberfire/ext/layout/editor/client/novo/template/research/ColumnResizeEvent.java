@@ -1,16 +1,18 @@
 package org.uberfire.ext.layout.editor.client.novo.template.research;
 
+
 public class ColumnResizeEvent {
 
-    private int columnHashCodeBegin;
-    private int columnHashCodeEnd;
+    private int columnHashCode;
     private Direction direction = Direction.LEFT;
 
-    public ColumnResizeEvent( int columnHashCodeBegin,
-                              int columnHashCodeEnd ) {
+    public ColumnResizeEvent( int columnHashCode ) {
 
-        this.columnHashCodeBegin = columnHashCodeBegin;
-        this.columnHashCodeEnd = columnHashCodeEnd;
+        this.columnHashCode = columnHashCode;
+    }
+
+    public int getColumnHashCode() {
+        return columnHashCode;
     }
 
     public ColumnResizeEvent left() {
@@ -31,26 +33,11 @@ public class ColumnResizeEvent {
         LEFT, RIGHT;
     }
 
-    public int getColumnHashCodeBegin() {
-        return columnHashCodeBegin;
-    }
-
-    public int getColumnHashCodeEnd() {
-        return columnHashCodeEnd;
-    }
 
     public Direction getDirection() {
         return direction;
     }
 
-    @Override
-    public String toString() {
-        return "ColumnResizeEvent{" +
-                "columnHashCodeBegin=" + columnHashCodeBegin +
-                ", columnHashCodeEnd=" + columnHashCodeEnd +
-                ", direction=" + direction +
-                '}';
-    }
 
     public ColumnResizeEvent(){};
 }

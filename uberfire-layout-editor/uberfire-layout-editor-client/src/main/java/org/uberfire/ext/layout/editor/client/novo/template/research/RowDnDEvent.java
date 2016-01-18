@@ -2,7 +2,6 @@ package org.uberfire.ext.layout.editor.client.novo.template.research;
 
 import org.jboss.errai.common.client.api.annotations.Portable;
 
-@Portable
 public class RowDnDEvent {
     private int rowHashCodeBegin;
     private int rowHashCodeEnd;
