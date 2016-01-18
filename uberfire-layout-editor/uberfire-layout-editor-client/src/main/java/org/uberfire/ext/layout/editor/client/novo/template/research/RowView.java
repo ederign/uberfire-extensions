@@ -85,21 +85,24 @@ public class RowView extends Composite
     public void dndBeginOnMouseDown( MouseDownEvent e ) {
         e.preventDefault();
         //move to presenter
+        presenter.mouseDown();
         dndManager.begin( presenter.hashCode() );
     }
 
-//    @EventHandler( "row" )
+    @EventHandler( "row" )
     public void dndEndOnMouseUp( MouseUpEvent e ) {
         e.preventDefault();
         GWT.log( "ROW MOUSE UP" );
+        presenter.mouseUp();
         //move to presenter
 //        dndManager.endColumnResize( presenter.hashCode() );
     }
 
-//    @EventHandler( "row" )
+    @EventHandler( "row" )
     public void dndEndOnMouseDown( MouseDownEvent e ) {
         e.preventDefault();
         GWT.log( "ROW MOUSE DOWN" );
+        presenter.mouseDown();
         //move to presenter
 //        dndManager.endColumnResize( presenter.hashCode() );
     }

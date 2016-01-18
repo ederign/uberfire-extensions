@@ -35,8 +35,14 @@ public class ColumnView extends Composite
     @Override
     public void init( Column presenter ) {
         this.presenter = presenter;
+    }
+
+    @Override
+    public void setCursor(){
         content.getStyle().setCursor( Style.Cursor.DEFAULT );
-        col.getStyle().setCursor( Style.Cursor.COL_RESIZE );
+        if(presenter.canResize()){
+            col.getStyle().setCursor( Style.Cursor.COL_RESIZE );
+        }
     }
 
     @Override

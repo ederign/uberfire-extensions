@@ -29,11 +29,12 @@ public class Container {
 
     public void init() {
         createDefaultRow();
+        createDefaultRow();
     }
 
     private void createDefaultRow() {
         final Row row = rowInstance.get();
-        row.defaultEmptyRow( );
+        row.defaultEmptyRow();
         rows.add( row );
         view.addRow( row.getView() );
     }
@@ -45,9 +46,11 @@ public class Container {
     public interface View extends UberView<Container> {
 
         void addRow( UberView<Row> view );
+
         void clear();
 
     }
+
     @Inject
     public Container( final View view ) {
         this.view = view;
@@ -79,8 +82,12 @@ public class Container {
     }
 
     public void handleRowDnD( @Observes RowDnDEvent rowDndEvent ) {
-        GWT.log("rowDndEvent");
+        GWT.log( "rowDndEvent" );
         swapRows( rowDndEvent );
+        updateView();
+    }
+
+    public void repaintContainer( @Observes RepaintContainerEvent repaintContainerEvent ) {
         updateView();
     }
 

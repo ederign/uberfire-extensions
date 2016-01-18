@@ -24,8 +24,9 @@ public class Column {
 
     private ParameterizedCommand<ColumnDrop> dropCommand;
 
-    public void beginResize( int xPosition ) {
-        columnResizeManager.begin( hashCode(), xPosition );
+
+    boolean canResize() {
+        return columnType == Type.MIDDLE;
     }
 
     public void endResize( int xPosition ) {
@@ -54,15 +55,19 @@ public class Column {
         view.setContent( "Drop your first component here..." );
     }
 
+    public void onMouseDown( int xPosition ) {
+        if ( canResize() ) {
+            dndManager.beginColumnResize( hashCode(), xPosition );
+        }
+    }
+
     public void onMouseUp( int xPosition ) {
         dndManager.endColumnResize( xPosition );
     }
 
-    public void onMouseDown( int xPosition ) {
-        dndManager.beginColumnResize( hashCode(), xPosition );
-    }
-
     public interface View extends UberView<Column> {
+
+        void setCursor();
 
         void setSize( String size );
 
@@ -89,6 +94,7 @@ public class Column {
         this.dropCommand = dropCommand;
         view.setSize( size.toString() );
         view.setContent( hashCode() + "" );
+        view.setCursor();
     }
 
     public Integer getSize() {

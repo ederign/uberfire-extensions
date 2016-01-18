@@ -1,12 +1,12 @@
 package org.uberfire.ext.layout.editor.client.novo.template.research;
 
-import com.google.gwt.core.client.GWT;
 import org.uberfire.client.mvp.UberView;
 import org.uberfire.mvp.ParameterizedCommand;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.Dependent;
+import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
@@ -20,6 +20,9 @@ public class Row {
 
     @Inject
     Instance<Column> columnInstance;
+
+    @Inject
+    Event<RepaintContainerEvent> repaintContainerEvent;
 
     List<Column> columns = new ArrayList<Column>();
 
@@ -37,6 +40,14 @@ public class Row {
         defaultEmptyColumn = column;
         columns.add( defaultEmptyColumn );
         updateView();
+    }
+
+    public void mouseDown() {
+        dndManager.beginRowMove( hashCode() );
+    }
+
+    public void mouseUp() {
+        dndManager.endRowMove( hashCode() );
     }
 
     public interface View extends UberView<Row> {
@@ -78,7 +89,8 @@ public class Row {
                 view.clear();
                 columns = new ArrayList<Column>();
                 createColumns( 12 );
-                updateView();
+                //mudei aqui
+                repaintContainerEvent.fire( new RepaintContainerEvent() );
             }
         };
     }
@@ -91,7 +103,7 @@ public class Row {
                 List<Column> newRow = new ArrayList<Column>();
                 for ( int i = 0; i < columns.size(); i++ ) {
                     Column column = columns.get( i );
-                    Column.Type type = getColumnType( i );
+
                     //TODO dont drop if the column size == 1
                     if ( dropIsOn( drop, column ) && column.getSize() != 1 ) {
 
@@ -100,15 +112,13 @@ public class Row {
 
                         if ( originalSize % 2 == 0 ) {
                             column.setSize( newColumnSize );
-                            GWT.log( "both" + newColumnSize );
                         } else {
-                            GWT.log( "actual" + newColumnSize );
                             column.setSize( newColumnSize + 1 );
-                            GWT.log( "new" + newColumnSize );
                         }
 
                         if ( drop.dropXPosition < drop.columnMiddleX ) {
                             final Column newColumn = columnInstance.get();
+                            Column.Type type = getColumnType( i );
                             newColumn.init( type, newColumnSize, dropCommand() );
                             newRow.add( newColumn );
                             newRow.add( column );
@@ -116,6 +126,7 @@ public class Row {
                         } else {
                             newRow.add( column );
                             final Column newColumn = columnInstance.get();
+                            Column.Type type = getColumnType( i + 1 );
                             newColumn.init( type, newColumnSize, dropCommand() );
                             newRow.add( newColumn );
                         }
