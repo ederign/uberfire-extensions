@@ -1,5 +1,6 @@
 package org.uberfire.ext.layout.editor.client.novo.template.research;
 
+import com.google.gwt.core.client.GWT;
 import org.uberfire.client.mvp.UberView;
 import org.uberfire.mvp.ParameterizedCommand;
 
@@ -11,13 +12,11 @@ import javax.inject.Inject;
 public class Column {
 
     @Inject
-    ColumnResizeManager columnResizeManager;
-
-    @Inject
     DnDManager dndManager;
 
     private final View view;
 
+    private int parentHashCode;
     private Type columnType;
 
     private Integer size;
@@ -29,8 +28,8 @@ public class Column {
         return columnType == Type.MIDDLE;
     }
 
-    public void endResize( int xPosition ) {
-        columnResizeManager.end( hashCode(), xPosition );
+    boolean canMove() {
+        return columnType == Type.FIRST;
     }
 
     public boolean canReduceSize() {
@@ -56,13 +55,19 @@ public class Column {
     }
 
     public void onMouseDown( int xPosition ) {
+        GWT.log( "onMouseDown" );
         if ( canResize() ) {
+            GWT.log( "canResize" );
             dndManager.beginColumnResize( hashCode(), xPosition );
+        } else if ( canMove() ) {
+            dndManager.beginRowMove( parentHashCode );
+        } else {
+            GWT.log( "nop" );
         }
     }
 
     public void onMouseUp( int xPosition ) {
-        dndManager.endColumnResize( xPosition );
+        dndManager.end( parentHashCode , xPosition);
     }
 
     public interface View extends UberView<Column> {
@@ -88,13 +93,19 @@ public class Column {
         return view;
     }
 
-    public void init( Type columnType, Integer size, ParameterizedCommand<ColumnDrop> dropCommand ) {
+    public void init( int parentHashCode, Type columnType, Integer size,
+                      ParameterizedCommand<ColumnDrop> dropCommand ) {
+        this.parentHashCode = parentHashCode;
         this.columnType = columnType;
         this.size = size;
         this.dropCommand = dropCommand;
         view.setSize( size.toString() );
         view.setContent( hashCode() + "" );
         view.setCursor();
+    }
+
+    public int getParentHashCode() {
+        return parentHashCode;
     }
 
     public Integer getSize() {

@@ -4,11 +4,17 @@ package org.uberfire.ext.layout.editor.client.novo.template.research;
 public class ColumnResizeEvent {
 
     private int columnHashCode;
+    private int rowHashCode;
     private Direction direction = Direction.LEFT;
 
-    public ColumnResizeEvent( int columnHashCode ) {
+    public ColumnResizeEvent( int columnHashCode , int rowHashCode) {
 
         this.columnHashCode = columnHashCode;
+        this.rowHashCode = rowHashCode;
+    }
+
+    public int getRowHashCode() {
+        return rowHashCode;
     }
 
     public int getColumnHashCode() {

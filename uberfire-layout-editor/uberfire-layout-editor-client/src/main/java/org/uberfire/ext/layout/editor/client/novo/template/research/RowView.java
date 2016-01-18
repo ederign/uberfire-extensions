@@ -76,8 +76,8 @@ public class RowView extends Composite
         }
     }
 
-//    @EventHandler( "row" )
-    public void rowrOut( MouseOutEvent e ) {
+    @EventHandler( "row" )
+    public void rowOut( MouseOutEvent e ) {
         presenter.rowOut();
     }
 
@@ -89,7 +89,7 @@ public class RowView extends Composite
         dndManager.begin( presenter.hashCode() );
     }
 
-    @EventHandler( "row" )
+//    @EventHandler( "row" )
     public void dndEndOnMouseUp( MouseUpEvent e ) {
         e.preventDefault();
         GWT.log( "ROW MOUSE UP" );
@@ -98,7 +98,7 @@ public class RowView extends Composite
 //        dndManager.endColumnResize( presenter.hashCode() );
     }
 
-    @EventHandler( "row" )
+//    @EventHandler( "row" )
     public void dndEndOnMouseDown( MouseDownEvent e ) {
         e.preventDefault();
         GWT.log( "ROW MOUSE DOWN" );

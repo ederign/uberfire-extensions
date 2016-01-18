@@ -1,5 +1,7 @@
 package org.uberfire.ext.layout.editor.client.novo.template.research;
 
+import com.google.gwt.core.client.GWT;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
@@ -23,17 +25,31 @@ public class DnDManager {
     private int rowHashBegin;
 
     public void beginColumnResize( int columnHashCode, int beginX ) {
+        GWT.log("beginColumnResize");
         this.columnHashCode = columnHashCode;
         this.isOnColumnResize = true;
         this.beginColumnX = beginX;
     }
 
-    public void endColumnResize( int endX ) {
+    public void end( int rowHashCodeEnd, int endX ) {
         if ( isOnColumnResize ) {
-            handleColumnResize( endX );
+            GWT.log( "endColumnResize" );
+            handleColumnResize( endX , rowHashCodeEnd);
             this.isOnColumnResize = false;
         }
+        else if (isOnRowMove){
+            GWT.log( "endRowMove" );
+            rowDnDEvent.fire( new RowDnDEvent( rowHashBegin, rowHashCodeEnd ) );
+        }
     }
+
+
+//    public void endColumnResize( int endX ) {
+//        if ( isOnColumnResize ) {
+//            handleColumnResize( endX, rowHashCodeEnd );
+//            this.isOnColumnResize = false;
+//        }
+//    }
 
     public void resetColumnResize() {
         if ( isOnColumnResize ) {
@@ -45,17 +61,20 @@ public class DnDManager {
         return endX < beginColumnX;
     }
 
-    private void handleColumnResize( int endX ) {
+    private void handleColumnResize( int endX, int rowHashCodeEnd ) {
         if ( left( endX ) ) {
-            columnResizeEvent.fire( new ColumnResizeEvent( columnHashCode ).left() );
+            columnResizeEvent.fire( new ColumnResizeEvent( columnHashCode, rowHashCodeEnd ).left() );
         } else {
-            columnResizeEvent.fire( new ColumnResizeEvent( columnHashCode ).right() );
+            columnResizeEvent.fire( new ColumnResizeEvent( columnHashCode, rowHashCodeEnd ).right() );
         }
     }
 
     public void beginRowMove( int rowHashBegin ) {
-        this.rowHashBegin = rowHashBegin;
-        this.isOnRowMove = true;
+        if ( !isOnColumnResize ) {
+            GWT.log( "beginRowMove" );
+            this.rowHashBegin = rowHashBegin;
+            this.isOnRowMove = true;
+        }
     }
 
     public boolean isOnRowMove() {
@@ -64,6 +83,7 @@ public class DnDManager {
 
     public void endRowMove( int rowHashCodeEnd ) {
         if ( isOnRowMove ) {
+            GWT.log( "endRowMove" );
             rowDnDEvent.fire( new RowDnDEvent( rowHashBegin, rowHashCodeEnd ) );
         }
     }

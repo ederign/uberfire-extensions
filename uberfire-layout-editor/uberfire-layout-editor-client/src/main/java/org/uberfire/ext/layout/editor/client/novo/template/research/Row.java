@@ -1,5 +1,6 @@
 package org.uberfire.ext.layout.editor.client.novo.template.research;
 
+import com.google.gwt.core.client.GWT;
 import org.uberfire.client.mvp.UberView;
 import org.uberfire.mvp.ParameterizedCommand;
 
@@ -27,9 +28,6 @@ public class Row {
     List<Column> columns = new ArrayList<Column>();
 
     Column defaultEmptyColumn;
-
-    @Inject
-    ColumnResizeManager columnResizeManager;
 
     @Inject
     DnDManager dndManager;
@@ -90,19 +88,19 @@ public class Row {
                 columns = new ArrayList<Column>();
                 createColumns( 12 );
                 //mudei aqui
-                repaintContainerEvent.fire( new RepaintContainerEvent() );
+                updateView();
             }
         };
     }
+
 
     ParameterizedCommand<ColumnDrop> dropCommand() {
         return new ParameterizedCommand<ColumnDrop>() {
             @Override
             public void execute( ColumnDrop drop ) {
-                view.clear();
-                List<Column> newRow = new ArrayList<Column>();
-                for ( int i = 0; i < columns.size(); i++ ) {
-                    Column column = columns.get( i );
+                List<Column> columns = new ArrayList<Column>();
+                for ( int i = 0; i < Row.this.columns.size(); i++ ) {
+                    Column column = Row.this.columns.get( i );
 
                     //TODO dont drop if the column size == 1
                     if ( dropIsOn( drop, column ) && column.getSize() != 1 ) {
@@ -119,27 +117,25 @@ public class Row {
                         if ( drop.dropXPosition < drop.columnMiddleX ) {
                             final Column newColumn = columnInstance.get();
                             Column.Type type = getColumnType( i );
-                            newColumn.init( type, newColumnSize, dropCommand() );
-                            newRow.add( newColumn );
-                            newRow.add( column );
+                            newColumn.init( column.getParentHashCode(), type, newColumnSize, dropCommand() );
+                            columns.add( newColumn );
+                            columns.add( column );
 
                         } else {
-                            newRow.add( column );
+                            columns.add( column );
                             final Column newColumn = columnInstance.get();
                             Column.Type type = getColumnType( i + 1 );
-                            newColumn.init( type, newColumnSize, dropCommand() );
-                            newRow.add( newColumn );
+                            newColumn.init( column.getParentHashCode(), type, newColumnSize, dropCommand() );
+                            columns.add( newColumn );
                         }
 
 
                     } else {
-                        newRow.add( column );
+                        columns.add( column );
                     }
                 }
-                columns = newRow;
-                for ( Column column : newRow ) {
-                    view.addColumn( column.getView() );
-                }
+                Row.this.columns = columns;
+                updateView();
             }
         };
     }
@@ -154,7 +150,7 @@ public class Row {
             Integer colSpan = colSpans[i];
             final Column column = columnInstance.get();
             Column.Type type = getColumnType( i );
-            column.init( type, colSpan, dropCommand() );
+            column.init( hashCode(), type, colSpan, dropCommand() );
             columns.add( column );
         }
     }
@@ -170,20 +166,23 @@ public class Row {
     }
 
     public void resizeColumns( @Observes ColumnResizeEvent resize ) {
-        Column resizeColumn = getColumn( resize );
+        GWT.log( "resizeColumns" );
+        if ( resize.getRowHashCode() == hashCode() ) {
+            Column resizeColumn = getColumn( resize );
 
-        if ( resizeColumn != null ) {
-            Column affectedColumn = columns.get( columns.indexOf( resizeColumn ) - 1 );
+            if ( resizeColumn != null ) {
+                Column affectedColumn = columns.get( columns.indexOf( resizeColumn ) - 1 );
 
-            if ( resize.isLeft() ) {
-                resizeColumn.incrementSize();
-                affectedColumn.reduzeSize();
-            } else {
-                affectedColumn.incrementSize();
-                resizeColumn.reduzeSize();
+                if ( resize.isLeft() ) {
+                    resizeColumn.incrementSize();
+                    affectedColumn.reduzeSize();
+                } else {
+                    affectedColumn.incrementSize();
+                    resizeColumn.reduzeSize();
+                }
             }
+            updateView();
         }
-        updateView();
     }
 
 
@@ -197,13 +196,13 @@ public class Row {
     }
 
     private void updateView() {
-        view.clear();
-        for ( Column column : columns ) {
-            view.addColumn( column.getView() );
-        }
+        repaintContainerEvent.fire( new RepaintContainerEvent() );
     }
 
     public UberView<Row> getView() {
+        for ( Column column : columns ) {
+            view.addColumn( column.getView() );
+        }
         return view;
     }
 

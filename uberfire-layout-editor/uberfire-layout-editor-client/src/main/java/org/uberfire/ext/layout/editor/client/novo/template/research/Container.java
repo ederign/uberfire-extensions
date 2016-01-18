@@ -1,6 +1,7 @@
 package org.uberfire.ext.layout.editor.client.novo.template.research;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Random;
 import org.uberfire.client.mvp.UberView;
 
 import javax.annotation.PostConstruct;
@@ -23,11 +24,14 @@ public class Container {
     @Inject
     RowDndManager dndManager;
 
+    final int i = Random.nextInt();
+
     List<Row> rows = new ArrayList<Row>();
 
     private final View view;
 
     public void init() {
+        createDefaultRow();
         createDefaultRow();
         createDefaultRow();
     }
@@ -36,7 +40,7 @@ public class Container {
         final Row row = rowInstance.get();
         row.defaultEmptyRow();
         rows.add( row );
-        view.addRow( row.getView() );
+        updateView();
     }
 
     public void load() {
@@ -74,13 +78,6 @@ public class Container {
     }
 
 
-    private void addRows( Integer... colSpans ) {
-        final Row row = rowInstance.get();
-        row.initDemo( colSpans );
-        rows.add( row );
-        view.addRow( row.getView() );
-    }
-
     public void handleRowDnD( @Observes RowDnDEvent rowDndEvent ) {
         GWT.log( "rowDndEvent" );
         swapRows( rowDndEvent );
@@ -88,14 +85,19 @@ public class Container {
     }
 
     public void repaintContainer( @Observes RepaintContainerEvent repaintContainerEvent ) {
+        GWT.log( "repaint" );
         updateView();
     }
 
     private void updateView() {
         clearView();
+//        GWT.log( "ROWS (Update View)" );
+//        GWT.log( rows.hashCode() + "" );
         for ( Row row : rows ) {
+//            GWT.log( row.hashCode() + "" );
             view.addRow( row.getView() );
         }
+//        GWT.log( "END" );
     }
 
     private void clearView() {
@@ -116,6 +118,20 @@ public class Container {
                 end = i;
             }
         }
+
+//        final Row beginRow = rows.get( begin );
+//        final Row endRow = rows.get( end );
+//        List<Row> newRows = new ArrayList<Row>();
+//        for ( Row row : rows ) {
+//            if ( row == beginRow ) {
+//                newRows.add( endRow );
+//            } else if ( row == endRow ) {
+//                newRows.add( beginRow );
+//            } else {
+//                newRows.add( row );
+//            }
+//        }
+//        this.rows = newRows;
         Collections.swap( rows, begin, end );
     }
 
