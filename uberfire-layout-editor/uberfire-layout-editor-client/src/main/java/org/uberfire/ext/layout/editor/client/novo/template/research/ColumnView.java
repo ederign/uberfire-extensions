@@ -2,8 +2,10 @@ package org.uberfire.ext.layout.editor.client.novo.template.research;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.DivElement;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.*;
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -26,36 +28,35 @@ public class ColumnView extends Composite
     public static final String COL_CSS_CLASS = "col-md-";
     private Column presenter;
 
-    @Inject
     @DataField
-    private SimplePanel col;
+    private Element col = DOM.createDiv();
 
-    private FlowPanel content = new FlowPanel();
+    @DataField
+    private Element content = DOM.createDiv();
 
     String cssSize = "";
 
     @Override
     public void init( Column presenter ) {
-        col.add( content );
         this.presenter = presenter;
-        content.getElement().getStyle().setCursor( Style.Cursor.DEFAULT );
-        col.getElement().getStyle().setCursor( Style.Cursor.COL_RESIZE );
+        content.getStyle().setCursor( Style.Cursor.DEFAULT );
+        col.getStyle().setCursor( Style.Cursor.COL_RESIZE );
 //        test();
     }
 
     @Override
     public void setSize( String size ) {
-        if ( !col.getElement().getClassName().isEmpty() ) {
-            col.getElement().removeClassName( cssSize );
+        if ( !col.getClassName().isEmpty() ) {
+            col.removeClassName( cssSize );
         }
         cssSize = COL_CSS_CLASS + size;
-        col.getElement().addClassName( cssSize );
-        col.getElement().addClassName( "no-padding" );
+        col.addClassName( cssSize );
+        col.addClassName( "no-padding" );
     }
 
     @Override
     public void setContent( String contentLabel ) {
-        content.add( new Label( contentLabel ) );
+        DivElement.as( content ).appendChild( new Label( contentLabel ).getElement() );
     }
 
 
@@ -77,35 +78,35 @@ public class ColumnView extends Composite
 //        presenter.beginResize( e.getClientX() );
     }
 
-    @EventHandler( "col" )
+//    @EventHandler( "col" )
     public void colMouseOver( MouseMoveEvent e ) {
         e.preventDefault();
         GWT.log( "COL MOUSE OVER" );
-        setMouseCursor( e.getClientX() );
+//        setMouseCursor( e.getClientX() );
 //        presenter.beginResize( e.getClientX() );
     }
 
-    private void setMouseCursor( int clientX ) {
-        if ( isOnResizePosition( clientX ) ) {
-            GWT.log( "ROW_RESIZE" );
-            col.getElement().addClassName( "cursorResize" );
-            col.getElement().getStyle().setCursor( Style.Cursor.ROW_RESIZE );
-        } else {
-            GWT.log( "DEFAULT" );
-            col.getElement().removeClassName( "cursorResize" );
-            col.getElement().getStyle().setCursor( Style.Cursor.DEFAULT );
-        }
-    }
+//    private void setMouseCursor( int clientX ) {
+//        if ( isOnResizePosition( clientX ) ) {
+//            GWT.log( "ROW_RESIZE" );
+//            col.getElement().addClassName( "cursorResize" );
+//            col.getElement().getStyle().setCursor( Style.Cursor.ROW_RESIZE );
+//        } else {
+//            GWT.log( "DEFAULT" );
+//            col.getElement().removeClassName( "cursorResize" );
+//            col.getElement().getStyle().setCursor( Style.Cursor.DEFAULT );
+//        }
+//    }
 
-    private boolean isOnResizePosition( int clientX ) {
-        int delta = getOffsetWidth() / 10;
-        final boolean b1 = clientX > col.getAbsoluteLeft();
-        final boolean b2 = clientX <= col.getAbsoluteLeft() + delta;
-        if ( b1 && b2 ) {
-            return true;
-        }
-        return false;
-    }
+//    private boolean isOnResizePosition( int clientX ) {
+//        int delta = getOffsetWidth() / 10;
+//        final boolean b1 = clientX > col.getAbsoluteLeft();
+//        final boolean b2 = clientX <= col.getAbsoluteLeft() + delta;
+//        if ( b1 && b2 ) {
+//            return true;
+//        }
+//        return false;
+//    }
 
 
     //    @EventHandler( "col" )
