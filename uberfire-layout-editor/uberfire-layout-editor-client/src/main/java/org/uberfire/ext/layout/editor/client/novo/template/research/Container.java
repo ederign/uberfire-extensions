@@ -21,15 +21,11 @@ public class Container {
     @Inject
     Instance<Row> rowInstance;
 
-//    @Inject
-//    RowDndManager dndManager;
-
     List<Row> rows = new ArrayList<Row>();
 
     private final View view;
 
     public void init() {
-        createDefaultRow();
         createDefaultRow();
     }
 
@@ -126,7 +122,7 @@ public class Container {
         }
 
 //        final Row beginRow = rows.get( begin );
-//        final Row endRow = rows.get( end );
+//        final Row endRow = rows.get( endColumnResize );
 //        List<Row> newRows = new ArrayList<Row>();
 //        for ( Row row : rows ) {
 //            if ( row == beginRow ) {

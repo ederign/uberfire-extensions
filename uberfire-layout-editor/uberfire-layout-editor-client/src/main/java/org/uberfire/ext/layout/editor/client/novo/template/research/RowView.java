@@ -55,25 +55,29 @@ public class RowView extends Composite
         wrapper.clear();
     }
 
+    @Override
+    public void removeColumn( UberView<Column> view ) {
+        wrapper.remove( view );
+    }
+
     private static native void onAttachNative( Widget w ) /*-{
         w.@com.google.gwt.user.client.ui.Widget::onAttach()();
     }-*/;
 
-//    @EventHandler( "row" )
-    public void rowClick( DropEvent e ) {
-        GWT.log( "drop Row" );
+    @EventHandler( "row" )
+    public void colMouseOver( DragEnterEvent e ) {
         e.preventDefault();
+        GWT.log( "DRAG ENTER ROW" );
+        presenter.dragEnterEvent();
+//        presenter.onMouseOver(new MouseOverInfo(e.getClientX(), e.getClientY()));
     }
 
-//    @EventHandler( "row" )
-    public void mouseOver( MouseOverEvent e ) {
+    @EventHandler( "row" )
+    public void colMouseOver( DragLeaveEvent e ) {
         e.preventDefault();
-        if ( ( getAbsoluteLeft() < e.getClientX() ) || ( e.getClientX() <= getAbsoluteLeft() + 20 ) ) {
-            row.getElement().getStyle().setCursor( Style.Cursor.MOVE );
-        }
-        else{
-            row.getElement().getStyle().setCursor( Style.Cursor.DEFAULT );
-        }
+        GWT.log( "DRAG END ROW" );
+        presenter.dragEndEvent();
+//        presenter.onMouseOver(new MouseOverInfo(e.getClientX(), e.getClientY()));
     }
 
     @EventHandler( "row" )
@@ -81,14 +85,14 @@ public class RowView extends Composite
         presenter.rowOut();
     }
 
-//    @EventHandler( "row" )
+    //    @EventHandler( "row" )
     public void dndBeginOnMouseDown( MouseDownEvent e ) {
         e.preventDefault();
         //move to presenter
         presenter.mouseDown();
     }
 
-//    @EventHandler( "row" )
+    //    @EventHandler( "row" )
     public void dndEndOnMouseUp( MouseUpEvent e ) {
         e.preventDefault();
         GWT.log( "ROW MOUSE UP" );
@@ -97,7 +101,7 @@ public class RowView extends Composite
 //        dndManager.endColumnResize( presenter.hashCode() );
     }
 
-//    @EventHandler( "row" )
+    //    @EventHandler( "row" )
     public void dndEndOnMouseDown( MouseDownEvent e ) {
         e.preventDefault();
         GWT.log( "ROW MOUSE DOWN" );

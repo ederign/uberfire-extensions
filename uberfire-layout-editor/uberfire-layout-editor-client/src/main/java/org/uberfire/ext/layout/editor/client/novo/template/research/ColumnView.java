@@ -74,10 +74,24 @@ public class ColumnView extends Composite
         presenter.onMouseUp(e.getClientX());
     }
 
-    //    @EventHandler( "col" )
+    @EventHandler( "col" )
     public void colMouseOver( MouseMoveEvent e ) {
         e.preventDefault();
-        GWT.log( "COL MOUSE OVER" );
+        presenter.onMouseOver(new MouseOverInfo(e.getClientX(), e.getClientY()));
+    }
+
+    @EventHandler( "col" )
+    public void colMouseOver( DragEnterEvent e ) {
+        e.preventDefault();
+        GWT.log( "DRAG ENTER COLUMN" );
+//        presenter.onMouseOver(new MouseOverInfo(e.getClientX(), e.getClientY()));
+    }
+
+    @EventHandler( "col" )
+    public void colMouseOver( DragLeaveEvent e ) {
+        e.preventDefault();
+        GWT.log( "DRAG END COLUMN" );
+//        presenter.onMouseOver(new MouseOverInfo(e.getClientX(), e.getClientY()));
     }
 
 

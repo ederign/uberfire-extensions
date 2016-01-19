@@ -67,7 +67,13 @@ public class Column {
     }
 
     public void onMouseUp( int xPosition ) {
-        dndManager.end( parentHashCode , xPosition);
+        dndManager.endColumnResize( parentHashCode, xPosition );
+    }
+
+    public void onMouseOver( MouseOverInfo mouseOverInfo ) {
+        if ( dndManager.isOnDnd()){
+            GWT.log("MOUSE OVER DND: " +  mouseOverInfo.toString() );
+        }
     }
 
     public interface View extends UberView<Column> {
@@ -100,7 +106,7 @@ public class Column {
         this.size = size;
         this.dropCommand = dropCommand;
         view.setSize( size.toString() );
-        view.setContent( "Parent: " + parentHashCode + " " +hashCode() + "" );
+        view.setContent( "Parent: " + parentHashCode + " " + hashCode() + "" );
         view.setCursor();
     }
 

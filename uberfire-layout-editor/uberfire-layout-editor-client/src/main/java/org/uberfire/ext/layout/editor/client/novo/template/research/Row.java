@@ -28,6 +28,7 @@ public class Row {
 
     List<Column> columns = new ArrayList<Column>();
 
+    Column previewColumn;
 
     @ApplicationScoped
     Container container;
@@ -54,12 +55,26 @@ public class Row {
         dndManager.endRowMove( hashCode() );
     }
 
+    public void dragEnterEvent() {
+        //TODO avoid leak
+        if(previewColumn==null){
+            previewColumn = createColumn();
+            previewColumn.defaultEmptyColumn( defaultEmptyRowDropCommand() );
+        }
+        view.addColumn( previewColumn.getView() );
+    }
+
+    public void dragEndEvent() {
+        view.removeColumn(previewColumn.getView());
+    }
+
     public interface View extends UberView<Row> {
 
         void addColumn( UberView<Column> view );
 
         void clear();
 
+        void removeColumn( UberView<Column> view );
     }
 
     @Inject

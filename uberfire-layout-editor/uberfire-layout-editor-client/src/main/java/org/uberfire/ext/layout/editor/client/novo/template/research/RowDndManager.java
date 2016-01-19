@@ -22,7 +22,7 @@
 //        this.isOnDnD = true;
 //    }
 //
-//    public void end( int rowHashCodeEnd ) {
+//    public void endColumnResize( int rowHashCodeEnd ) {
 //        GWT.log( "END ROW DND" );
 //        if ( isOnDnD() ) {
 //            isOnDnD = false;

@@ -1,5 +1,5 @@
 .no-padding{
-    padding:0px !important
+    padding:0px !important;
 }
 .left{
     float: left;
@@ -15,12 +15,16 @@
 }
 .center{
     display: inline-block;
-    width: 95%;
+    width: 90%;
     /*width: 100%;*/
     border-style:solid;
     border-color: magenta;
 }
-.cursorResize{
-    cursor: copy;
-    background-color: black;
+.top{
+    border-style:solid;
+    border-color: chartreuse;
+}
+.bottom{
+    border-style:solid;
+    border-color: coral;
 }
