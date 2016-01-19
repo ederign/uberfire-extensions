@@ -6,6 +6,7 @@ import org.uberfire.mvp.ParameterizedCommand;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
@@ -27,17 +28,22 @@ public class Row {
 
     List<Column> columns = new ArrayList<Column>();
 
-    Column defaultEmptyColumn;
+
+    @ApplicationScoped
+    Container container;
 
     @Inject
     DnDManager dndManager;
 
     public void defaultEmptyRow() {
-        final Column column = columnInstance.get();
+        final Column column = createColumn();
         column.defaultEmptyColumn( defaultEmptyRowDropCommand() );
-        defaultEmptyColumn = column;
-        columns.add( defaultEmptyColumn );
+        columns.add( column );
         updateView();
+    }
+
+    private Column createColumn() {
+        return columnInstance.get();
     }
 
     public void mouseDown() {
@@ -61,11 +67,6 @@ public class Row {
         this.view = view;
     }
 
-    //old one
-    public void initDemo( Integer[] colSpans ) {
-        createColumns( colSpans );
-    }
-
     @PostConstruct
     public void post() {
         view.init( this );
@@ -87,7 +88,6 @@ public class Row {
                 view.clear();
                 columns = new ArrayList<Column>();
                 createColumns( 12 );
-                //mudei aqui
                 updateView();
             }
         };
@@ -115,7 +115,7 @@ public class Row {
                         }
 
                         if ( drop.dropXPosition < drop.columnMiddleX ) {
-                            final Column newColumn = columnInstance.get();
+                            final Column newColumn = createColumn();
                             Column.Type type = getColumnType( i );
                             newColumn.init( column.getParentHashCode(), type, newColumnSize, dropCommand() );
                             columns.add( newColumn );
@@ -123,7 +123,7 @@ public class Row {
 
                         } else {
                             columns.add( column );
-                            final Column newColumn = columnInstance.get();
+                            final Column newColumn = createColumn();
                             Column.Type type = getColumnType( i + 1 );
                             newColumn.init( column.getParentHashCode(), type, newColumnSize, dropCommand() );
                             columns.add( newColumn );
@@ -148,7 +148,7 @@ public class Row {
     private void createColumns( Integer... colSpans ) {
         for ( int i = 0; i < colSpans.length; i++ ) {
             Integer colSpan = colSpans[i];
-            final Column column = columnInstance.get();
+            final Column column = createColumn();
             Column.Type type = getColumnType( i );
             column.init( hashCode(), type, colSpan, dropCommand() );
             columns.add( column );
@@ -207,4 +207,14 @@ public class Row {
     }
 
 
+    @Override
+    public String toString() {
+        GWT.log( "ROW " + hashCode() );
+        for ( Column column : columns ) {
+            GWT.log( "COLUMN" );
+            GWT.log( column.toString() );
+        }
+        GWT.log( "====================" );
+        return super.toString();
+    }
 }

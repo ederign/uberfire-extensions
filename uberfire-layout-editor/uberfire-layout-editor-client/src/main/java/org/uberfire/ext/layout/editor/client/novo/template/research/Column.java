@@ -100,7 +100,7 @@ public class Column {
         this.size = size;
         this.dropCommand = dropCommand;
         view.setSize( size.toString() );
-        view.setContent( hashCode() + "" );
+        view.setContent( "Parent: " + parentHashCode + " " +hashCode() + "" );
         view.setCursor();
     }
 
@@ -124,5 +124,15 @@ public class Column {
 
     public enum Type {
         FIRST, MIDDLE, DnD;
+    }
+
+    @Override
+    public String toString() {
+        return "Column{" +
+                "size=" + size +
+                ", hashCode=" + hashCode() +
+                ", parentHashCode=" + parentHashCode +
+                ", columnType=" + columnType +
+                '}';
     }
 }

@@ -6,6 +6,7 @@ import org.uberfire.client.mvp.UberView;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Instance;
@@ -17,14 +18,11 @@ import java.util.List;
 @Dependent
 public class Container {
 
-
     @Inject
     Instance<Row> rowInstance;
 
-    @Inject
-    RowDndManager dndManager;
-
-    final int i = Random.nextInt();
+//    @Inject
+//    RowDndManager dndManager;
 
     List<Row> rows = new ArrayList<Row>();
 
@@ -33,14 +31,17 @@ public class Container {
     public void init() {
         createDefaultRow();
         createDefaultRow();
-        createDefaultRow();
     }
 
     private void createDefaultRow() {
-        final Row row = rowInstance.get();
+        final Row row = createRow();
         row.defaultEmptyRow();
-        rows.add( row );
+        getRows().add( row );
         updateView();
+    }
+
+    private Row createRow() {
+        return rowInstance.get();
     }
 
     public void load() {
@@ -74,18 +75,13 @@ public class Container {
     }
 
     public void containerOut() {
-        dndManager.reset();
-    }
-
-
-    public void handleRowDnD( @Observes RowDnDEvent rowDndEvent ) {
-        GWT.log( "rowDndEvent" );
-        swapRows( rowDndEvent );
-        updateView();
+        //TODO
+//        dndManager.reset();
     }
 
     public void repaintContainer( @Observes RepaintContainerEvent repaintContainerEvent ) {
         GWT.log( "repaint" );
+//        teste();
         updateView();
     }
 
@@ -93,18 +89,28 @@ public class Container {
         clearView();
 //        GWT.log( "ROWS (Update View)" );
 //        GWT.log( rows.hashCode() + "" );
-        for ( Row row : rows ) {
+        for ( Row row : getRows() ) {
 //            GWT.log( row.hashCode() + "" );
             view.addRow( row.getView() );
         }
 //        GWT.log( "END" );
     }
 
+    private List<Row> getRows() {
+//        GWT.log( "Container" );
+//        GWT.log( "=============" );
+//        for ( Row row : rows ) {
+//            GWT.log( row.toString() );
+//            GWT.log( "............" );
+//        }
+        return rows;
+    }
+
     private void clearView() {
         view.clear();
     }
 
-    private void swapRows( @Observes RowDnDEvent rowDndEvent ) {
+    private void swapRows(@Observes RowDnDEvent rowDndEvent ) {
         int begin = -1;
         int end = -1;
 
@@ -132,7 +138,18 @@ public class Container {
 //            }
 //        }
 //        this.rows = newRows;
+        GWT.log( "old" );
+        teste();
+        GWT.log( "new" );
         Collections.swap( rows, begin, end );
+        teste();
+        updateView();
+    }
+
+    public void teste() {
+        for ( Row row : rows ) {
+            GWT.log( row.hashCode()+"" );
+        }
     }
 
     public UberView<Container> getView() {

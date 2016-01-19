@@ -29,8 +29,8 @@ public class RowView extends Composite
     private SimplePanel row;
 
     //move to presenter
-    @Inject
-    RowDndManager dndManager;
+//    @Inject
+//    RowDndManager dndManager;
 
     FlowPanel wrapper = new FlowPanel();
 
@@ -86,7 +86,6 @@ public class RowView extends Composite
         e.preventDefault();
         //move to presenter
         presenter.mouseDown();
-        dndManager.begin( presenter.hashCode() );
     }
 
 //    @EventHandler( "row" )
