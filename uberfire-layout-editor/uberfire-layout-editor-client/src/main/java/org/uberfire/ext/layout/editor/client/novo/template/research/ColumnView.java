@@ -28,6 +28,12 @@ public class ColumnView extends Composite
     private Element col = DOM.createDiv();
 
     @DataField
+    private Element left = DOM.createDiv();
+
+    @DataField
+    private Element right = DOM.createDiv();
+
+    @DataField
     private Element content = DOM.createDiv();
 
     String cssSize = "";
@@ -111,6 +117,10 @@ public class ColumnView extends Composite
         e.preventDefault();
         presenter.onDrop( e.getNativeEvent().getClientX(), calculateMiddle() );
     }
+
+
+
+
 
     private int calculateMiddle() {
         return getAbsoluteLeft() + ( getOffsetWidth() / 2 );

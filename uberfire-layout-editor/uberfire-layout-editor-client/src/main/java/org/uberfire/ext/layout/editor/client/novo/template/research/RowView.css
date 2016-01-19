@@ -1,6 +1,15 @@
-.row2{
-    border-style:solid;
-    border-color: red;
-    padding-left: 0 !important;
-    padding-right: 0 !important;
+.rowCss{
+    padding-left: 0px !important;
+    padding-right: 0px !important;
+    padding-top: 1px !important;
+    padding-bottom: 1px !important;
+}
+.rowDropPreview{
+    border-style: dashed;
+    border-color: darkgray;
+    height: 20px;
+}
+.upper{
+}
+.bottom{
 }

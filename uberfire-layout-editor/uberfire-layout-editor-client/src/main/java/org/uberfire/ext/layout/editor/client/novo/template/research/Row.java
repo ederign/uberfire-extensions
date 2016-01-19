@@ -6,7 +6,6 @@ import org.uberfire.mvp.ParameterizedCommand;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
@@ -20,25 +19,29 @@ public class Row {
 
     private final View view;
 
+    private List<Column> columns = new ArrayList<Column>();
+
     @Inject
     Instance<Column> columnInstance;
 
     @Inject
     Event<RepaintContainerEvent> repaintContainerEvent;
 
-    List<Column> columns = new ArrayList<Column>();
-
-    Column previewColumn;
-
-    @ApplicationScoped
-    Container container;
-
     @Inject
     DnDManager dndManager;
 
-    public void defaultEmptyRow() {
+    private ParameterizedCommand<RowDrop> dropCommand;
+
+    public void firstEmptyRow() {
         final Column column = createColumn();
         column.defaultEmptyColumn( defaultEmptyRowDropCommand() );
+        columns.add( column );
+        updateView();
+    }
+
+    public void firstRowWithColumn() {
+        final Column column = createColumn();
+        column.columnFromDrop( dropCommand() );
         columns.add( column );
         updateView();
     }
@@ -47,25 +50,13 @@ public class Row {
         return columnInstance.get();
     }
 
-    public void mouseDown() {
-        dndManager.beginRowMove( hashCode() );
+
+    public void init( ParameterizedCommand<RowDrop> dropCommand ) {
+        this.dropCommand = dropCommand;
     }
 
-    public void mouseUp() {
-        dndManager.endRowMove( hashCode() );
-    }
-
-    public void dragEnterEvent() {
-        //TODO avoid leak
-        if(previewColumn==null){
-            previewColumn = createColumn();
-            previewColumn.defaultEmptyColumn( defaultEmptyRowDropCommand() );
-        }
-        view.addColumn( previewColumn.getView() );
-    }
-
-    public void dragEndEvent() {
-        view.removeColumn(previewColumn.getView());
+    public void drop(RowDrop.Orientation orientation) {
+        dropCommand.execute( new RowDrop( hashCode(), orientation));
     }
 
     public interface View extends UberView<Row> {
@@ -74,7 +65,6 @@ public class Row {
 
         void clear();
 
-        void removeColumn( UberView<Column> view );
     }
 
     @Inject

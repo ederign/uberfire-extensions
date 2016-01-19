@@ -1,12 +1,10 @@
 package org.uberfire.ext.layout.editor.client.novo.template.research;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.Random;
 import org.uberfire.client.mvp.UberView;
+import org.uberfire.mvp.ParameterizedCommand;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Instance;
@@ -26,18 +24,51 @@ public class Container {
     private final View view;
 
     public void init() {
-        createDefaultRow();
-    }
-
-    private void createDefaultRow() {
-        final Row row = createRow();
-        row.defaultEmptyRow();
-        getRows().add( row );
+        rows.add( createFirstRow() );
         updateView();
     }
 
+    private Row createFirstRow() {
+        final Row row = createRow();
+        row.firstEmptyRow();
+        return row;
+    }
+
+    private Row createRowFromDrop() {
+        final Row row = createRow();
+        row.firstRowWithColumn();
+        return row;
+    }
+
     private Row createRow() {
-        return rowInstance.get();
+        final Row row = rowInstance.get();
+        row.init( createDropCommand() );
+        return row;
+    }
+
+    private ParameterizedCommand<RowDrop> createDropCommand() {
+        return new ParameterizedCommand<RowDrop>() {
+            @Override
+            public void execute( RowDrop dropRow ) {
+                List<Row> newRows = new ArrayList<Row>();
+                for ( int i = 0; i < rows.size(); i++ ) {
+                    Row row = rows.get( i );
+                    if ( dropRow.getRowHashCode() == row.hashCode() ) {
+                        if ( dropRow.getOrientation() == RowDrop.Orientation.AFTER ) {
+                            newRows.add( createRowFromDrop() );
+                            newRows.add( row );
+                        } else {
+                            newRows.add( row );
+                            newRows.add( createRowFromDrop() );
+                        }
+                    } else {
+                        newRows.add( row );
+                    }
+                }
+                rows = newRows;
+                updateView();
+            }
+        };
     }
 
     public void load() {
@@ -60,9 +91,6 @@ public class Container {
     @PostConstruct
     public void post() {
         view.init( this );
-//        addRows( 6, 6 );
-//        addRows( 12 );
-//        addRows( 4, 4, 4 );
     }
 
     @PreDestroy
@@ -76,37 +104,25 @@ public class Container {
     }
 
     public void repaintContainer( @Observes RepaintContainerEvent repaintContainerEvent ) {
-        GWT.log( "repaint" );
-//        teste();
         updateView();
     }
 
     private void updateView() {
         clearView();
-//        GWT.log( "ROWS (Update View)" );
-//        GWT.log( rows.hashCode() + "" );
-        for ( Row row : getRows() ) {
-//            GWT.log( row.hashCode() + "" );
+        for ( int i = 0; i < rows.size(); i++ ) {
+            Row row = rows.get( i );
+            if ( i == 0 ) {
+                //todo maybe remove drop on new
+            }
             view.addRow( row.getView() );
         }
-//        GWT.log( "END" );
-    }
-
-    private List<Row> getRows() {
-//        GWT.log( "Container" );
-//        GWT.log( "=============" );
-//        for ( Row row : rows ) {
-//            GWT.log( row.toString() );
-//            GWT.log( "............" );
-//        }
-        return rows;
     }
 
     private void clearView() {
         view.clear();
     }
 
-    private void swapRows(@Observes RowDnDEvent rowDndEvent ) {
+    private void swapRows( @Observes RowDnDEvent rowDndEvent ) {
         int begin = -1;
         int end = -1;
 
@@ -121,32 +137,10 @@ public class Container {
             }
         }
 
-//        final Row beginRow = rows.get( begin );
-//        final Row endRow = rows.get( endColumnResize );
-//        List<Row> newRows = new ArrayList<Row>();
-//        for ( Row row : rows ) {
-//            if ( row == beginRow ) {
-//                newRows.add( endRow );
-//            } else if ( row == endRow ) {
-//                newRows.add( beginRow );
-//            } else {
-//                newRows.add( row );
-//            }
-//        }
-//        this.rows = newRows;
-        GWT.log( "old" );
-        teste();
-        GWT.log( "new" );
         Collections.swap( rows, begin, end );
-        teste();
         updateView();
     }
 
-    public void teste() {
-        for ( Row row : rows ) {
-            GWT.log( row.hashCode()+"" );
-        }
-    }
 
     public UberView<Container> getView() {
         return view;

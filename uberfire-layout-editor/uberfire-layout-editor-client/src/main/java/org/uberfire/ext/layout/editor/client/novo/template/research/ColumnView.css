@@ -1,6 +1,7 @@
 .no-padding{
     padding:0px !important;
 }
+
 .left{
     float: left;
     width: 5%;
@@ -19,12 +20,4 @@
     /*width: 100%;*/
     border-style:solid;
     border-color: magenta;
-}
-.top{
-    border-style:solid;
-    border-color: chartreuse;
-}
-.bottom{
-    border-style:solid;
-    border-color: coral;
 }

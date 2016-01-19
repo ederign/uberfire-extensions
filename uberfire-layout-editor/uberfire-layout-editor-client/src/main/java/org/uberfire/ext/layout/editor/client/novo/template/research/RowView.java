@@ -1,12 +1,15 @@
 package org.uberfire.ext.layout.editor.client.novo.template.research;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style;
-import com.google.gwt.event.dom.client.*;
+import com.google.gwt.event.dom.client.DragLeaveEvent;
+import com.google.gwt.event.dom.client.DragOverEvent;
+import com.google.gwt.event.dom.client.DropEvent;
+import com.google.gwt.event.dom.client.MouseOutEvent;
+import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.Widget;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
@@ -24,91 +27,90 @@ public class RowView extends Composite
     private Row presenter;
 
 
+    @DataField
+    private Element upper = DOM.createDiv();
+
     @Inject
     @DataField
-    private SimplePanel row;
+    private SimplePanel content;
 
-    //move to presenter
-//    @Inject
-//    RowDndManager dndManager;
+    @DataField
+    private Element bottom = DOM.createDiv();
 
-    FlowPanel wrapper = new FlowPanel();
+
+    FlowPanel rowContentWrapper = new FlowPanel();
 
 
     @Override
     public void init( Row presenter ) {
         this.presenter = presenter;
-        row.add( wrapper );
-        row.getElement().getStyle().setCursor( Style.Cursor.MOVE );
+        content.add( rowContentWrapper );
+        content.getElement().getStyle().setCursor( Style.Cursor.MOVE );
     }
 
     @Override
     public void addColumn( UberView<Column> view ) {
-        wrapper.add( view );
-//        onAttachNative( view.asWidget() );
-//        RootPanel.detachOnWindowClose( view.asWidget() );
-//        DivElement.as( row ).appendChild( view.asWidget().getElement() );
+        rowContentWrapper.add( view );
     }
 
     @Override
     public void clear() {
-        wrapper.clear();
+        rowContentWrapper.clear();
     }
 
-    @Override
-    public void removeColumn( UberView<Column> view ) {
-        wrapper.remove( view );
-    }
-
-    private static native void onAttachNative( Widget w ) /*-{
-        w.@com.google.gwt.user.client.ui.Widget::onAttach()();
-    }-*/;
-
-    @EventHandler( "row" )
-    public void colMouseOver( DragEnterEvent e ) {
+    @EventHandler( "upper" )
+    public void dragOverUpper( DragOverEvent e ) {
         e.preventDefault();
-        GWT.log( "DRAG ENTER ROW" );
-        presenter.dragEnterEvent();
-//        presenter.onMouseOver(new MouseOverInfo(e.getClientX(), e.getClientY()));
+        upper.addClassName( "rowDropPreview" );
     }
 
-    @EventHandler( "row" )
-    public void colMouseOver( DragLeaveEvent e ) {
+    @EventHandler( "upper" )
+    public void dragLeaveUpper( DragLeaveEvent e ) {
         e.preventDefault();
-        GWT.log( "DRAG END ROW" );
-        presenter.dragEndEvent();
-//        presenter.onMouseOver(new MouseOverInfo(e.getClientX(), e.getClientY()));
+        upper.removeClassName( "rowDropPreview" );
     }
 
-    @EventHandler( "row" )
-    public void rowOut( MouseOutEvent e ) {
-        presenter.rowOut();
-    }
-
-    //    @EventHandler( "row" )
-    public void dndBeginOnMouseDown( MouseDownEvent e ) {
+    @EventHandler( "upper" )
+    public void dropUpperEvent( DropEvent e ) {
         e.preventDefault();
-        //move to presenter
-        presenter.mouseDown();
+        upper.removeClassName( "rowDropPreview" );
+        presenter.drop( RowDrop.Orientation.AFTER);
     }
 
-    //    @EventHandler( "row" )
-    public void dndEndOnMouseUp( MouseUpEvent e ) {
+    @EventHandler( "bottom" )
+    public void mouseOutUpper( MouseOutEvent e ) {
         e.preventDefault();
-        GWT.log( "ROW MOUSE UP" );
-        presenter.mouseUp();
-        //move to presenter
-//        dndManager.endColumnResize( presenter.hashCode() );
+        bottom.removeClassName( "rowDropPreview" );
     }
 
-    //    @EventHandler( "row" )
-    public void dndEndOnMouseDown( MouseDownEvent e ) {
+    @EventHandler( "bottom" )
+    public void dragoverBottom( DragOverEvent e ) {
         e.preventDefault();
-        GWT.log( "ROW MOUSE DOWN" );
-        presenter.mouseDown();
-        //move to presenter
-//        dndManager.endColumnResize( presenter.hashCode() );
+        bottom.addClassName( "rowDropPreview" );
+
     }
+
+    @EventHandler( "bottom" )
+    public void dropBottomEvent( DropEvent e ) {
+        e.preventDefault();
+        bottom.removeClassName( "rowDropPreview" );
+        presenter.drop( RowDrop.Orientation.BEFORE);
+    }
+
+
+    @EventHandler( "bottom" )
+    public void dragLeaveBottom( DragLeaveEvent e ) {
+        e.preventDefault();
+        bottom.removeClassName( "rowDropPreview" );
+    }
+
+    @EventHandler( "bottom" )
+    public void mouseOutBottom( MouseOutEvent e ) {
+        e.preventDefault();
+        bottom.removeClassName( "rowDropPreview" );
+    }
+
+
 }
 
 

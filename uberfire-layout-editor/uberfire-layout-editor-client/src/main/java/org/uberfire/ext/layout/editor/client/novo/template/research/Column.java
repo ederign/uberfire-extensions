@@ -54,6 +54,14 @@ public class Column {
         view.setContent( "Drop your first component here..." );
     }
 
+    public void columnFromDrop( ParameterizedCommand<ColumnDrop> columnDropParameterizedCommand ) {
+        this.size = 12;
+        this.columnType = Type.DnD;
+        this.dropCommand = columnDropParameterizedCommand;
+        view.setSize( size.toString() );
+        view.setContent( hashCode()+"" );
+    }
+
     public void onMouseDown( int xPosition ) {
         GWT.log( "onMouseDown" );
         if ( canResize() ) {
