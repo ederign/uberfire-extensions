@@ -5,19 +5,21 @@
 .left{
     float: left;
     width: 5%;
-    border-style:solid;
-    border-color: yellow;
 }
+
 .right{
     float: right;
     width: 5%;
-    border-style:solid;
-    border-color: green;
 }
 .center{
     display: inline-block;
     width: 90%;
-    /*width: 100%;*/
-    border-style:solid;
-    border-color: magenta;
+    border: 1px solid lightgray;
+
+}
+.centerPreview{
+    width: 50% !important;
+}
+.dropPreview{
+    width: 45% !important;
 }

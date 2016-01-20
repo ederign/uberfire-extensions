@@ -33,9 +33,9 @@ public class Row {
     private ParameterizedCommand<RowDrop> dropCommand;
 
     public void firstEmptyRow() {
-        final Column column = createColumn();
-        column.defaultEmptyColumn( defaultEmptyRowDropCommand() );
-        columns.add( column );
+//        final Column column = createColumn();
+//        column.defaultEmptyColumn( defaultEmptyRowDropCommand() );
+//        columns.add( column );
         updateView();
     }
 
@@ -55,8 +55,8 @@ public class Row {
         this.dropCommand = dropCommand;
     }
 
-    public void drop(RowDrop.Orientation orientation) {
-        dropCommand.execute( new RowDrop( hashCode(), orientation));
+    public void drop( RowDrop.Orientation orientation ) {
+        dropCommand.execute( new RowDrop( hashCode(), orientation ) );
     }
 
     public interface View extends UberView<Row> {
@@ -119,7 +119,7 @@ public class Row {
                             column.setSize( newColumnSize + 1 );
                         }
 
-                        if ( drop.dropXPosition < drop.columnMiddleX ) {
+                        if ( drop.getOrientation() == ColumnDrop.Orientation.LEFT ) {
                             final Column newColumn = createColumn();
                             Column.Type type = getColumnType( i );
                             newColumn.init( column.getParentHashCode(), type, newColumnSize, dropCommand() );
@@ -146,7 +146,7 @@ public class Row {
     }
 
     private boolean dropIsOn( ColumnDrop drop, Column column ) {
-        return drop.hash == column.hashCode();
+        return drop.getHash() == column.hashCode();
     }
 
 

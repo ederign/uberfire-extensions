@@ -51,7 +51,6 @@ public class Column {
         this.columnType = Type.DnD;
         this.dropCommand = columnDropParameterizedCommand;
         view.setSize( size.toString() );
-        view.setContent( "Drop your first component here..." );
     }
 
     public void columnFromDrop( ParameterizedCommand<ColumnDrop> columnDropParameterizedCommand ) {
@@ -59,7 +58,7 @@ public class Column {
         this.columnType = Type.DnD;
         this.dropCommand = columnDropParameterizedCommand;
         view.setSize( size.toString() );
-        view.setContent( hashCode()+"" );
+        view.setContent( hashCode() + "" );
     }
 
     public void onMouseDown( int xPosition ) {
@@ -79,8 +78,8 @@ public class Column {
     }
 
     public void onMouseOver( MouseOverInfo mouseOverInfo ) {
-        if ( dndManager.isOnDnd()){
-            GWT.log("MOUSE OVER DND: " +  mouseOverInfo.toString() );
+        if ( dndManager.isOnDnd() ) {
+            GWT.log( "MOUSE OVER DND: " + mouseOverInfo.toString() );
         }
     }
 
@@ -91,6 +90,8 @@ public class Column {
         void setSize( String size );
 
         void setContent( String contentLabel );
+
+        void calculateSize();
     }
 
     @Inject
@@ -104,6 +105,7 @@ public class Column {
     }
 
     public UberView<Column> getView() {
+        view.calculateSize();
         return view;
     }
 
@@ -131,8 +133,8 @@ public class Column {
         view.setSize( size.toString() );
     }
 
-    public void onDrop( int dropPosition, int columnMiddleX ) {
-        dropCommand.execute( new ColumnDrop( hashCode(), dropPosition, columnMiddleX ) );
+    public void onDrop( ColumnDrop.Orientation orientation ) {
+        dropCommand.execute( new ColumnDrop( hashCode(), orientation ) );
     }
 
 

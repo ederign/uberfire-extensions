@@ -5,8 +5,7 @@
     padding-bottom: 1px !important;
 }
 .rowDropPreview{
-    border-style: dashed;
-    border-color: darkgray;
+    border: 1px dashed lightgray;;
     height: 20px;
 }
 .upper{
