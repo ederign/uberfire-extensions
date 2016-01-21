@@ -208,9 +208,7 @@ public class Row {
     }
 
     public UberView<Row> getView() {
-        GWT.log( "====================" );
         for ( Column column : columns ) {
-            GWT.log( column.toString() );
             view.addColumn( column.getView() );
         }
         return view;

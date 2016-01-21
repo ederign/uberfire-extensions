@@ -106,7 +106,6 @@ public class Column {
     }
 
     public UberView<Column> getView() {
-        //TODO COLUMN UPDATE PROCSS
         view.calculateSize();
         view.setCursor();
         return view;
