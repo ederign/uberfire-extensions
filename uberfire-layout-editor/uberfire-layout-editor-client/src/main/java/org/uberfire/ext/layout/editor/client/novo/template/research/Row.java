@@ -175,8 +175,6 @@ public class Row {
     }
 
     public void resizeColumns( @Observes ColumnResizeEvent resize ) {
-        GWT.log( resize.getRowHashCode()+"" );
-        GWT.log( hashCode()+"" );
         if ( resize.getRowHashCode() == hashCode() ) {
             Column resizeColumn = getColumn( resize );
 

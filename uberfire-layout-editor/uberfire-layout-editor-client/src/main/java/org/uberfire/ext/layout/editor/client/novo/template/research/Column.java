@@ -68,7 +68,7 @@ public class Column {
             dndManager.beginColumnResize( hashCode(), xPosition );
         } else if ( canMove() ) {
             GWT.log( "canMov" );
-//            dndManager.beginRowMove( parentHashCode );
+            dndManager.beginRowMove( parentHashCode );
         } else {
             GWT.log( "nop" );
         }
