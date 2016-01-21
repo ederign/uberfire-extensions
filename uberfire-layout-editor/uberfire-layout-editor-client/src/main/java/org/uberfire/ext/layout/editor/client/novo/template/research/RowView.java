@@ -45,7 +45,7 @@ public class RowView extends Composite
     public void init( Row presenter ) {
         this.presenter = presenter;
         content.add( rowContentWrapper );
-        content.getElement().getStyle().setCursor( Style.Cursor.MOVE );
+//        content.getElement().getStyle().setCursor( Style.Cursor.MOVE );
     }
 
     @Override

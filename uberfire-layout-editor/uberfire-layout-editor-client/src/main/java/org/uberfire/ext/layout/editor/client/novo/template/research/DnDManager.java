@@ -31,6 +31,7 @@ public class DnDManager {
     }
 
     public void endColumnResize( int rowHashCodeEnd, int endX ) {
+        GWT.log(  rowHashCodeEnd + "<=================");
         if ( isOnColumnResize ) {
             GWT.log( "endColumnResize" );
             handleColumnResize( endX, rowHashCodeEnd );

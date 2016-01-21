@@ -48,14 +48,14 @@ public class Column {
 
     public void defaultEmptyColumn( ParameterizedCommand<ColumnDrop> columnDropParameterizedCommand ) {
         this.size = 12;
-        this.columnType = Type.DnD;
+        this.columnType = Type.FIRST;
         this.dropCommand = columnDropParameterizedCommand;
         view.setSize( size.toString() );
     }
 
     public void columnFromDrop( ParameterizedCommand<ColumnDrop> columnDropParameterizedCommand ) {
         this.size = 12;
-        this.columnType = Type.DnD;
+        this.columnType = Type.FIRST;
         this.dropCommand = columnDropParameterizedCommand;
         view.setSize( size.toString() );
         view.setContent( hashCode() + "" );
@@ -67,7 +67,8 @@ public class Column {
             GWT.log( "canResize" );
             dndManager.beginColumnResize( hashCode(), xPosition );
         } else if ( canMove() ) {
-            dndManager.beginRowMove( parentHashCode );
+            GWT.log( "canMov" );
+//            dndManager.beginRowMove( parentHashCode );
         } else {
             GWT.log( "nop" );
         }
@@ -105,7 +106,9 @@ public class Column {
     }
 
     public UberView<Column> getView() {
+        //TODO COLUMN UPDATE PROCSS
         view.calculateSize();
+        view.setCursor();
         return view;
     }
 
@@ -139,7 +142,15 @@ public class Column {
 
 
     public enum Type {
-        FIRST, MIDDLE, DnD;
+        FIRST, MIDDLE;
+    }
+
+    public void setColumnType( Type columnType ) {
+        this.columnType = columnType;
+    }
+
+    public void setParentHashCode( int parentHashCode ) {
+        this.parentHashCode = parentHashCode;
     }
 
     @Override

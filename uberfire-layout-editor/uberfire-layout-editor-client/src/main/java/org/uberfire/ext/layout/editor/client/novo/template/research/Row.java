@@ -47,7 +47,9 @@ public class Row {
     }
 
     private Column createColumn() {
-        return columnInstance.get();
+        final Column column = columnInstance.get();
+        column.setParentHashCode( hashCode() );
+        return column;
     }
 
 
@@ -124,9 +126,11 @@ public class Row {
                             Column.Type type = getColumnType( i );
                             newColumn.init( column.getParentHashCode(), type, newColumnSize, dropCommand() );
                             columns.add( newColumn );
+                            column.setColumnType( getColumnType( i + 1 ) );
                             columns.add( column );
 
                         } else {
+                            column.setColumnType( getColumnType( i ) );
                             columns.add( column );
                             final Column newColumn = createColumn();
                             Column.Type type = getColumnType( i + 1 );
@@ -171,7 +175,8 @@ public class Row {
     }
 
     public void resizeColumns( @Observes ColumnResizeEvent resize ) {
-        GWT.log( "resizeColumns" );
+        GWT.log( resize.getRowHashCode()+"" );
+        GWT.log( hashCode()+"" );
         if ( resize.getRowHashCode() == hashCode() ) {
             Column resizeColumn = getColumn( resize );
 
@@ -205,7 +210,9 @@ public class Row {
     }
 
     public UberView<Row> getView() {
+        GWT.log( "====================" );
         for ( Column column : columns ) {
+            GWT.log( column.toString() );
             view.addColumn( column.getView() );
         }
         return view;

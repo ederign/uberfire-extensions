@@ -64,7 +64,7 @@ public class ColumnView extends Composite
             public void execute() {
                 final int colWidth = col.getOffsetWidth();
 
-                final int contentWidth = colWidth - originalLeftRightWidth *2 -1;
+                final int contentWidth = colWidth - originalLeftRightWidth * 2 - 1;
                 left.setWidth( originalLeftRightWidth + "px" );
                 right.setWidth( originalLeftRightWidth + "px" );
 
@@ -80,7 +80,9 @@ public class ColumnView extends Composite
     public void setCursor() {
         content.getElement().getStyle().setCursor( Style.Cursor.DEFAULT );
         if ( presenter.canResize() ) {
-            col.getStyle().setCursor( Style.Cursor.COL_RESIZE );
+            left.getElement().getStyle().setCursor( Style.Cursor.COL_RESIZE );
+        } else {
+            left.getElement().getStyle().setCursor( Style.Cursor.MOVE );
         }
     }
 
@@ -99,19 +101,19 @@ public class ColumnView extends Composite
         contentWrapper.add( new Label( contentLabel ) );
     }
 
-    @EventHandler( "col" )
+    @EventHandler( "left" )
     public void colMouseDown( MouseDownEvent e ) {
         e.preventDefault();
-        GWT.log( "COL MOUSE DOWN" );
         presenter.onMouseDown( e.getClientX() );
     }
 
     @EventHandler( "col" )
     public void colMouseUp( MouseUpEvent e ) {
         e.preventDefault();
-        GWT.log( "COL MOUSE UP" );
         presenter.onMouseUp( e.getClientX() );
     }
+
+    //TODO MOUSE OUT ROW
 
     @EventHandler( "col" )
     public void colMouseOver( MouseMoveEvent e ) {
@@ -175,14 +177,19 @@ public class ColumnView extends Composite
     }
 
     @EventHandler( "col" )
-    public void click( ClickEvent e ) {
-        GWT.log( "Click" );
-    }
-
-    @EventHandler( "col" )
     public void dragOverEvent( DragOverEvent e ) {
         e.preventDefault();
     }
+
+//    @EventHandler( "col" )
+//    public void click( ClickEvent e ) {
+//        GWT.log( "Click" );
+//    }
+//
+//    @EventHandler( "col" )
+//    public void dragOverEvent( DragOverEvent e ) {
+//        e.preventDefault();
+//    }
 
 
     private int calculateMiddle() {
