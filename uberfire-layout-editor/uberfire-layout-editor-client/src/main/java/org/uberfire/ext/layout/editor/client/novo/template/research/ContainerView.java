@@ -1,11 +1,13 @@
 package org.uberfire.ext.layout.editor.client.novo.template.research;
 
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.MouseOutEvent;
-import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.ui.*;
+import org.gwtbootstrap3.client.ui.Column;
+import org.gwtbootstrap3.client.ui.constants.ColumnSize;
 import org.gwtbootstrap3.client.ui.html.Span;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
@@ -27,6 +29,9 @@ public class ContainerView extends Composite
     @DataField
     private SimplePanel layout;
 
+    @DataField
+    private Element container = DOM.createDiv();
+
     @Inject
     @DataField
     private Span mobile;
@@ -47,27 +52,49 @@ public class ContainerView extends Composite
 
         layout.add( wrapper );
 
+
     }
 
     @EventHandler( "mobile" )
     public void mobileSize( ClickEvent e ) {
-        e.preventDefault();
-        layout.setWidth( "320px" );
-        presenter.changeResolution();
+        wrapper.clear();
+        Frame f = new Frame( "test.html" );
+        wrapper.add(f);
+        String containerPreview = getElement().getInnerHTML();
+        f.setWidth( "200px" );
+
+//        alert( "$('.gwt-Frame').contents().find('body').append($('#layout'))");
+
     }
+
+    public static native void alert(String msg) /*-{
+        $wnd.eval(msg);
+
+    }-*/;
 
     @EventHandler( "tablet" )
     public void tabletSize( ClickEvent e ) {
+        GWT.log( "tablet" );
+        wrapper.clear();
+        Frame f = new Frame( "test.html" );
+        wrapper.add(f);
+        f.setWidth( "767px" );
         e.preventDefault();
-        layout.setWidth( "768px" );
-        presenter.changeResolution();
+//        presenter.changeResolution();
     }
 
     @EventHandler( "desktop" )
     public void desktopSize( ClickEvent e ) {
+        GWT.log( "tablet" );
+        wrapper.clear();
+        Frame f = new Frame( "test.html" );
+        wrapper.add(f);
+
+        f.setWidth( getOffsetWidth()+"px" );
+
         e.preventDefault();
-        layout.setWidth( "100%" );
-        presenter.changeResolution();
+//        container.getStyle().setProperty( "width", "100%" );
+//        presenter.changeResolution();
     }
 
 

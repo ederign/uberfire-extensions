@@ -75,8 +75,9 @@ public class Container {
         //TODO load a existent layout
     }
 
-    public void changeResolution() {
+    public UberView<Container> changeResolution() {
         updateView();
+        return getView();
     }
 
     public interface View extends UberView<Container> {
