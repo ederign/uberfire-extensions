@@ -31,6 +31,17 @@
         <button ui:field="click" type="button" class="btn btn-default btn-lg">
           <span class="glyphicon glyphicon-star" aria-hidden="true"></span> Star
         </button>
+        <!-- Single button -->
+        <div class="btn-group">
+          <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Action <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu">
+            <li><a href="#" ui:field="click1" >Action</a></li>
+            <li><a href="#" ui:field="click2" >Another action</a></li>
+            <li><a href="#" ui:field="click3"  >Something else here</a></li>
+          </ul>
+        </div>
       </div>
     </div>
 

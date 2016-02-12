@@ -46,4 +46,26 @@ public class MyCellRenderer extends AbstractCell<YoDTO> {
         //Maybe use the ActionCell.Delegate to process the action elsewhere...
         GWT.log("Click : " + value.getName());
     }
+
+
+    @UiHandler({"click1"})
+    void click1(ClickEvent event, Element parent, YoDTO value) {
+        //Maybe use the ActionCell.Delegate to process the action elsewhere...
+        GWT.log("Click1 : " + value.getName());
+    }
+
+
+    @UiHandler({"click2"})
+    void click2(ClickEvent event, Element parent, YoDTO value) {
+        //Maybe use the ActionCell.Delegate to process the action elsewhere...
+        GWT.log("Click2 : " + value.getName());
+    }
+
+
+    @UiHandler({"click3"})
+    void click3(ClickEvent event, Element parent, YoDTO value) {
+        //Maybe use the ActionCell.Delegate to process the action elsewhere...
+        GWT.log("Click : " + value.getName());
+    }
+
 }
