@@ -15,30 +15,31 @@
  */
 package org.uberfire.ext.layout.editor.client;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import javax.annotation.PostConstruct;
-import javax.enterprise.context.Dependent;
-import javax.enterprise.event.Event;
-import javax.enterprise.inject.Instance;
-import javax.inject.Inject;
-
+import com.google.gwt.user.cellview.client.CellList;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.errai.ioc.client.container.IOC;
 import org.uberfire.client.mvp.UberView;
 import org.uberfire.ext.layout.editor.api.editor.LayoutTemplate;
+import org.uberfire.ext.layout.editor.client.components.GridLayoutDragComponent;
+import org.uberfire.ext.layout.editor.client.components.LayoutDragComponent;
 import org.uberfire.ext.layout.editor.client.components.LayoutDragComponentGroup;
-import org.uberfire.ext.layout.editor.client.novo.LayoutContainerPresenter;
-import org.uberfire.ext.layout.editor.client.novo.Test;
 import org.uberfire.ext.layout.editor.client.novo.template.research.Container;
 import org.uberfire.ext.layout.editor.client.novo.template.research.Row;
 import org.uberfire.ext.layout.editor.client.novo.template.research.SimplePresenter;
 import org.uberfire.ext.layout.editor.client.structure.EditorWidget;
-import org.uberfire.ext.layout.editor.client.components.GridLayoutDragComponent;
-import org.uberfire.ext.layout.editor.client.components.LayoutDragComponent;
+import org.uberfire.ext.layout.editor.client.teste.MyCellRenderer;
+import org.uberfire.ext.layout.editor.client.teste.YoDTO;
 import org.uberfire.workbench.events.NotificationEvent;
+
+import javax.annotation.PostConstruct;
+import javax.enterprise.context.Dependent;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 @Dependent
 public class LayoutEditorPresenter {
@@ -55,7 +56,7 @@ public class LayoutEditorPresenter {
     private SimplePresenter simplePresenter;
 
 
-    private List<LayoutDragComponent> addedGridSystemComponents = new ArrayList<LayoutDragComponent>( );
+    private List<LayoutDragComponent> addedGridSystemComponents = new ArrayList<LayoutDragComponent>();
 
     public interface View extends UberView<LayoutEditorPresenter> {
 
@@ -65,11 +66,11 @@ public class LayoutEditorPresenter {
 
         void setupComponents( List<LayoutDragComponent> layoutDragComponents );
 
-        void setupContent( LayoutTemplate layoutTemplate);
+        void setupContent( LayoutTemplate layoutTemplate );
 
         LayoutTemplate getModel();
 
-        void loadDefaultLayout(String layoutName);
+        void loadDefaultLayout( String layoutName );
 
         void addLayoutProperty( String key,
                                 String value );
@@ -108,13 +109,25 @@ public class LayoutEditorPresenter {
 
     }
 
+    private static final List<YoDTO> dogs = Arrays.asList( new YoDTO( "eder", "dora" ), new YoDTO( "carol", "bento" ) );
+//    private static final List<YoDTO> dogs = Arrays.asList( new YoDTO(  ));
+
     @PostConstruct
-    public void initNew(){
-        view.setupNewContainer2( new Label( "Simple Presenter") );
+    public void initNew() {
+        MyCellRenderer cell = new MyCellRenderer();
+
+        CellList<YoDTO> cellList = new CellList<YoDTO>( cell );
+
+        cellList.setRowData( 0, dogs );
+
+        view.setupNewContainer2( cellList );
+
+
+        view.setupNewContainer2( new Label( "Simple Presenter" ) );
         view.setupNewContainer( simplePresenter.getView() );
-        view.setupNewContainer2( new Label( "Container") );
+        view.setupNewContainer2( new Label( "Container" ) );
         container.init();
-        view.setupNewContainer2( container.getView().asWidget());
+        view.setupNewContainer2( container.getView().asWidget() );
     }
 
     public UberView<LayoutEditorPresenter> getView() {
@@ -122,10 +135,10 @@ public class LayoutEditorPresenter {
         return view;
     }
 
-    public void setupDndPallete(List<LayoutDragComponent> layoutDragComponents ) {
+    public void setupDndPallete( List<LayoutDragComponent> layoutDragComponents ) {
         view.setupComponents( layoutDragComponents );
 
-        List<LayoutDragComponent> gridSystemComponents = new ArrayList<LayoutDragComponent>(  );
+        List<LayoutDragComponent> gridSystemComponents = new ArrayList<LayoutDragComponent>();
 
         for ( String span : SPANS ) {
             GridLayoutDragComponent component = getGridLayoutDragComponent();
@@ -155,19 +168,19 @@ public class LayoutEditorPresenter {
         return view.getModel();
     }
 
-    public void loadLayout(LayoutTemplate layoutTemplate) {
-        view.setupContent(layoutTemplate);
+    public void loadLayout( LayoutTemplate layoutTemplate ) {
+        view.setupContent( layoutTemplate );
     }
 
     public void loadDefaultLayout( String layoutName ) {
-        view.loadDefaultLayout(layoutName);
+        view.loadDefaultLayout( layoutName );
     }
 
-    public void addLayoutProperty(String key, String value) {
+    public void addLayoutProperty( String key, String value ) {
         view.addLayoutProperty( key, value );
     }
 
-    public String getLayoutProperty(String key) {
+    public String getLayoutProperty( String key ) {
         return view.getLayoutProperty( key );
     }
 
