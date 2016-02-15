@@ -114,13 +114,13 @@ public class LayoutEditorPresenter {
 
     @PostConstruct
     public void initNew() {
-        MyCellRenderer cell = new MyCellRenderer();
+//        MyCellRenderer cell = new MyCellRenderer();
 
-        CellList<YoDTO> cellList = new CellList<YoDTO>( cell );
-
-        cellList.setRowData( 0, dogs );
-
-        view.setupNewContainer2( cellList );
+//        CellList<YoDTO> cellList = new CellList<YoDTO>( cell );
+//
+//        cellList.setRowData( 0, dogs );
+//
+//        view.setupNewContainer2( cellList );
 
 
         view.setupNewContainer2( new Label( "Simple Presenter" ) );
