@@ -112,33 +112,12 @@ public class Row {
                     //TODO dont drop if the column size == 1
                     if ( dropIsOn( drop, column ) && column.getSize() != 1 ) {
 
-                        Integer originalSize = column.getSize();
-                        Integer newColumnSize = originalSize / 2;
-
-                        if ( originalSize % 2 == 0 ) {
-                            column.setSize( newColumnSize );
-                        } else {
-                            column.setSize( newColumnSize + 1 );
+                        if ( isASideDrop( drop ) ) {
+                            handleSideDrop( drop, columns, i, column );
                         }
-
-                        if ( drop.getOrientation() == ColumnDrop.Orientation.LEFT ) {
-                            final Column newColumn = createColumn();
-                            Column.Type type = getColumnType( i );
-                            newColumn.init( column.getParentHashCode(), type, newColumnSize, dropCommand() );
-                            columns.add( newColumn );
-                            column.setColumnType( getColumnType( i + 1 ) );
-                            columns.add( column );
-
-                        } else {
-                            column.setColumnType( getColumnType( i ) );
-                            columns.add( column );
-                            final Column newColumn = createColumn();
-                            Column.Type type = getColumnType( i + 1 );
-                            newColumn.init( column.getParentHashCode(), type, newColumnSize, dropCommand() );
-                            columns.add( newColumn );
+                        else{
+                            handleNewComponentDrop(columns, column);
                         }
-
-
                     } else {
                         columns.add( column );
                     }
@@ -147,6 +126,44 @@ public class Row {
                 updateView();
             }
         };
+    }
+
+    private void handleNewComponentDrop( List<Column> columns, Column column) {
+        
+        columns.add( column );
+    }
+
+    private void handleSideDrop( ColumnDrop drop, List<Column> columns, int i, Column column ) {
+        Integer originalSize = column.getSize();
+        Integer newColumnSize = originalSize / 2;
+
+        if ( originalSize % 2 == 0 ) {
+            column.setSize( newColumnSize );
+        } else {
+            column.setSize( newColumnSize + 1 );
+        }
+
+        if ( drop.getOrientation() == ColumnDrop.Orientation.LEFT ) {
+            final Column newColumn = createColumn();
+            Column.Type type = getColumnType( i );
+            newColumn.init( column.getParentHashCode(), type, newColumnSize, dropCommand() );
+            columns.add( newColumn );
+            column.setColumnType( getColumnType( i + 1 ) );
+            columns.add( column );
+
+        } else {
+            column.setColumnType( getColumnType( i ) );
+            columns.add( column );
+            final Column newColumn = createColumn();
+            Column.Type type = getColumnType( i + 1 );
+            newColumn.init( column.getParentHashCode(), type, newColumnSize, dropCommand() );
+            columns.add( newColumn );
+        }
+    }
+
+    private boolean isASideDrop( ColumnDrop drop ) {
+        return drop.getOrientation() == ColumnDrop.Orientation.LEFT || drop
+                .getOrientation() == ColumnDrop.Orientation.RIGHT;
     }
 
     private boolean dropIsOn( ColumnDrop drop, Column column ) {

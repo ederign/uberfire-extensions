@@ -148,6 +148,7 @@ public class ColumnView extends Composite
     }
 
 
+
     @EventHandler( "content" )
     public void dragOverCenter( DragOverEvent e ) {
         e.preventDefault();
@@ -193,6 +194,31 @@ public class ColumnView extends Composite
 //        presenter.onMouseOver(new MouseOverInfo(e.getClientX(), e.getClientY()));
     }
 
+
+    @EventHandler( "content" )
+    public void dropInsideColumn( DropEvent e ) {
+        GWT.log( "dropInsideColumnDown content" );
+        presenter.onDrop( ColumnDrop.Orientation.INSIDE );
+        colUp.getElement().removeClassName( "colPreview" );
+        colDown.getElement().removeClassName( "colPreview" );
+    }
+
+    @EventHandler( "colUp" )
+    public void dropInsideColumnUp( DropEvent e ) {
+        GWT.log( "dropInsideColumnDown up" );
+        presenter.onDrop( ColumnDrop.Orientation.INSIDE );
+        colUp.getElement().removeClassName( "colPreview" );
+        colDown.getElement().removeClassName( "colPreview" );
+    }
+
+    @EventHandler( "colDown" )
+    public void dropInsideColumnDown( DropEvent e ) {
+        GWT.log( "dropInsideColumnDown down" );
+        presenter.onDrop( ColumnDrop.Orientation.INSIDE );
+        colUp.getElement().removeClassName( "colPreview" );
+        colDown.getElement().removeClassName( "colPreview" );
+
+    }
 
     @EventHandler( "left" )
     public void dropColumnRight( DropEvent e ) {

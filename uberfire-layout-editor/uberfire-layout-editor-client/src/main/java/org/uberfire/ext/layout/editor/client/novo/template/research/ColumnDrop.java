@@ -12,7 +12,7 @@ public class ColumnDrop{
     }
 
     public enum Orientation {
-        LEFT, RIGHT
+        LEFT, RIGHT, INSIDE,
     }
 
     public Orientation getOrientation() {
