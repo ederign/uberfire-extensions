@@ -11,6 +11,19 @@
     float: right;
     width: 5%;
 }
+.colUp{
+    height:5px;
+}
+
+.colPreview{
+    border: 1px dashed blue;
+    height: 10px;
+    margin-left:5px;
+    margin-right:5px;
+}
+.colDown{
+    height:5px;
+}
 .center{
     display: inline-block;
     width: 90%;

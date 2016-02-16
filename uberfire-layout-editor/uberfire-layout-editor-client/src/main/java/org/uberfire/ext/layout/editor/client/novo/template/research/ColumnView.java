@@ -9,8 +9,8 @@ import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
-import org.gwtbootstrap3.client.ui.Label;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
@@ -30,6 +30,16 @@ public class ColumnView extends Composite
 
     @DataField
     private Element col = DOM.createDiv();
+
+
+    @Inject
+    @DataField
+    private SimplePanel colUp;
+
+    @Inject
+    @DataField
+    private SimplePanel colDown;
+
 
     @Inject
     @DataField
@@ -72,6 +82,12 @@ public class ColumnView extends Composite
                 right.setHeight( content.getOffsetHeight() + "px" );
 
                 content.setWidth( contentWidth + "px" );
+
+                //FIXME <- redimensiona browser
+                colDown.setWidth( contentWidth + "px" );
+                colUp.setWidth( contentWidth + "px" );
+
+
             }
         } );
     }
@@ -121,11 +137,48 @@ public class ColumnView extends Composite
         //why?
 //        presenter.onMouseOver(new MouseOverInfo(e.getClientX(), e.getClientY()));
     }
+    @EventHandler( "colUp" )
+    public void dragEntercolUp( DragOverEvent e ) {
+        colUp.getElement().addClassName( "colPreview" );
+    }
+
+    @EventHandler( "colUp" )
+    public void dragLeftcolUp( DragLeaveEvent e ) {
+        colUp.getElement().removeClassName( "colPreview" );
+    }
+
+
+    @EventHandler( "content" )
+    public void dragOverCenter( DragOverEvent e ) {
+        e.preventDefault();
+        final int absoluteTop = content.getElement().getAbsoluteTop();
+        final int absoluteBottom = content.getElement().getAbsoluteBottom();
+        final int dragOverY = e.getNativeEvent().getClientY();
+
+        if ( ( dragOverY - absoluteTop ) < ( absoluteBottom - dragOverY ) ) {
+            colUp.getElement().addClassName( "colPreview" );
+            colDown.getElement().removeClassName( "colPreview" );
+
+        } else {
+            colDown.getElement().addClassName( "colPreview" );
+            colUp.getElement().removeClassName( "colPreview" );
+        }
+//        presenter.onMouseOver(new MouseOverInfo(e.getClientX(), e.getClientY()));
+    }
+
+    @EventHandler( "content" )
+    public void dragLeaveCenter( DragLeaveEvent e ) {
+        e.preventDefault();
+        colUp.getElement().removeClassName( "colPreview" );
+        colDown.getElement().removeClassName( "colPreview" );
+//        presenter.onMouseOver(new MouseOverInfo(e.getClientX(), e.getClientY()));
+    }
+
 
     @EventHandler( "left" )
     public void dragEnterLeft( DragEnterEvent e ) {
         e.preventDefault();
-        GWT.log( "DRAG ENTER COLUMN" );
+        GWT.log( "DRAG ENTER left" );
         left.getElement().addClassName( "columnDropPreview dropPreview" );
         content.getElement().addClassName( "centerPreview" );
 //        presenter.onMouseOver(new MouseOverInfo(e.getClientX(), e.getClientY()));
@@ -134,7 +187,7 @@ public class ColumnView extends Composite
     @EventHandler( "left" )
     public void dragLeaveLeft( DragLeaveEvent e ) {
         e.preventDefault();
-        GWT.log( "DRAG END COLUMN" );
+        GWT.log( "DRAG END left" );
         left.getElement().removeClassName( "columnDropPreview dropPreview" );
         content.getElement().removeClassName( "centerPreview" );
 //        presenter.onMouseOver(new MouseOverInfo(e.getClientX(), e.getClientY()));
@@ -169,7 +222,7 @@ public class ColumnView extends Composite
 
     @EventHandler( "right" )
     public void dropColumnRIGHT( DropEvent e ) {
-        GWT.log( "DROP COLUMN LEFT EVENT" );
+        GWT.log( "DROP right LEFT EVENT" );
         e.preventDefault();
         right.getElement().removeClassName( "columnDropPreview dropPreview" );
         content.getElement().removeClassName( "centerPreview" );
