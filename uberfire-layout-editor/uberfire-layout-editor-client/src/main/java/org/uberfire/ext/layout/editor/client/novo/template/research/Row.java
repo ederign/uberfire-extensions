@@ -61,6 +61,11 @@ public class Row {
         dropCommand.execute( new RowDrop( hashCode(), orientation ) );
     }
 
+    public void addColumns( Column column, Column newColumn ) {
+        columns.add( newColumn );
+        columns.add( column );
+    }
+
     public interface View extends UberView<Row> {
 
         void addColumn( UberView<Column> view );
@@ -106,6 +111,7 @@ public class Row {
             @Override
             public void execute( ColumnDrop drop ) {
                 List<Column> columns = new ArrayList<Column>();
+                GWT.log( "->" + Row.this.columns.size() );
                 for ( int i = 0; i < Row.this.columns.size(); i++ ) {
                     Column column = Row.this.columns.get( i );
 
@@ -114,26 +120,44 @@ public class Row {
 
                         if ( isASideDrop( drop ) ) {
                             handleSideDrop( drop, columns, i, column );
-                        }
-                        else{
-                            handleNewComponentDrop(columns, column);
+                        } else {
+                            handleNewComponentDrop( columns, i, column );
                         }
                     } else {
+
                         columns.add( column );
                     }
                 }
                 Row.this.columns = columns;
+                GWT.log( Row.this.columns.size() + " =1" );
                 updateView();
             }
         };
     }
 
-    private void handleNewComponentDrop( List<Column> columns, Column column) {
-        
-        columns.add( column );
+    private void handleNewComponentDrop( List<Column> columns, int columnINdex, Column column ) {
+        GWT.log( "YO" );
+        final Column containerColumn = createColumn();
+        Column.Type type = getColumnType( columnINdex + 1 );
+        containerColumn.init( column.getParentHashCode(), type, column.getSize(), dropCommand(), "" );
+
+        column.setColumnType( getColumnType( 0 ) );
+
+        final Column newColumn = createColumn();
+        type = getColumnType( 0 );
+        containerColumn.init( column.getParentHashCode(), type, column.getSize(), dropCommand(), hashCode()+"" );
+
+        containerColumn.withComponents( column, newColumn );
+
+
+
+        columns.add( containerColumn );
+
+
+//        columns.add( column );
     }
 
-    private void handleSideDrop( ColumnDrop drop, List<Column> columns, int i, Column column ) {
+    private void handleSideDrop( ColumnDrop drop, List<Column> columns, int columnINdex, Column column ) {
         Integer originalSize = column.getSize();
         Integer newColumnSize = originalSize / 2;
 
@@ -145,18 +169,20 @@ public class Row {
 
         if ( drop.getOrientation() == ColumnDrop.Orientation.LEFT ) {
             final Column newColumn = createColumn();
-            Column.Type type = getColumnType( i );
-            newColumn.init( column.getParentHashCode(), type, newColumnSize, dropCommand() );
+            Column.Type type = getColumnType( columnINdex );
+            newColumn.init( column.getParentHashCode(), type, newColumnSize, dropCommand(),
+                            "Parent: " + column.getParentHashCode() + " " + hashCode() + "" );
             columns.add( newColumn );
-            column.setColumnType( getColumnType( i + 1 ) );
+            column.setColumnType( getColumnType( columnINdex + 1 ) );
             columns.add( column );
 
         } else {
-            column.setColumnType( getColumnType( i ) );
+            column.setColumnType( getColumnType( columnINdex ) );
             columns.add( column );
             final Column newColumn = createColumn();
-            Column.Type type = getColumnType( i + 1 );
-            newColumn.init( column.getParentHashCode(), type, newColumnSize, dropCommand() );
+            Column.Type type = getColumnType( columnINdex + 1 );
+            newColumn.init( column.getParentHashCode(), type, newColumnSize, dropCommand(),
+                            "Parent: " + column.getParentHashCode() + " " + hashCode() + "" );
             columns.add( newColumn );
         }
     }
@@ -176,7 +202,7 @@ public class Row {
             Integer colSpan = colSpans[i];
             final Column column = createColumn();
             Column.Type type = getColumnType( i );
-            column.init( hashCode(), type, colSpan, dropCommand() );
+            column.init( hashCode(), type, colSpan, dropCommand(), " " + hashCode() + "" );
             columns.add( column );
         }
     }
@@ -225,6 +251,7 @@ public class Row {
     }
 
     public UberView<Row> getView() {
+        view.clear();
         for ( Column column : columns ) {
             view.addColumn( column.getView() );
         }

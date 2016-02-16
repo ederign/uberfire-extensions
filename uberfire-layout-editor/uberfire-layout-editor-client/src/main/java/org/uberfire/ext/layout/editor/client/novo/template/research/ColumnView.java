@@ -93,6 +93,11 @@ public class ColumnView extends Composite
     }
 
     @Override
+    public void addRow( UberView<Row> view ) {
+        contentWrapper.add( view );
+    }
+
+    @Override
     public void setCursor() {
         content.getElement().getStyle().setCursor( Style.Cursor.DEFAULT );
         if ( presenter.canResize() ) {
@@ -114,7 +119,8 @@ public class ColumnView extends Composite
 
     @Override
     public void setContent( String contentLabel ) {
-        contentWrapper.add( new Label( contentLabel ) );
+        if ( !contentLabel.isEmpty() )
+            contentWrapper.add( new Label( contentLabel ) );
     }
 
     @EventHandler( "left" )
@@ -137,6 +143,7 @@ public class ColumnView extends Composite
         //why?
 //        presenter.onMouseOver(new MouseOverInfo(e.getClientX(), e.getClientY()));
     }
+
     @EventHandler( "colUp" )
     public void dragEntercolUp( DragOverEvent e ) {
         colUp.getElement().addClassName( "colPreview" );
@@ -146,7 +153,6 @@ public class ColumnView extends Composite
     public void dragLeftcolUp( DragLeaveEvent e ) {
         colUp.getElement().removeClassName( "colPreview" );
     }
-
 
 
     @EventHandler( "content" )

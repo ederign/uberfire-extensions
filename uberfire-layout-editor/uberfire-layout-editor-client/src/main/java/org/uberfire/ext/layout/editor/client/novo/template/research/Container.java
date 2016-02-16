@@ -1,5 +1,6 @@
 package org.uberfire.ext.layout.editor.client.novo.template.research;
 
+import com.google.gwt.core.client.GWT;
 import org.uberfire.client.mvp.UberView;
 import org.uberfire.mvp.ParameterizedCommand;
 

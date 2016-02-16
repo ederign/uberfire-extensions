@@ -6,7 +6,10 @@ import org.uberfire.mvp.ParameterizedCommand;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
 
 @Dependent
 public class Column {
@@ -17,11 +20,17 @@ public class Column {
     private final View view;
 
     private int parentHashCode;
+
     private Type columnType;
 
     private Integer size;
 
     private ParameterizedCommand<ColumnDrop> dropCommand;
+
+    @Inject
+    Instance<Row> rowInstance;
+
+    List<Row> rows = new ArrayList<Row>();
 
 
     boolean canResize() {
@@ -84,6 +93,23 @@ public class Column {
         }
     }
 
+    public void withComponents( Column column, Column newColumn ) {
+        GWT.log( "TODO YEAH" );
+        final Row row = rowInstance.get();
+        row.init( createDropCommand() );
+        row.addColumns(column, newColumn);
+        rows.add( row );
+    }
+
+    private ParameterizedCommand<RowDrop> createDropCommand() {
+        return new ParameterizedCommand<RowDrop>() {
+            @Override
+            public void execute( RowDrop parameter ) {
+                GWT.log( "TODO DROP" );
+            }
+        };
+    }
+
     public interface View extends UberView<Column> {
 
         void setCursor();
@@ -93,6 +119,8 @@ public class Column {
         void setContent( String contentLabel );
 
         void calculateSize();
+
+        void addRow( UberView<Row> view );
     }
 
     @Inject
@@ -106,19 +134,32 @@ public class Column {
     }
 
     public UberView<Column> getView() {
-        view.calculateSize();
-        view.setCursor();
+        if ( hasRows() ) {
+            GWT.log( "YOOOOOPIUI" + rows.size() );
+            for ( Row row : rows ) {
+                view.addRow(row.getView());
+            }
+            
+        } else {
+            view.calculateSize();
+            view.setCursor();
+        }
+
         return view;
     }
 
+    private boolean hasRows() {
+        return !rows.isEmpty();
+    }
+
     public void init( int parentHashCode, Type columnType, Integer size,
-                      ParameterizedCommand<ColumnDrop> dropCommand ) {
+                      ParameterizedCommand<ColumnDrop> dropCommand, String content ) {
         this.parentHashCode = parentHashCode;
         this.columnType = columnType;
         this.size = size;
         this.dropCommand = dropCommand;
         view.setSize( size.toString() );
-        view.setContent( "Parent: " + parentHashCode + " " + hashCode() + "" );
+        view.setContent( content );
         view.setCursor();
     }
 
