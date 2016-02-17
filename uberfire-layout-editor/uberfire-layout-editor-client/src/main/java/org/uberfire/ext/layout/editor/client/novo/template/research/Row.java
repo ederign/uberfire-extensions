@@ -62,8 +62,8 @@ public class Row {
     }
 
     public void addColumns( Column column, Column newColumn ) {
-        columns.add( newColumn );
         columns.add( column );
+        columns.add( newColumn );
     }
 
     public interface View extends UberView<Row> {
@@ -139,14 +139,14 @@ public class Row {
         GWT.log( "YO" );
         final Column containerColumn = createColumn();
         Column.Type type = getColumnType( columnINdex + 1 );
-        containerColumn.init( column.getParentHashCode(), type, column.getSize(), dropCommand(), "" );
+        containerColumn.init( column.getParentHashCode(), type, column.getSize(), dropCommand(), "Container" );
 
         column.setColumnType( getColumnType( 0 ) );
 
         final Column newColumn = createColumn();
         type = getColumnType( 0 );
-        containerColumn.init( column.getParentHashCode(), type, column.getSize(), dropCommand(), hashCode()+"" );
-
+        newColumn.init( column.getParentHashCode(), type, 12, dropCommand(), hashCode()+"" );
+        column.setSize( 12 );
         containerColumn.withComponents( column, newColumn );
 
 

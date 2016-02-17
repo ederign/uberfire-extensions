@@ -97,7 +97,7 @@ public class Column {
         GWT.log( "TODO YEAH" );
         final Row row = rowInstance.get();
         row.init( createDropCommand() );
-        row.addColumns(column, newColumn);
+        row.addColumns( column, newColumn );
         rows.add( row );
     }
 
@@ -137,13 +137,12 @@ public class Column {
         if ( hasRows() ) {
             GWT.log( "YOOOOOPIUI" + rows.size() );
             for ( Row row : rows ) {
+//                GWT.log("has columns");
                 view.addRow(row.getView());
             }
-            
-        } else {
-            view.calculateSize();
-            view.setCursor();
         }
+        view.calculateSize();
+        view.setCursor();
 
         return view;
     }
