@@ -136,25 +136,25 @@ public class Row {
     }
 
     private void handleNewComponentDrop( List<Column> columns, int columnINdex, Column column ) {
-        GWT.log( "YO" );
         final Column containerColumn = createColumn();
-        Column.Type type = getColumnType( columnINdex + 1 );
-        containerColumn.init( column.getParentHashCode(), type, column.getSize(), dropCommand(), "Container" );
-
-        column.setColumnType( getColumnType( 0 ) );
+        containerColumn.containerColumn();
+        containerColumn.init( column.getParentHashCode(), getColumnType( columnINdex + 1 ), column.getSize(), dropCommand(), "" );
 
         final Column newColumn = createColumn();
-        type = getColumnType( 0 );
-        newColumn.init( column.getParentHashCode(), type, 12, dropCommand(), hashCode()+"" );
+        newColumn.innerColumn();
+        newColumn.init( column.getParentHashCode(), getColumnType( 0 ), 12, dropCommand(), hashCode()+"" );
+
+
+        column.setColumnType( getColumnType( 0 ) );
+        column.innerColumn();
         column.setSize( 12 );
+
+
+
         containerColumn.withComponents( column, newColumn );
-
-
-
         columns.add( containerColumn );
 
-
-//        columns.add( column );
+        column.recalculateSize();
     }
 
     private void handleSideDrop( ColumnDrop drop, List<Column> columns, int columnINdex, Column column ) {

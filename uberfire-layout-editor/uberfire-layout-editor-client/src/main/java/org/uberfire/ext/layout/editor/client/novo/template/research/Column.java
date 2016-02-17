@@ -32,6 +32,10 @@ public class Column {
 
     List<Row> rows = new ArrayList<Row>();
 
+    //gambiarra pra acertar o padding de inner columns
+    boolean innerColumn = false;
+    boolean containerColumn = false;
+
 
     boolean canResize() {
         return columnType == Type.MIDDLE;
@@ -110,6 +114,14 @@ public class Column {
         };
     }
 
+    public void innerColumn() {
+        this.innerColumn = true;
+    }
+
+    public void containerColumn() {
+        this.containerColumn = true;
+    }
+
     public interface View extends UberView<Column> {
 
         void setCursor();
@@ -138,7 +150,7 @@ public class Column {
             GWT.log( "YOOOOOPIUI" + rows.size() );
             for ( Row row : rows ) {
 //                GWT.log("has columns");
-                view.addRow(row.getView());
+                view.addRow( row.getView() );
             }
         }
         view.calculateSize();
@@ -147,6 +159,9 @@ public class Column {
         return view;
     }
 
+    public void recalculateSize(){
+        view.calculateSize();
+    }
     private boolean hasRows() {
         return !rows.isEmpty();
     }
@@ -200,5 +215,13 @@ public class Column {
                 ", parentHashCode=" + parentHashCode +
                 ", columnType=" + columnType +
                 '}';
+    }
+
+    protected boolean isInnerColumn() {
+        return innerColumn;
+    }
+
+    public boolean isContainerColumn() {
+        return containerColumn;
     }
 }

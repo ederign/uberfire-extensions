@@ -65,7 +65,6 @@ public class ColumnView extends Composite
         this.presenter = presenter;
         contentWrapper = GWT.create( FlowPanel.class );
         content.add( contentWrapper );
-
     }
 
     @Override
@@ -78,14 +77,20 @@ public class ColumnView extends Composite
                 left.setWidth( originalLeftRightWidth + "px" );
                 right.setWidth( originalLeftRightWidth + "px" );
 
-                left.setHeight( content.getOffsetHeight() + "px" );
-                right.setHeight( content.getOffsetHeight() + "px" );
+                if(!presenter.isContainerColumn()) {
+                    //broke the layout, need
+                    left.setHeight( content.getOffsetHeight() + "px" );
+                    right.setHeight( content.getOffsetHeight() + "px" );
+                }
 
                 content.setWidth( contentWidth + "px" );
 
                 //FIXME <- redimensiona browser
                 colDown.setWidth( contentWidth + "px" );
                 colUp.setWidth( contentWidth + "px" );
+
+
+                    col.addClassName( "container" );
 
 
             }
@@ -114,7 +119,15 @@ public class ColumnView extends Composite
         }
         cssSize = COL_CSS_CLASS + size;
         col.addClassName( cssSize );
-        col.addClassName( "no-padding" );
+        if(!presenter.isInnerColumn()){
+            col.addClassName( "no-padding" );
+        }
+        else{
+            if(col.hasClassName( "no-padding" )){
+                col.removeClassName( "no-padding" );
+                col.addClassName( "innerColumnPadding" );
+            }
+        }
     }
 
     @Override
