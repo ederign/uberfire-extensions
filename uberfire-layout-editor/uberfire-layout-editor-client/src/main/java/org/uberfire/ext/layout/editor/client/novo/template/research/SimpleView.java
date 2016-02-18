@@ -10,6 +10,7 @@ import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.uberfire.client.mvp.UberView;
+import org.uberfire.ext.layout.editor.client.novo.template.research.layout.infra.ColumnResizeManager;
 
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;

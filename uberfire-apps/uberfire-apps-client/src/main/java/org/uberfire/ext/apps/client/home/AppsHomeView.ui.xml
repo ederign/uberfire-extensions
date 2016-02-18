@@ -26,5 +26,10 @@
   <g:FlowPanel ui:field="mainPanel" addStyleNames="{res.CSS.breadCrumbs}">
     <b:Breadcrumbs ui:field="dirs"/>
     <g:FlowPanel ui:field="dirContent"/>
+    <b:Button ui:field="button1" />
+    <b:Button ui:field="button2"/>
+    <g:FlowPanel ui:field="dirContent1"/>
+    <g:FlowPanel ui:field="dirContent2"/>
+
   </g:FlowPanel>
 </ui:UiBinder>

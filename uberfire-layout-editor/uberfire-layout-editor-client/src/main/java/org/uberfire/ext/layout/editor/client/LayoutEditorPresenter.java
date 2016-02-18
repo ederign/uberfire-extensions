@@ -15,7 +15,6 @@
  */
 package org.uberfire.ext.layout.editor.client;
 
-import com.google.gwt.user.cellview.client.CellList;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.errai.ioc.client.container.IOC;
@@ -24,11 +23,10 @@ import org.uberfire.ext.layout.editor.api.editor.LayoutTemplate;
 import org.uberfire.ext.layout.editor.client.components.GridLayoutDragComponent;
 import org.uberfire.ext.layout.editor.client.components.LayoutDragComponent;
 import org.uberfire.ext.layout.editor.client.components.LayoutDragComponentGroup;
-import org.uberfire.ext.layout.editor.client.novo.template.research.Container;
-import org.uberfire.ext.layout.editor.client.novo.template.research.Row;
+import org.uberfire.ext.layout.editor.client.novo.template.research.layout.container.Container;
+import org.uberfire.ext.layout.editor.client.novo.template.research.layout.rows.Row;
 import org.uberfire.ext.layout.editor.client.novo.template.research.SimplePresenter;
 import org.uberfire.ext.layout.editor.client.structure.EditorWidget;
-import org.uberfire.ext.layout.editor.client.teste.MyCellRenderer;
 import org.uberfire.ext.layout.editor.client.teste.YoDTO;
 import org.uberfire.workbench.events.NotificationEvent;
 
@@ -48,6 +46,8 @@ public class LayoutEditorPresenter {
 
     @Inject
     private Event<NotificationEvent> ufNotification;
+
+    @Inject Container newContainer;
 
 
     private final View view;
@@ -128,6 +128,9 @@ public class LayoutEditorPresenter {
         view.setupNewContainer2( new Label( "Container" ) );
         container.init();
         view.setupNewContainer2( container.getView().asWidget() );
+        view.setupNewContainer2( new Label( "Container2" ) );
+        newContainer.init();
+        view.setupNewContainer2( newContainer.getView().asWidget() );
     }
 
     public UberView<LayoutEditorPresenter> getView() {

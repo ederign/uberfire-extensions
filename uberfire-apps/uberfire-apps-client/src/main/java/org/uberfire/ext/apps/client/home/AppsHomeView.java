@@ -18,6 +18,7 @@ package org.uberfire.ext.apps.client.home;
 
 import java.util.List;
 import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -29,11 +30,15 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.gwtbootstrap3.client.ui.AnchorListItem;
 import org.gwtbootstrap3.client.ui.Breadcrumbs;
+import org.gwtbootstrap3.client.ui.Button;
 import org.jboss.errai.ioc.client.api.AfterInitialization;
+import org.uberfire.client.mvp.PlaceManager;
 import org.uberfire.ext.apps.api.Directory;
 import org.uberfire.ext.apps.api.DirectoryBreadCrumb;
 import org.uberfire.ext.apps.client.home.components.TilesApp;
 import org.uberfire.mvp.ParameterizedCommand;
+import org.uberfire.mvp.PlaceRequest;
+import org.uberfire.mvp.impl.DefaultPlaceRequest;
 
 @Dependent
 public class AppsHomeView extends Composite implements AppsHomePresenter.View {
@@ -48,6 +53,22 @@ public class AppsHomeView extends Composite implements AppsHomePresenter.View {
 
     @UiField
     FlowPanel dirContent;
+
+    @UiField
+    FlowPanel dirContent1;
+
+    @UiField
+    FlowPanel dirContent2;
+
+    @UiField
+    Button button1;
+
+
+    @UiField
+    Button button2;
+
+    @Inject
+    PlaceManager placeManager;
 
     interface AppsHomeViewBinder
             extends
@@ -65,6 +86,22 @@ public class AppsHomeView extends Composite implements AppsHomePresenter.View {
     @Override
     public void init( final AppsHomePresenter presenter ) {
         this.presenter = presenter;
+        button1.addClickHandler( new ClickHandler() {
+            @Override
+            public void onClick( ClickEvent event ) {
+                placeManager.goTo( new DefaultPlaceRequest( "HomeScreen" ), dirContent1 );
+                dirContent1.setHeight( "100px" );
+                dirContent1.setWidth( "100px" );
+            }
+        } );
+        button2.addClickHandler( new ClickHandler() {
+            @Override
+            public void onClick( ClickEvent event ) {
+                placeManager.goTo( new DefaultPlaceRequest( "HomeScreen1" ), dirContent2 );
+                dirContent2.setHeight( "100px" );
+                dirContent2.setWidth( "100px" );
+            }
+        } );
     }
 
     @Override
