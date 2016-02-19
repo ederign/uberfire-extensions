@@ -1,0 +1,14 @@
+.rowCss{
+    padding-left: 0px !important;
+    padding-right: 0px !important;
+    padding-top: 1px !important;
+    padding-bottom: 1px !important;
+}
+.rowDropPreview{
+    border: 1px dashed lightgray;;
+    height: 20px;
+}
+.upper{
+}
+.bottom{
+}

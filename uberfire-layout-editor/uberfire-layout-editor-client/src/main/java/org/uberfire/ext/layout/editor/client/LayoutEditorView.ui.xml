@@ -27,20 +27,25 @@
     }
 
     .container {
-      border-radius: 4px;
-      border: 1px solid #DDDDDD;
-      margin: 5px;
+      /*border-radius: 4px;*/
+      /*border: 1px solid #DDDDDD;*/
+      /*margin: 5px;*/
     }
 
     .componentsGrid {
       width: 100%;
     }
 
-    .dndComponent{
+    .dndComponent {
       position: fixed;
       right: 0;
       width: 200px;
       margin-right: 30px;
+    }
+
+    .newContainer {
+      border-radius: 4px;
+      border: 1px solid #DDDDDD;
     }
   </ui:style>
 
@@ -48,7 +53,7 @@
     <b:Row>
       <b:Column size="MD_9">
         <g:FlowPanel styleName="{style.container}">
-          <b:Label text="{i18n.Container}"/>
+          <b:Label text="Container"/>
           <g:FlowPanel ui:field="container"/>
         </g:FlowPanel>
       </b:Column>
@@ -79,6 +84,9 @@
         </g:FlowPanel>
       </b:Column>
     </b:Row>
+    <g:FlowPanel>
+      <g:FlowPanel ui:field="newContainer"/>
+    </g:FlowPanel>
   </g:HTMLPanel>
 </ui:UiBinder>
 

@@ -19,10 +19,10 @@ package org.uberfire.ext.wires.bayesian.network.parser.client.parser;
 import java.io.Serializable;
 import java.util.List;
 
-import org.jboss.errai.common.client.api.annotations.Portable;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
+import org.jboss.errai.common.client.api.annotations.Portable;
 
 @XStreamAlias("NETWORK")
 @Portable

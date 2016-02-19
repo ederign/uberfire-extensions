@@ -16,13 +16,16 @@
 
 package org.uberfire.ext.layout.editor.client;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.enterprise.context.Dependent;
-import javax.inject.Inject;
-
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Element;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.Widget;
 import org.gwtbootstrap3.client.ui.Anchor;
 import org.gwtbootstrap3.client.ui.PanelBody;
 import org.gwtbootstrap3.client.ui.PanelCollapse;
@@ -30,27 +33,28 @@ import org.gwtbootstrap3.client.ui.PanelGroup;
 import org.uberfire.client.mvp.UberView;
 import org.uberfire.ext.layout.editor.api.editor.LayoutRow;
 import org.uberfire.ext.layout.editor.api.editor.LayoutTemplate;
-import org.uberfire.ext.layout.editor.client.components.DynamicLayoutDraggableGroup;
 import org.uberfire.ext.layout.editor.client.components.LayoutDragComponent;
 import org.uberfire.ext.layout.editor.client.components.LayoutDragComponentGroup;
+import org.uberfire.ext.layout.editor.client.components.DynamicLayoutDraggableGroup;
 import org.uberfire.ext.layout.editor.client.dnd.DragGridElement;
 import org.uberfire.ext.layout.editor.client.dnd.DropRowPanel;
+import org.uberfire.ext.layout.editor.client.novo.LayoutContainerPresenter;
+import org.uberfire.ext.layout.editor.client.novo.template.research.SimplePresenter;
+import org.uberfire.ext.layout.editor.client.novo.template.research.SimpleView;
 import org.uberfire.ext.layout.editor.client.row.RowView;
 import org.uberfire.ext.layout.editor.client.structure.EditorWidget;
 import org.uberfire.ext.layout.editor.client.structure.LayoutEditorWidget;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Widget;
+import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Dependent
 public class LayoutEditorView extends Composite
         implements UberView<LayoutEditorPresenter>,
-                   LayoutEditorPresenter.View {
+        LayoutEditorPresenter.View {
 
     interface LayoutEditorViewBinder
             extends
@@ -75,7 +79,21 @@ public class LayoutEditorView extends Composite
     @UiField
     FlowPanel container;
 
-    //needed to setup ids
+    @UiField
+    FlowPanel newContainer;
+
+
+    @Override
+    public void setupNewContainer( UberView<SimplePresenter> view ) {
+        newContainer.add( view );
+    }
+
+    @Override
+    public void setupNewContainer2( Widget view ) {
+        newContainer.add( view );
+    }
+
+    //needed to init ids
     @UiField
     PanelGroup accordion;
 
@@ -90,10 +108,6 @@ public class LayoutEditorView extends Composite
 
     @UiField
     PanelCollapse collapseTwo;
-
-    // For proxying
-    protected LayoutEditorView() {
-    }
 
     @Inject
     public LayoutEditorView( LayoutEditorWidget layoutEditorWidget) {
@@ -228,4 +242,6 @@ public class LayoutEditorView extends Composite
 
         if (group != null) group.removeDraggable( componentId );
     }
+
+
 }

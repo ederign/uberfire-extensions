@@ -1,0 +1,27 @@
+.container-border {
+    border: 1px solid lightgray;
+}
+.resolution{
+    text-align: center;
+    font-size: 20px;
+}
+
+.simulate-xs .col-sm-12,
+.simulate-xs .col-sm-8,
+.simulate-xs .col-sm-4,
+.simulate-xs .col-md-12,
+.simulate-xs .col-md-8,
+.simulate-xs .col-md-4
+.simulate-xs .col-lg-12,
+.simulate-xs .col-lg-8,
+.simulate-xs .col-lg-4 /* no comma on the last one! always gets me */
+{width:100%} /* I got lazy, but you want all 12 col-classes for all 3 devices-classes above xs (so 36 total) here if you want to cover every col-* option */
+
+.simulate-xs .col-xs-12{width:100%}
+.simulate-xs .col-xs-8{width:75%}
+.simulate-xs .col-xs-6{width:50%} /* do this for all 12 col-xs-* classes, doing the basic math to figure out the appropriate % for each*/
+
+.simulate-sm .col-sm-12{width:100%}
+.simulate-sm .col-sm-8{width:75%}
+.simulate-sm .col-sm-6{width:50%}
+.simulate-sm .col-sm-4{width:25%} /* again, do this for all 12 col-sm-* classes

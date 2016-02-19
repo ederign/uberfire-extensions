@@ -1,0 +1,8 @@
+.rowDropPreview{
+    border: 2px dashed lightgray;;
+    height: 25px;
+
+}
+.emptyRow{
+    text-align: center;
+}
