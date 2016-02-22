@@ -34,7 +34,7 @@ import javax.enterprise.context.Dependent;
 @WorkbenchScreen( identifier = "HomeScreen2" )
 public class HomeScreen2 {
 
-    private static final String ORIGINAL_TEXT = "How do you feel2?";
+    private static final String ORIGINAL_TEXT = "fsdfsadfsadfasd";
 
     private final Label label = new Label( ORIGINAL_TEXT );
 
