@@ -3,8 +3,8 @@ package org.uberfire.ext.layout.editor.client.novo.template.research.layout.rows
 import com.google.gwt.core.client.GWT;
 import org.uberfire.client.mvp.UberView;
 import org.uberfire.ext.layout.editor.client.novo.template.research.layout.columns.Column;
+import org.uberfire.ext.layout.editor.client.novo.template.research.layout.columns.ColumnWithComponents;
 import org.uberfire.ext.layout.editor.client.novo.template.research.layout.columns.ComponentColumn;
-import org.uberfire.ext.layout.editor.client.novo.template.research.layout.columns.NoDropColumn;
 import org.uberfire.ext.layout.editor.client.novo.template.research.layout.infra.ColumnDrop;
 import org.uberfire.ext.layout.editor.client.novo.template.research.layout.infra.ColumnResizeEvent;
 import org.uberfire.ext.layout.editor.client.novo.template.research.layout.infra.DnDManager;
@@ -32,8 +32,7 @@ public class Row {
     Instance<ComponentColumn> columnInstance;
 
     @Inject
-    Instance<NoDropColumn> noDropColumnInstance;
-
+    Instance<ColumnWithComponents> columnWithComponentsInstance;
 
     @Inject
     Event<RepaintContainerEvent> repaintContainerEvent;
@@ -58,9 +57,8 @@ public class Row {
 
     public void rowWithOneColumn() {
         final ComponentColumn column = createColumn();
-        column. columnFromDrop( dropCommand() );
+        column.columnFromDrop( dropCommand() );
         columns.add( column );
-        updateView();
     }
 
     private ComponentColumn createColumn() {
@@ -70,8 +68,8 @@ public class Row {
     }
 
 
-    private NoDropColumn createNoDropColumn() {
-        final NoDropColumn column = noDropColumnInstance.get();
+    private ColumnWithComponents createColumnWithComponents() {
+        final ColumnWithComponents column = columnWithComponentsInstance.get();
         column.setParentHashCode( hashCode() );
         return column;
     }
@@ -82,7 +80,7 @@ public class Row {
 
     public void addColumns( Column... _columns ) {
         for ( Column column : _columns ) {
-            columns.add(column);
+            columns.add( column );
         }
     }
 
@@ -118,42 +116,45 @@ public class Row {
 
                     //TODO dont drop if the column size == 1
                     if ( dropIsOn( drop, column ) && column.getSize() != 1 ) {
-
                         if ( isASideDrop( drop ) ) {
                             handleSideDrop( drop, columns, i, column );
                         } else {
-                            handleNewComponentDrop( columns, i, column );
+                            handleInnerComponentDrop( drop,  columns, i, column );
                         }
                     } else {
-
                         columns.add( column );
                     }
                 }
                 Row.this.columns = columns;
-                GWT.log( Row.this.columns.size() + " =1" );
                 updateView();
             }
         };
     }
 
-    private void handleNewComponentDrop( List<Column> columns, int columnIndex, ComponentColumn column ) {
-        final NoDropColumn containerColumn = createNoDropColumn();
-        containerColumn.containerColumn();
-        containerColumn.init( column.getParentHashCode(), NoDropColumn.Type.FIRST, column.getSize(), dropCommand(), "" );
+    private void handleInnerComponentDrop( ColumnDrop drop, List<Column> columns, int columnIndex,
+                                           ComponentColumn column ) {
+        final ColumnWithComponents columnWithComponents = createColumnWithComponents();
+        columnWithComponents.init( column.getSize() );
+        //uf bug
+        Integer originalColumnUFSize = column.getPanelSize();
 
-        final NoDropColumn newColumn = createNoDropColumn();
-        newColumn.innerColumn();
-        newColumn.init( column.getParentHashCode(), NoDropColumn.Type.FIRST, 12, dropCommand(), hashCode()+"" );
+        final ComponentColumn newColumn = createColumn();
+        newColumn.init( column.getParentHashCode(), getColumnType( 0 ), 12, dropCommand() );
+        newColumn.halfParentPanelSize( originalColumnUFSize );
 
-//TODO Precisa colocar o side drop e convertar a column pra nodrop
-        column.setColumnType( getColumnType( 0 ) );
-        column.innerColumn();
         column.setSize( 12 );
-
-        containerColumn.withComponents( column, newColumn );
-        columns.add( containerColumn );
-
+        column.halfParentPanelSize( originalColumnUFSize );
         column.recalculateSize();
+        column.setColumnType( getColumnType( 0 ) );
+        if(drop.getOrientation()== ColumnDrop.Orientation.DOWN){
+            columnWithComponents.withComponents( column, newColumn );
+        }
+        else{
+            columnWithComponents.withComponents( column, newColumn );
+        }
+
+        columns.add( columnWithComponents );
+
     }
 
     private void handleSideDrop( ColumnDrop drop, List<Column> columns, int columnINdex, ComponentColumn column ) {
@@ -169,8 +170,7 @@ public class Row {
         if ( drop.getOrientation() == ColumnDrop.Orientation.LEFT ) {
             final ComponentColumn newColumn = createColumn();
             ComponentColumn.Type type = getColumnType( columnINdex );
-            newColumn.init( column.getParentHashCode(), type, newColumnSize, dropCommand(),
-                            "Parent: " + column.getParentHashCode() + " " + hashCode() + "" );
+            newColumn.init( column.getParentHashCode(), type, newColumnSize, dropCommand() );
             columns.add( newColumn );
             column.setColumnType( getColumnType( columnINdex + 1 ) );
             columns.add( column );
@@ -180,8 +180,7 @@ public class Row {
             columns.add( column );
             final ComponentColumn newColumn = createColumn();
             ComponentColumn.Type type = getColumnType( columnINdex + 1 );
-            newColumn.init( column.getParentHashCode(), type, newColumnSize, dropCommand(),
-                            "Parent: " + column.getParentHashCode() + " " + hashCode() + "" );
+            newColumn.init( column.getParentHashCode(), type, newColumnSize, dropCommand() );
             columns.add( newColumn );
         }
     }
@@ -195,16 +194,6 @@ public class Row {
         return drop.getHash() == column.hashCode();
     }
 
-
-    private void createColumns( Integer... colSpans ) {
-        for ( int i = 0; i < colSpans.length; i++ ) {
-            Integer colSpan = colSpans[i];
-            final ComponentColumn column = createColumn();
-            ComponentColumn.Type type = getColumnType( i );
-            column.init( hashCode(), type, colSpan, dropCommand(), " " + hashCode() + "" );
-            columns.add( column );
-        }
-    }
 
     private ComponentColumn.Type getColumnType( int i ) {
         ComponentColumn.Type type;
@@ -247,6 +236,7 @@ public class Row {
     }
 
     private void updateView() {
+        GWT.log( "UPDATE VIEW" + hashCode() );
         repaintContainerEvent.fire( new RepaintContainerEvent() );
     }
 

@@ -10,8 +10,6 @@ import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Random;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.SimplePanel;
-import org.gwtbootstrap3.client.ui.Label;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
@@ -19,10 +17,12 @@ import org.uberfire.client.mvp.PlaceManager;
 import org.uberfire.client.mvp.UberView;
 import org.uberfire.ext.layout.editor.client.novo.template.research.layout.infra.ColumnDrop;
 import org.uberfire.ext.layout.editor.client.novo.template.research.layout.rows.Row;
-import org.uberfire.mvp.PlaceRequest;
+import org.uberfire.mvp.impl.DefaultPlaceRequest;
 
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
+import java.util.HashMap;
+import java.util.Map;
 
 @Dependent
 @Templated
@@ -62,8 +62,6 @@ public class ComponentColumnView extends Composite
     @Inject
     PlaceManager placeManager;
 
-    private FlowPanel contentWrapper;
-
     String cssSize = "";
 
     private final int originalLeftRightWidth = 5;
@@ -72,8 +70,6 @@ public class ComponentColumnView extends Composite
     @Override
     public void init( ComponentColumn presenter ) {
         this.presenter = presenter;
-        contentWrapper = GWT.create( FlowPanel.class );
-        content.add( contentWrapper );
     }
 
     @Override
@@ -108,7 +104,7 @@ public class ComponentColumnView extends Composite
 
     @Override
     public void addRow( UberView<Row> view ) {
-        contentWrapper.add( view );
+        content.add( view );
     }
 
     @Override
@@ -139,18 +135,13 @@ public class ComponentColumnView extends Composite
     }
 
     @Override
-    public void setContent( PlaceRequest place ) {
-        GWT.log( place.getIdentifier() );
-        contentWrapper.clear();
-        FlowPanel panel = GWT.create( FlowPanel.class );
-        panel.getElement().setId( Random.nextInt() + "" );
-        contentWrapper.getElement().setId( Random.nextInt() + "" );
-        placeManager.goTo( place, panel );
+    public void setContent( String place, String size ) {
+        content.clear();
         //FIXME UF BUG
-        panel.setHeight( "100px" );
-        GWT.log( panel.getElement().getInnerHTML() );
-        contentWrapper.add( panel );
-        contentWrapper.add( new Label( "fafasd" ) );
+        content.setHeight( size+"px" );
+        Map<String, String> param = new HashMap<String, String>();
+        param.put( "key", Random.nextInt() + "" );
+        placeManager.goTo( new DefaultPlaceRequest( place, param ), content );
     }
 
 
@@ -235,7 +226,7 @@ public class ComponentColumnView extends Composite
     @EventHandler( "content" )
     public void dropInsideColumn( DropEvent e ) {
         GWT.log( "dropInsideColumnDown content" );
-        presenter.onDrop( ColumnDrop.Orientation.INSIDE );
+        presenter.onDrop( ColumnDrop.Orientation.UP );
         colUp.getElement().removeClassName( "colPreview" );
         colDown.getElement().removeClassName( "colPreview" );
     }
@@ -251,7 +242,7 @@ public class ComponentColumnView extends Composite
     @EventHandler( "colDown" )
     public void dropInsideColumnDown( DropEvent e ) {
         GWT.log( "dropInsideColumnDown down" );
-        presenter.onDrop( ColumnDrop.Orientation.INSIDE );
+        presenter.onDrop( ColumnDrop.Orientation.DOWN );
         colUp.getElement().removeClassName( "colPreview" );
         colDown.getElement().removeClassName( "colPreview" );
 

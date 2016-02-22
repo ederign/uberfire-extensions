@@ -1,5 +1,6 @@
 package org.uberfire.ext.layout.editor.client.novo.template.research.layout.container;
 
+import com.google.gwt.core.client.GWT;
 import org.uberfire.client.mvp.UberView;
 import org.uberfire.ext.layout.editor.client.novo.template.research.layout.infra.RepaintContainerEvent;
 import org.uberfire.ext.layout.editor.client.novo.template.research.layout.rows.EmptyDropRow;
@@ -36,7 +37,7 @@ public class Container {
 
     public void init() {
         emptyDropRow = createEmptyRow();
-        updateView();
+        view.addEmptyRow( emptyDropRow.getView() );
     }
 
     private EmptyDropRow createEmptyRow() {
@@ -50,7 +51,7 @@ public class Container {
             @Override
             public void execute( RowDrop parameter ) {
                 rows.add( createRowFromDrop() );
-                updateView();
+                updateView(" empty drop");
             }
         };
     }
@@ -71,6 +72,7 @@ public class Container {
         return new ParameterizedCommand<RowDrop>() {
             @Override
             public void execute( RowDrop dropRow ) {
+                GWT.log( "createDropCommand" );
                 List<Row> newRows = new ArrayList<Row>();
                 for ( int i = 0; i < rows.size(); i++ ) {
                     Row row = rows.get( i );
@@ -87,7 +89,7 @@ public class Container {
                     }
                 }
                 rows = newRows;
-                updateView();
+                updateView(" drop");
             }
         };
     }
@@ -97,7 +99,7 @@ public class Container {
     }
 
     public UberView<Container> changeResolution() {
-        updateView();
+        updateView("change resolution");
         return getView();
     }
 
@@ -131,20 +133,28 @@ public class Container {
     }
 
     public void repaintContainer( @Observes RepaintContainerEvent repaintContainerEvent ) {
-        updateView();
+        updateView("event");
+//        GWT.log("yo");
     }
 
-    private void updateView() {
+    private void updateView(String source) {
+        //FIXME ??? pq sera
+//        GWT.log( source + " " +rows.size()+" UPDATE CALL " );
+        updateViewMaybeUfBug();
+        updateViewMaybeUfBug();
+    }
+
+    private void updateViewMaybeUfBug() {
+        //screens are not displayed in the first try
         clearView();
-        if ( rows.size() == 0 ) {
-            view.addEmptyRow( emptyDropRow.getView() );
-        } else {
+        if ( !rows.isEmpty()) {
             for ( int i = 0; i < rows.size(); i++ ) {
                 Row row = rows.get( i );
                 view.addRow( row.getView() );
             }
         }
     }
+
 
     private void clearView() {
         view.clear();
@@ -166,7 +176,7 @@ public class Container {
         }
 
         Collections.swap( rows, begin, end );
-        updateView();
+        updateView("swap ");
     }
 
 

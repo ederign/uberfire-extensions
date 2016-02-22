@@ -1,7 +1,6 @@
 package org.uberfire.ext.layout.editor.client.novo.template.research.layout.columns;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.Random;
 import org.uberfire.client.mvp.UberView;
 import org.uberfire.ext.layout.editor.client.novo.template.research.layout.infra.ColumnDrop;
 import org.uberfire.ext.layout.editor.client.novo.template.research.layout.infra.DnDManager;
@@ -10,17 +9,11 @@ import org.uberfire.ext.layout.editor.client.novo.template.research.layout.rows.
 import org.uberfire.ext.layout.editor.client.novo.template.research.layout.rows.RowDrop;
 import org.uberfire.ext.layout.editor.client.novo.template.research.layout.screens.Screens;
 import org.uberfire.mvp.ParameterizedCommand;
-import org.uberfire.mvp.PlaceRequest;
-import org.uberfire.mvp.impl.DefaultPlaceRequest;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @Dependent
 public class ComponentColumn implements Column {
@@ -41,12 +34,12 @@ public class ComponentColumn implements Column {
     @Inject
     Instance<Row> rowInstance;
 
-    List<Row> rows = new ArrayList<Row>();
-
     //gambiarra pra acertar o padding de inner columns
     boolean innerColumn = false;
     boolean containerColumn = false;
-    private DefaultPlaceRequest place;
+    private String place;
+    //UF BUG
+    private Integer panelSize = 100;
 
 
     boolean canResize() {
@@ -76,11 +69,7 @@ public class ComponentColumn implements Column {
         this.columnType = Type.FIRST;
         this.dropCommand = columnDropParameterizedCommand;
         view.setSize( size.toString() );
-        Map<String, String> param = new HashMap<String, String>(  );
-        param.put( "key", Random.nextInt()+"" );
-        place = new DefaultPlaceRequest( Screens.next().name(), param  );
-        view.setContent( place );
-//        view.setContent( place );
+        place = Screens.next().name();
     }
 
     public void onMouseDown( int xPosition ) {
@@ -106,14 +95,6 @@ public class ComponentColumn implements Column {
         }
     }
 
-    public void withComponents( ComponentColumn column, ComponentColumn newColumn ) {
-        GWT.log( "TODO YEAH" );
-        final Row row = rowInstance.get();
-        row.init( createDropCommand() );
-        row.addColumns( column, newColumn );
-        rows.add( row );
-    }
-
     private ParameterizedCommand<RowDrop> createDropCommand() {
         return new ParameterizedCommand<RowDrop>() {
             @Override
@@ -131,6 +112,10 @@ public class ComponentColumn implements Column {
         this.containerColumn = true;
     }
 
+    public Integer getPanelSize() {
+        return panelSize;
+    }
+
     public interface View extends UberView<ComponentColumn> {
 
         void setCursor();
@@ -141,7 +126,7 @@ public class ComponentColumn implements Column {
 
         void addRow( UberView<Row> view );
 
-        void setContent( PlaceRequest place );
+        void setContent( String place, String size );
     }
 
     @Inject
@@ -155,18 +140,9 @@ public class ComponentColumn implements Column {
     }
 
     public UberView<ComponentColumn> getView() {
-        GWT.log( "getView Component Column" );
-        if ( hasRows() ) {
-            for ( Row row : rows ) {
-//                GWT.log("has columns");
-                view.addRow( row.getView() );
-            }
-        }
         view.calculateSize();
         view.setCursor();
-        Map<String, String> param = new HashMap<String, String>(  );
-        param.put( "key", Random.nextInt()+"" );
-        view.setContent( new DefaultPlaceRequest( place.getIdentifier(), param ));
+        view.setContent( place, panelSize.toString() );
         return view;
     }
 
@@ -174,19 +150,20 @@ public class ComponentColumn implements Column {
         view.calculateSize();
     }
 
-    private boolean hasRows() {
-        return !rows.isEmpty();
+    public void halfParentPanelSize(Integer panelSize){
+        //columns should have half of parent size
+        this.panelSize = panelSize/2;
     }
 
     public void init( int parentHashCode, Type columnType, Integer size,
-                      ParameterizedCommand<ColumnDrop> dropCommand, String content ) {
+                      ParameterizedCommand<ColumnDrop> dropCommand  ) {
         this.parentHashCode = parentHashCode;
         this.columnType = columnType;
         this.size = size;
         this.dropCommand = dropCommand;
         view.setSize( size.toString() );
-//        view.setContent( new DefaultPlaceRequest( Screens.next().name() ) );
         view.setCursor();
+        place = Screens.next().name();
     }
 
     public int getParentHashCode() {

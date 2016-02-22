@@ -23,7 +23,6 @@ public class EmptyDropRow {
 
     public void init( ParameterizedCommand<RowDrop> dropCommand ) {
         this.dropCommand = dropCommand;
-//        updateView();
     }
 
     public void drop() {

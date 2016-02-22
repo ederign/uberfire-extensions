@@ -111,23 +111,8 @@ public class LayoutEditorPresenter {
 
     @PostConstruct
     public void initNew() {
-//        MyCellRenderer cell = new MyCellRenderer();
-
-//        CellList<YoDTO> cellList = new CellList<YoDTO>( cell );
-//
-//        cellList.setRowData( 0, dogs );
-//
-//        view.setupNewContainer2( cellList );
-
-
-        view.setupNewContainer2( new Label( "Simple Presenter" ) );
-        view.setupNewContainer( simplePresenter.getView() );
-        view.setupNewContainer2( new Label( "Container" ) );
         container.init();
         view.setupNewContainer2( container.getView().asWidget() );
-        view.setupNewContainer2( new Label( "Container2" ) );
-        newContainer.init();
-        view.setupNewContainer2( newContainer.getView().asWidget() );
     }
 
     public UberView<LayoutEditorPresenter> getView() {

@@ -8,9 +8,12 @@ import org.gwtbootstrap3.client.ui.html.Span;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
+import org.uberfire.client.mvp.PlaceManager;
 import org.uberfire.client.mvp.UberView;
 import org.uberfire.ext.layout.editor.client.novo.template.research.layout.rows.EmptyDropRow;
 import org.uberfire.ext.layout.editor.client.novo.template.research.layout.rows.Row;
+import org.uberfire.ext.layout.editor.client.novo.template.research.layout.screens.Screens;
+import org.uberfire.mvp.impl.DefaultPlaceRequest;
 
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
@@ -22,6 +25,9 @@ public class ContainerView extends Composite
         Container.View {
 
     private Container presenter;
+
+    @Inject
+    PlaceManager placeManager;
 
     @Inject
     @DataField
@@ -39,19 +45,16 @@ public class ContainerView extends Composite
     @DataField
     private Span desktop;
 
-    private FlowPanel wrapper = new FlowPanel();
-
     @Override
     public void init( Container presenter ) {
         this.presenter = presenter;
-        layout.add( wrapper );
     }
 
     @EventHandler( "mobile" )
     public void mobileSize( ClickEvent e ) {
-        wrapper.clear();
+        layout.clear();
         Frame f = new Frame( "test.html" );
-        wrapper.add( f );
+        layout.add( f );
         String containerPreview = getElement().getInnerHTML();
         f.setWidth( "200px" );
     }
@@ -64,9 +67,9 @@ public class ContainerView extends Composite
     @EventHandler( "tablet" )
     public void tabletSize( ClickEvent e ) {
         GWT.log( "tablet" );
-        wrapper.clear();
+        layout.clear();
         Frame f = new Frame( "test.html" );
-        wrapper.add( f );
+        layout.add( f );
         f.setWidth( "767px" );
         e.preventDefault();
     }
@@ -74,9 +77,9 @@ public class ContainerView extends Composite
     @EventHandler( "desktop" )
     public void desktopSize( ClickEvent e ) {
         GWT.log( "tablet" );
-        wrapper.clear();
+        layout.clear();
         Frame f = new Frame( "test.html" );
-        wrapper.add( f );
+        layout.add( f );
 
         f.setWidth( getOffsetWidth() + "px" );
 
@@ -86,17 +89,18 @@ public class ContainerView extends Composite
 
     @Override
     public void addRow( UberView<Row> view ) {
-        wrapper.add( view.asWidget() );
+
+        layout.add( view.asWidget() );
     }
 
     @Override
     public void clear() {
-        wrapper.clear();
+        layout.clear();
     }
 
     @Override
     public void addEmptyRow( UberView<EmptyDropRow> emptyDropRow ) {
-        wrapper.add( emptyDropRow.asWidget() );
+        layout.add( emptyDropRow.asWidget() );
     }
 
 
