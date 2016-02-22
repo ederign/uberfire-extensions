@@ -43,8 +43,11 @@ public class ComponentColumnView extends Composite
 
     @Inject
     @DataField
-    private FlowPanel colDown;
+    private FlowPanel topPanel;
 
+    @Inject
+    @DataField
+    private FlowPanel colDown;
 
     @Inject
     @DataField

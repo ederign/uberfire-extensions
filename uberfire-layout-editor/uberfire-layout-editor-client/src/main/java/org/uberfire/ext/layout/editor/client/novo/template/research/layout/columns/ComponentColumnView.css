@@ -45,3 +45,7 @@
 .columnDropPreview{
     border: 1px dashed lightgray;;
 }
+
+.buttonsPanel{
+    text-align: right;
+}
