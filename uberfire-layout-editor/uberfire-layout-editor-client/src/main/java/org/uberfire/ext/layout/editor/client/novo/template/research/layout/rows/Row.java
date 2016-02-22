@@ -119,7 +119,7 @@ public class Row {
                         if ( isASideDrop( drop ) ) {
                             handleSideDrop( drop, columns, i, column );
                         } else {
-                            handleInnerComponentDrop( drop,  columns, i, column );
+                            handleInnerComponentDrop( drop, columns, i, column );
                         }
                     } else {
                         columns.add( column );
@@ -146,11 +146,10 @@ public class Row {
         column.halfParentPanelSize( originalColumnUFSize );
         column.recalculateSize();
         column.setColumnType( getColumnType( 0 ) );
-        if(drop.getOrientation()== ColumnDrop.Orientation.DOWN){
+        if ( drop.getOrientation() == ColumnDrop.Orientation.DOWN ) {
             columnWithComponents.withComponents( column, newColumn );
-        }
-        else{
-            columnWithComponents.withComponents( column, newColumn );
+        } else {
+            columnWithComponents.withComponents( newColumn, column );
         }
 
         columns.add( columnWithComponents );
