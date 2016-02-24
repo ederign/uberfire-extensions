@@ -116,6 +116,10 @@ public class ComponentColumn implements Column {
         return panelSize;
     }
 
+    public String dragInfo() {
+        return place;
+    }
+
     public interface View extends UberView<ComponentColumn> {
 
         void setCursor();
@@ -156,14 +160,14 @@ public class ComponentColumn implements Column {
     }
 
     public void init( int parentHashCode, Type columnType, Integer size,
-                      ParameterizedCommand<ColumnDrop> dropCommand  ) {
+                      ParameterizedCommand<ColumnDrop> dropCommand, String place  ) {
         this.parentHashCode = parentHashCode;
         this.columnType = columnType;
         this.size = size;
         this.dropCommand = dropCommand;
         view.setSize( size.toString() );
         view.setCursor();
-        place = Screens.next().name();
+        this.place = place;
     }
 
     public int getParentHashCode() {
@@ -179,8 +183,9 @@ public class ComponentColumn implements Column {
         view.setSize( size.toString() );
     }
 
-    public void onDrop( ColumnDrop.Orientation orientation ) {
-        dropCommand.execute( new ColumnDrop( hashCode(), orientation ) );
+    public void onDrop( ColumnDrop.Orientation orientation, String dndData ) {
+        GWT.log( dndData + " <- dndData" );
+        dropCommand.execute( new ColumnDrop( hashCode(), orientation, dndData ) );
     }
 
 
@@ -212,5 +217,9 @@ public class ComponentColumn implements Column {
 
     public boolean isContainerColumn() {
         return containerColumn;
+    }
+
+    public String getPlace() {
+        return place;
     }
 }

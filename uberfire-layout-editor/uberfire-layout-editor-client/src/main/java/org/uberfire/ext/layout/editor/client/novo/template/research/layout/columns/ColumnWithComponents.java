@@ -32,10 +32,19 @@ public class ColumnWithComponents implements Column {
 
     public void withComponents( Column... _columns ) {
         final Row row = rowInstance.get();
-        row.init( createDropCommand() );
+        row.init( createDropCommand(), componentRemovalCommand() );
         row.addColumns( _columns );
 //        column.setParentHashCode( row.hashCode() );
         rows.add( row );
+    }
+
+    private ParameterizedCommand<String> componentRemovalCommand() {
+        return  new ParameterizedCommand<String>() {
+            @Override
+            public void execute( String parameter ) {
+                GWT.log( "remove " + parameter );
+            }
+        };
     }
 
     private ParameterizedCommand<RowDrop> createDropCommand() {
@@ -74,7 +83,7 @@ public class ColumnWithComponents implements Column {
         return view;
     }
 
-    private boolean hasRows() {
+    public boolean hasRows() {
         return !rows.isEmpty();
     }
 
@@ -83,4 +92,7 @@ public class ColumnWithComponents implements Column {
         view.setSize( size.toString() );
     }
 
+    public List<Row> getRows() {
+        return rows;
+    }
 }

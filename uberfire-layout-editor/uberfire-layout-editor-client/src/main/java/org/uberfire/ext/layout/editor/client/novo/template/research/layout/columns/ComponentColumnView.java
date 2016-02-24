@@ -10,11 +10,13 @@ import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Random;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
+import org.gwtbootstrap3.client.ui.Button;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.uberfire.client.mvp.PlaceManager;
 import org.uberfire.client.mvp.UberView;
+import org.uberfire.ext.layout.editor.client.components.LayoutDragComponent;
 import org.uberfire.ext.layout.editor.client.novo.template.research.layout.infra.ColumnDrop;
 import org.uberfire.ext.layout.editor.client.novo.template.research.layout.rows.Row;
 import org.uberfire.mvp.impl.DefaultPlaceRequest;
@@ -41,9 +43,8 @@ public class ComponentColumnView extends Composite
     @DataField
     private FlowPanel colUp;
 
-    @Inject
     @DataField
-    private FlowPanel topPanel;
+    private Element topPanel = DOM.createDiv();
 
     @Inject
     @DataField
@@ -61,6 +62,10 @@ public class ComponentColumnView extends Composite
     @DataField
     private FlowPanel content;
 
+    @Inject
+    @DataField
+    private Button teste;
+
 
     @Inject
     PlaceManager placeManager;
@@ -69,10 +74,33 @@ public class ComponentColumnView extends Composite
 
     private final int originalLeftRightWidth = 5;
 
+    private ColumnDrop.Orientation contentDropOrientation;
 
     @Override
     public void init( ComponentColumn presenter ) {
         this.presenter = presenter;
+        setupDnD();
+    }
+
+    private void setupDnD() {
+        teste.addDomHandler( new DragStartHandler() {
+            @Override
+            public void onDragStart( DragStartEvent event ) {
+                content.getElement().addClassName( "columnDropPreview" );
+                event.setData( LayoutDragComponent.FORMAT, presenter.dragInfo() );
+                event.getDataTransfer().setDragImage( content.getElement(), 10, 10 );
+            }
+
+        }, DragStartEvent.getType() );
+
+        teste.addDomHandler( new DragEndHandler() {
+            @Override
+            public void onDragEnd( DragEndEvent dragEndEvent ) {
+                content.getElement().removeClassName( "columnDropPreview" );
+            }
+        }, DragEndEvent.getType() );
+
+        teste.getElement().setDraggable( com.google.gwt.user.client.Element.DRAGGABLE_TRUE );
     }
 
     @Override
@@ -113,6 +141,7 @@ public class ComponentColumnView extends Composite
     @Override
     public void setCursor() {
         content.getElement().getStyle().setCursor( Style.Cursor.DEFAULT );
+        topPanel.getStyle().setCursor( Style.Cursor.MOVE );
         if ( presenter.canResize() ) {
             left.getElement().getStyle().setCursor( Style.Cursor.COL_RESIZE );
         } else {
@@ -141,7 +170,7 @@ public class ComponentColumnView extends Composite
     public void setContent( String place, String size ) {
         content.clear();
         //FIXME UF BUG
-        content.setHeight( size+"px" );
+        content.setHeight( size + "px" );
         Map<String, String> param = new HashMap<String, String>();
         param.put( "key", Random.nextInt() + "" );
         placeManager.goTo( new DefaultPlaceRequest( place, param ), content );
@@ -190,10 +219,12 @@ public class ComponentColumnView extends Composite
         if ( ( dragOverY - absoluteTop ) < ( absoluteBottom - dragOverY ) ) {
             colUp.getElement().addClassName( "colPreview" );
             colDown.getElement().removeClassName( "colPreview" );
+            contentDropOrientation = ColumnDrop.Orientation.UP;
 
         } else {
             colDown.getElement().addClassName( "colPreview" );
             colUp.getElement().removeClassName( "colPreview" );
+            contentDropOrientation = ColumnDrop.Orientation.DOWN;
         }
 //        presenter.onMouseOver(new MouseOverInfo(e.getClientX(), e.getClientY()));
     }
@@ -203,6 +234,7 @@ public class ComponentColumnView extends Composite
         e.preventDefault();
         colUp.getElement().removeClassName( "colPreview" );
         colDown.getElement().removeClassName( "colPreview" );
+        contentDropOrientation = null;
 //        presenter.onMouseOver(new MouseOverInfo(e.getClientX(), e.getClientY()));
     }
 
@@ -229,27 +261,30 @@ public class ComponentColumnView extends Composite
     @EventHandler( "content" )
     public void dropInsideColumn( DropEvent e ) {
         GWT.log( "dropInsideColumnDown content" );
-        presenter.onDrop( ColumnDrop.Orientation.UP );
+
+        if ( contentDropOrientation != null ) {
+            presenter.onDrop( contentDropOrientation, e.getData( "text" ) );
+        }
         colUp.getElement().removeClassName( "colPreview" );
         colDown.getElement().removeClassName( "colPreview" );
     }
 
-    @EventHandler( "colUp" )
-    public void dropInsideColumnUp( DropEvent e ) {
-        GWT.log( "dropInsideColumnDown up" );
-        presenter.onDrop( ColumnDrop.Orientation.INSIDE );
-        colUp.getElement().removeClassName( "colPreview" );
-        colDown.getElement().removeClassName( "colPreview" );
-    }
-
-    @EventHandler( "colDown" )
-    public void dropInsideColumnDown( DropEvent e ) {
-        GWT.log( "dropInsideColumnDown down" );
-        presenter.onDrop( ColumnDrop.Orientation.DOWN );
-        colUp.getElement().removeClassName( "colPreview" );
-        colDown.getElement().removeClassName( "colPreview" );
-
-    }
+//    @EventHandler( "colUp" )
+//    public void dropInsideColumnUp( DropEvent e ) {
+//        GWT.log( "dropInsideColumnDown up" );
+//        presenter.onDrop( ColumnDrop.Orientation.UP, e.getData( "text" ) );
+//        colUp.getElement().removeClassName( "colPreview" );
+//        colDown.getElement().removeClassName( "colPreview" );
+//    }
+//
+//    @EventHandler( "colDown" )
+//    public void dropInsideColumnDown( DropEvent e ) {
+//        GWT.log( "dropInsideColumnDown down" );
+//        presenter.onDrop( ColumnDrop.Orientation.DOWN,e.getData( "text" ) );
+//        colUp.getElement().removeClassName( "colPreview" );
+//        colDown.getElement().removeClassName( "colPreview" );
+//
+//    }
 
     @EventHandler( "left" )
     public void dropColumnRight( DropEvent e ) {
@@ -257,7 +292,7 @@ public class ComponentColumnView extends Composite
         e.preventDefault();
         left.getElement().removeClassName( "columnDropPreview dropPreview" );
         content.getElement().removeClassName( "centerPreview" );
-        presenter.onDrop( ColumnDrop.Orientation.LEFT );
+        presenter.onDrop( ColumnDrop.Orientation.LEFT, e.getData( "text" ) );
     }
 
     @EventHandler( "right" )
@@ -283,7 +318,7 @@ public class ComponentColumnView extends Composite
         e.preventDefault();
         right.getElement().removeClassName( "columnDropPreview dropPreview" );
         content.getElement().removeClassName( "centerPreview" );
-        presenter.onDrop( ColumnDrop.Orientation.RIGHT );
+        presenter.onDrop( ColumnDrop.Orientation.RIGHT, e.getData( "text" ) );
     }
 
     @EventHandler( "col" )
@@ -291,17 +326,20 @@ public class ComponentColumnView extends Composite
         e.preventDefault();
     }
 
-//    @EventHandler( "col" )
-//    public void click( ClickEvent e ) {
-//        GWT.log( "Click" );
-//    }
-//
-//    @EventHandler( "col" )
-//    public void dragOverEvent( DragOverEvent e ) {
-//        e.preventDefault();
-//    }
+    @EventHandler( "teste" )
+    public void x( ClickEvent e ) {
+        GWT.log( "teste" );
+    }
 
+    @EventHandler( "teste" )
+    public void x( DragStartEvent e ) {
+        GWT.log( "DragStartEvent" );
+    }
 
+    //    @EventHandler("col")
+//    public void x(DragEndEvent e){
+//        GWT.log("DRAG END");
+//    }
     private int calculateMiddle() {
         return getAbsoluteLeft() + ( getOffsetWidth() / 2 );
     }

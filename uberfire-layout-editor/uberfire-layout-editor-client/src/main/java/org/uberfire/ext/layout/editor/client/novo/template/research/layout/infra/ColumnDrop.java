@@ -4,11 +4,13 @@ public class ColumnDrop{
 
     private final int hash;
     private  final Orientation orientation;
+    private String dndData;
 
     public ColumnDrop( int hash,
-                       Orientation orientation ) {
+                       Orientation orientation, String dndData ) {
         this.hash = hash;
         this.orientation = orientation;
+        this.dndData = dndData;
     }
 
     public enum Orientation {
@@ -21,5 +23,9 @@ public class ColumnDrop{
 
     public int getHash() {
         return hash;
+    }
+
+    public String getDndData() {
+        return dndData;
     }
 }

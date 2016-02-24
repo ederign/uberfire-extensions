@@ -51,7 +51,7 @@ public class Container {
             @Override
             public void execute( RowDrop parameter ) {
                 rows.add( createRowFromDrop() );
-                updateView(" empty drop");
+                updateView( " empty drop" );
             }
         };
     }
@@ -64,8 +64,23 @@ public class Container {
 
     private Row createRow() {
         final Row row = rowInstance.get();
-        row.init( createDropCommand() );
+        row.init( createDropCommand(), componentRemovalCommand() );
         return row;
+    }
+
+    private ParameterizedCommand<String> componentRemovalCommand() {
+        return new ParameterizedCommand<String>() {
+            @Override
+            public void execute( String placeName ) {
+                for ( Row row : rows ) {
+                    //escrever algoritmo melhor
+                    final boolean removed = row.removeColumn( placeName );
+                    if ( removed ) {
+                        //remover row
+                    }
+                }
+            }
+        };
     }
 
     private ParameterizedCommand<RowDrop> createDropCommand() {
@@ -89,7 +104,7 @@ public class Container {
                     }
                 }
                 rows = newRows;
-                updateView(" drop");
+                updateView( " drop" );
             }
         };
     }
@@ -99,7 +114,7 @@ public class Container {
     }
 
     public UberView<Container> changeResolution() {
-        updateView("change resolution");
+        updateView( "change resolution" );
         return getView();
     }
 
@@ -133,11 +148,11 @@ public class Container {
     }
 
     public void repaintContainer( @Observes RepaintContainerEvent repaintContainerEvent ) {
-        updateView("event");
+        updateView( "event" );
 //        GWT.log("yo");
     }
 
-    private void updateView(String source) {
+    private void updateView( String source ) {
         //FIXME ??? pq sera
 //        GWT.log( source + " " +rows.size()+" UPDATE CALL " );
         updateViewMaybeUfBug();
@@ -147,10 +162,12 @@ public class Container {
     private void updateViewMaybeUfBug() {
         //screens are not displayed in the first try
         clearView();
-        if ( !rows.isEmpty()) {
+        if ( !rows.isEmpty() ) {
             for ( int i = 0; i < rows.size(); i++ ) {
                 Row row = rows.get( i );
-                view.addRow( row.getView() );
+                if ( row.hasColumns() ) {
+                    view.addRow( row.getView() );
+                }
             }
         }
     }
@@ -176,7 +193,7 @@ public class Container {
         }
 
         Collections.swap( rows, begin, end );
-        updateView("swap ");
+        updateView( "swap " );
     }
 
 
