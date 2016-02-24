@@ -8,7 +8,6 @@ import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.SimplePanel;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
@@ -60,54 +59,70 @@ public class RowView extends Composite
 
     @EventHandler( "upper" )
     public void dragOverUpper( DragOverEvent e ) {
-        e.preventDefault();
-        upper.addClassName( "rowDropPreview" );
+        if ( presenter.isDropEnable() ) {
+            e.preventDefault();
+            upper.addClassName( "rowDropPreview" );
+        }
     }
 
     @EventHandler( "upper" )
     public void dragLeaveUpper( DragLeaveEvent e ) {
-        e.preventDefault();
-        upper.removeClassName( "rowDropPreview" );
+        if ( presenter.isDropEnable() ) {
+            e.preventDefault();
+            upper.removeClassName( "rowDropPreview" );
+        }
     }
 
     @EventHandler( "upper" )
     public void dropUpperEvent( DropEvent e ) {
-        e.preventDefault();
-        upper.removeClassName( "rowDropPreview" );
-        presenter.drop( RowDrop.Orientation.AFTER);
+        if ( presenter.isDropEnable() ) {
+            e.preventDefault();
+            upper.removeClassName( "rowDropPreview" );
+            presenter.drop( RowDrop.Orientation.AFTER );
+        }
     }
 
     @EventHandler( "bottom" )
     public void mouseOutUpper( MouseOutEvent e ) {
-        e.preventDefault();
-        bottom.removeClassName( "rowDropPreview" );
+        if ( presenter.isDropEnable() ) {
+            e.preventDefault();
+            bottom.removeClassName( "rowDropPreview" );
+        }
     }
 
     @EventHandler( "bottom" )
     public void dragoverBottom( DragOverEvent e ) {
-        e.preventDefault();
-        bottom.addClassName( "rowDropPreview" );
+        if ( presenter.isDropEnable() ) {
+            e.preventDefault();
+            bottom.addClassName( "rowDropPreview" );
+        }
 
     }
 
     @EventHandler( "bottom" )
     public void dropBottomEvent( DropEvent e ) {
-        e.preventDefault();
-        bottom.removeClassName( "rowDropPreview" );
-        presenter.drop( RowDrop.Orientation.BEFORE);
+        if ( presenter.isDropEnable() ) {
+            e.preventDefault();
+            bottom.removeClassName( "rowDropPreview" );
+            presenter.drop( RowDrop.Orientation.BEFORE );
+        }
     }
 
 
     @EventHandler( "bottom" )
     public void dragLeaveBottom( DragLeaveEvent e ) {
-        e.preventDefault();
-        bottom.removeClassName( "rowDropPreview" );
+        if ( presenter.isDropEnable() ) {
+            e.preventDefault();
+            bottom.removeClassName( "rowDropPreview" );
+        }
     }
 
     @EventHandler( "bottom" )
     public void mouseOutBottom( MouseOutEvent e ) {
-        e.preventDefault();
-        bottom.removeClassName( "rowDropPreview" );
+        if ( presenter.isDropEnable() ) {
+            e.preventDefault();
+            bottom.removeClassName( "rowDropPreview" );
+        }
     }
 
 

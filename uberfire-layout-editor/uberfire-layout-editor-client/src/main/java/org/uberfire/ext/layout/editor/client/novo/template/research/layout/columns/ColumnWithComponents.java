@@ -10,7 +10,6 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
-import java.util.ArrayList;
 import java.util.List;
 
 @Dependent
@@ -21,8 +20,8 @@ public class ColumnWithComponents implements Column {
     private int parentHashCode;
 
 
-    List<Row> rows = new ArrayList<>();
-    
+    Row row;
+
     @Inject
     Instance<Row> rowInstance;
 
@@ -31,15 +30,15 @@ public class ColumnWithComponents implements Column {
     }
 
     public void withComponents( Column... _columns ) {
-        final Row row = rowInstance.get();
+        row = rowInstance.get();
+        row.disableDrop();
         row.init( createDropCommand(), componentRemovalCommand() );
         row.addColumns( _columns );
 //        column.setParentHashCode( row.hashCode() );
-        rows.add( row );
     }
 
     private ParameterizedCommand<String> componentRemovalCommand() {
-        return  new ParameterizedCommand<String>() {
+        return new ParameterizedCommand<String>() {
             @Override
             public void execute( String parameter ) {
                 GWT.log( "remove " + parameter );
@@ -51,9 +50,13 @@ public class ColumnWithComponents implements Column {
         return new ParameterizedCommand<RowDrop>() {
             @Override
             public void execute( RowDrop parameter ) {
-                GWT.log("Drop");
+                GWT.log( "Drop Column With components" );
             }
         };
+    }
+
+    public void addColumnToRow( ComponentColumn newColumn ) {
+        row.addColumns( newColumn );
     }
 
     public interface View extends UberView<ColumnWithComponents> {
@@ -75,16 +78,14 @@ public class ColumnWithComponents implements Column {
 
     @Override
     public UberView<ColumnWithComponents> getView() {
-        if ( hasRows() ) {
-            for ( Row row : rows ) {
-                view.addRow( row.getView() );
-            }
+        if ( hasRow() ) {
+            view.addRow( row.getView() );
         }
         return view;
     }
 
-    public boolean hasRows() {
-        return !rows.isEmpty();
+    public boolean hasRow() {
+        return row != null;
     }
 
     public void init( Integer size ) {
@@ -92,7 +93,7 @@ public class ColumnWithComponents implements Column {
         view.setSize( size.toString() );
     }
 
-    public List<Row> getRows() {
-        return rows;
+    public Row getRow() {
+        return row;
     }
 }
