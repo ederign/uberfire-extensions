@@ -38,9 +38,6 @@ import org.uberfire.ext.layout.editor.client.components.LayoutDragComponentGroup
 import org.uberfire.ext.layout.editor.client.components.DynamicLayoutDraggableGroup;
 import org.uberfire.ext.layout.editor.client.dnd.DragGridElement;
 import org.uberfire.ext.layout.editor.client.dnd.DropRowPanel;
-import org.uberfire.ext.layout.editor.client.novo.LayoutContainerPresenter;
-import org.uberfire.ext.layout.editor.client.novo.template.research.SimplePresenter;
-import org.uberfire.ext.layout.editor.client.novo.template.research.SimpleView;
 import org.uberfire.ext.layout.editor.client.row.RowView;
 import org.uberfire.ext.layout.editor.client.structure.EditorWidget;
 import org.uberfire.ext.layout.editor.client.structure.LayoutEditorWidget;
@@ -82,11 +79,6 @@ public class LayoutEditorView extends Composite
     @UiField
     FlowPanel newContainer;
 
-
-    @Override
-    public void setupNewContainer( UberView<SimplePresenter> view ) {
-        newContainer.add( view );
-    }
 
     @Override
     public void setupNewContainer2( Widget view ) {

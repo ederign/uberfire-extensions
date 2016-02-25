@@ -15,7 +15,6 @@
  */
 package org.uberfire.ext.layout.editor.client;
 
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.errai.ioc.client.container.IOC;
 import org.uberfire.client.mvp.UberView;
@@ -24,8 +23,6 @@ import org.uberfire.ext.layout.editor.client.components.GridLayoutDragComponent;
 import org.uberfire.ext.layout.editor.client.components.LayoutDragComponent;
 import org.uberfire.ext.layout.editor.client.components.LayoutDragComponentGroup;
 import org.uberfire.ext.layout.editor.client.novo.template.research.layout.container.Container;
-import org.uberfire.ext.layout.editor.client.novo.template.research.layout.rows.Row;
-import org.uberfire.ext.layout.editor.client.novo.template.research.SimplePresenter;
 import org.uberfire.ext.layout.editor.client.structure.EditorWidget;
 import org.uberfire.workbench.events.NotificationEvent;
 
@@ -34,7 +31,6 @@ import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -46,13 +42,13 @@ public class LayoutEditorPresenter {
     @Inject
     private Event<NotificationEvent> ufNotification;
 
-    @Inject Container newContainer;
+    @Inject
+    Container newContainer;
 
 
     private final View view;
+
     private Container container;
-    private Row row;
-    private SimplePresenter simplePresenter;
 
 
     private List<LayoutDragComponent> addedGridSystemComponents = new ArrayList<LayoutDragComponent>();
@@ -95,15 +91,12 @@ public class LayoutEditorPresenter {
 
         void removeDraggableComponentFromGroup( String groupId, String componentId );
 
-        void setupNewContainer( UberView<SimplePresenter> view );
     }
 
     @Inject
-    public LayoutEditorPresenter( final View view, Row row, Container container, SimplePresenter simplePresenter ) {
+    public LayoutEditorPresenter( final View view, Container container ) {
         this.view = view;
-        this.row = row;
         this.container = container;
-        this.simplePresenter = simplePresenter;
         view.init( this );
 
     }
