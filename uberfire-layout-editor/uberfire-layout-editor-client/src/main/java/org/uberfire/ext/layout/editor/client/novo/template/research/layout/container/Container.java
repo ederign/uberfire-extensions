@@ -1,6 +1,5 @@
 package org.uberfire.ext.layout.editor.client.novo.template.research.layout.container;
 
-import com.google.gwt.core.client.GWT;
 import org.uberfire.client.mvp.UberView;
 import org.uberfire.ext.layout.editor.client.novo.template.research.layout.infra.RepaintContainerEvent;
 import org.uberfire.ext.layout.editor.client.novo.template.research.layout.rows.EmptyDropRow;
@@ -47,17 +46,22 @@ public class Container {
     }
 
     private ParameterizedCommand<RowDrop> createEmptyDropCommand() {
-        return new ParameterizedCommand<RowDrop>() {
-            @Override
-            public void execute( RowDrop parameter ) {
-                rows.add( createRowFromDrop() );
-                updateView( " empty drop" );
-            }
+//        return new ParameterizedCommand<RowDrop>() {
+//            @Override
+//            public void execute( RowDrop parameter ) {
+//                rows.add( createRowFromDrop() );
+//                updateView();
+//            }
+//        };
+        return ( drop ) -> {
+            rows.add( createRowFromDrop() );
+            updateView();
         };
     }
 
     private Row createRowFromDrop() {
         final Row row = createRow();
+        //TODO read DND DATA and pass proper component as parameter
         row.rowWithOneColumn();
         return row;
     }
@@ -69,44 +73,71 @@ public class Container {
     }
 
     private ParameterizedCommand<String> componentRemovalCommand() {
-        return new ParameterizedCommand<String>() {
-            @Override
-            public void execute( String placeName ) {
-                for ( Row row : rows ) {
-                    //escrever algoritmo melhor
-                    final boolean removed = row.removeColumn( placeName );
-                    if ( removed ) {
-                        //remover row
-                    }
+        return (placeName) -> {
+            for ( Row row : rows ) {
+                final boolean removed = row.removeColumn( placeName );
+                if ( removed ) {
+                    //TODO remove row
                 }
             }
         };
+//        new ParameterizedCommand<String>() {
+//            @Override
+//            public void execute( String placeName ) {
+//                for ( Row row : rows ) {
+//                    final boolean removed = row.removeColumn( placeName );
+//                    if ( removed ) {
+//                        //TODO remove row
+//                    }
+//                }
+//            }
+//        };
     }
 
     private ParameterizedCommand<RowDrop> createDropCommand() {
-        return new ParameterizedCommand<RowDrop>() {
-            @Override
-            public void execute( RowDrop dropRow ) {
-                GWT.log( "createDropCommand" );
-                List<Row> newRows = new ArrayList<Row>();
-                for ( int i = 0; i < rows.size(); i++ ) {
-                    Row row = rows.get( i );
-                    if ( dropRow.getRowHashCode() == row.hashCode() ) {
-                        if ( dropRow.getOrientation() == RowDrop.Orientation.AFTER ) {
-                            newRows.add( createRowFromDrop() );
-                            newRows.add( row );
-                        } else {
-                            newRows.add( row );
-                            newRows.add( createRowFromDrop() );
-                        }
+        return (dropRow) ->{
+            List<Row> newRows = new ArrayList<Row>();
+            for ( int i = 0; i < rows.size(); i++ ) {
+                //TODO Refator DND
+                Row row = rows.get( i );
+                if ( dropRow.getRowHashCode() == row.hashCode() ) {
+                    if ( dropRow.getOrientation() == RowDrop.Orientation.AFTER ) {
+                        newRows.add( createRowFromDrop() );
+                        newRows.add( row );
                     } else {
                         newRows.add( row );
+                        newRows.add( createRowFromDrop() );
                     }
+                } else {
+                    newRows.add( row );
                 }
-                rows = newRows;
-                updateView( " drop" );
             }
+            rows = newRows;
+            updateView();
         };
+//        return new ParameterizedCommand<RowDrop>() {
+//            @Override
+//            public void execute( RowDrop dropRow ) {
+//                List<Row> newRows = new ArrayList<Row>();
+//                for ( int i = 0; i < rows.size(); i++ ) {
+//                    //TODO Refator DND
+//                    Row row = rows.get( i );
+//                    if ( dropRow.getRowHashCode() == row.hashCode() ) {
+//                        if ( dropRow.getOrientation() == RowDrop.Orientation.AFTER ) {
+//                            newRows.add( createRowFromDrop() );
+//                            newRows.add( row );
+//                        } else {
+//                            newRows.add( row );
+//                            newRows.add( createRowFromDrop() );
+//                        }
+//                    } else {
+//                        newRows.add( row );
+//                    }
+//                }
+//                rows = newRows;
+//                updateView();
+//            }
+//        };
     }
 
     public void load() {
@@ -114,7 +145,6 @@ public class Container {
     }
 
     public UberView<Container> changeResolution() {
-        updateView( "change resolution" );
         return getView();
     }
 
@@ -142,25 +172,18 @@ public class Container {
         //TODO destroy all rows instances
     }
 
-    public void containerOut() {
-        //TODO
-//        dndManager.reset();
-    }
 
     public void repaintContainer( @Observes RepaintContainerEvent repaintContainerEvent ) {
-        updateView( "event" );
-//        GWT.log("yo");
+        updateView();
     }
 
-    private void updateView( String source ) {
-        //FIXME ??? pq sera
-//        GWT.log( source + " " +rows.size()+" UPDATE CALL " );
+    private void updateView() {
+        //TODO screens are not displayed in the first try UF BUG?
         updateViewMaybeUfBug();
         updateViewMaybeUfBug();
     }
 
     private void updateViewMaybeUfBug() {
-        //screens are not displayed in the first try
         clearView();
         if ( !rows.isEmpty() ) {
             for ( int i = 0; i < rows.size(); i++ ) {
@@ -192,8 +215,10 @@ public class Container {
             }
         }
 
-        Collections.swap( rows, begin, end );
-        updateView( "swap " );
+        if ( begin >= 0 && end >= 0 ) {
+            Collections.swap( rows, begin, end );
+        }
+        updateView();
     }
 
 

@@ -2,8 +2,9 @@ package org.uberfire.ext.layout.editor.client.novo.template.research.layout.cont
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.MouseOutEvent;
-import com.google.gwt.user.client.ui.*;
+import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Frame;
 import org.gwtbootstrap3.client.ui.html.Span;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
@@ -12,8 +13,6 @@ import org.uberfire.client.mvp.PlaceManager;
 import org.uberfire.client.mvp.UberView;
 import org.uberfire.ext.layout.editor.client.novo.template.research.layout.rows.EmptyDropRow;
 import org.uberfire.ext.layout.editor.client.novo.template.research.layout.rows.Row;
-import org.uberfire.ext.layout.editor.client.novo.template.research.layout.screens.Screens;
-import org.uberfire.mvp.impl.DefaultPlaceRequest;
 
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
@@ -52,11 +51,12 @@ public class ContainerView extends Composite
 
     @EventHandler( "mobile" )
     public void mobileSize( ClickEvent e ) {
-        layout.clear();
-        Frame f = new Frame( "test.html" );
-        layout.add( f );
-        String containerPreview = getElement().getInnerHTML();
-        f.setWidth( "200px" );
+        GWT.log( "mobileSize" );
+//        layout.clear();
+//        Frame f = new Frame( "test.html" );
+//        layout.add( f );
+//        String containerPreview = getElement().getInnerHTML();
+//        f.setWidth( "200px" );
     }
 
     public static native void alert( String msg ) /*-{
@@ -67,29 +67,28 @@ public class ContainerView extends Composite
     @EventHandler( "tablet" )
     public void tabletSize( ClickEvent e ) {
         GWT.log( "tablet" );
-        layout.clear();
-        Frame f = new Frame( "test.html" );
-        layout.add( f );
-        f.setWidth( "767px" );
-        e.preventDefault();
+//        layout.clear();
+//        Frame f = new Frame( "test.html" );
+//        layout.add( f );
+//        f.setWidth( "767px" );
+//        e.preventDefault();
     }
 
     @EventHandler( "desktop" )
     public void desktopSize( ClickEvent e ) {
-        GWT.log( "tablet" );
-        layout.clear();
-        Frame f = new Frame( "test.html" );
-        layout.add( f );
-
-        f.setWidth( getOffsetWidth() + "px" );
-
-        e.preventDefault();
+        GWT.log( "desktop" );
+//        layout.clear();
+//        Frame f = new Frame( "test.html" );
+//        layout.add( f );
+//
+//        f.setWidth( getOffsetWidth() + "px" );
+//
+//        e.preventDefault();
     }
 
 
     @Override
     public void addRow( UberView<Row> view ) {
-
         layout.add( view.asWidget() );
     }
 
@@ -101,13 +100,6 @@ public class ContainerView extends Composite
     @Override
     public void addEmptyRow( UberView<EmptyDropRow> emptyDropRow ) {
         layout.add( emptyDropRow.asWidget() );
-    }
-
-
-    //    @EventHandler( "container" )
-    public void containerOut( MouseOutEvent e ) {
-        //TODO cancel everything/reset css
-        presenter.containerOut();
     }
 
 }

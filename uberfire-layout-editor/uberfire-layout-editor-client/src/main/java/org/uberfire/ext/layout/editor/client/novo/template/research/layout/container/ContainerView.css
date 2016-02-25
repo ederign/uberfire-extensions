@@ -6,6 +6,7 @@
     font-size: 20px;
 }
 
+
 .simulate-xs .col-sm-12,
 .simulate-xs .col-sm-8,
 .simulate-xs .col-sm-4,
@@ -25,3 +26,4 @@
 .simulate-sm .col-sm-8{width:75%}
 .simulate-sm .col-sm-6{width:50%}
 .simulate-sm .col-sm-4{width:25%} /* again, do this for all 12 col-sm-* classes
+
