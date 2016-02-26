@@ -30,7 +30,7 @@ public class ContainerView extends Composite
 
     @Inject
     @DataField
-    private FlowPanel layout;
+    FlowPanel layout;
 
     @Inject
     @DataField
@@ -58,11 +58,6 @@ public class ContainerView extends Composite
 //        String containerPreview = getElement().getInnerHTML();
 //        f.setWidth( "200px" );
     }
-
-    public static native void alert( String msg ) /*-{
-        $wnd.eval(msg);
-
-    }-*/;
 
     @EventHandler( "tablet" )
     public void tabletSize( ClickEvent e ) {
