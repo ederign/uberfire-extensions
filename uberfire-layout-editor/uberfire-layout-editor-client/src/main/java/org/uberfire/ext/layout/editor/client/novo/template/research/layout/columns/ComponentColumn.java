@@ -64,14 +64,6 @@ public class ComponentColumn implements Column {
         setSize( newSize );
     }
 
-    public void columnFromDrop( ParameterizedCommand<ColumnDrop> columnDropParameterizedCommand ) {
-        this.size = 12;
-        this.columnType = Type.FIRST;
-        this.dropCommand = columnDropParameterizedCommand;
-        view.setSize( size.toString() );
-        place = Screens.next().name();
-    }
-
     public void onMouseDown( int xPosition ) {
         GWT.log( "onMouseDown" );
         if ( canResize() ) {
@@ -174,6 +166,7 @@ public class ComponentColumn implements Column {
         return parentHashCode;
     }
 
+    @Override
     public Integer getSize() {
         return size;
     }

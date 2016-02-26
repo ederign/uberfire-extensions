@@ -10,7 +10,6 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
-import java.util.List;
 
 @Dependent
 public class ColumnWithComponents implements Column {
@@ -84,12 +83,18 @@ public class ColumnWithComponents implements Column {
         return view;
     }
 
+    @Override
+    public Integer getSize() {
+        return size;
+    }
+
     public boolean hasRow() {
         return row != null;
     }
 
-    public void init( Integer size ) {
+    public void init( Integer parentHashCode, Integer size ) {
         this.size = size;
+        this.parentHashCode = parentHashCode;
         view.setSize( size.toString() );
     }
 

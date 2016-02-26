@@ -4,4 +4,6 @@ import org.uberfire.client.mvp.UberView;
 
 public interface Column<T> {
     UberView<T> getView();
+
+    Integer getSize();
 }
