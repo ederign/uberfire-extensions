@@ -60,9 +60,8 @@ public class Row {
         }
         if ( columnToRemove != null ) {
             setSizeOfSibilinColumn( columnToRemove );
-
             columns.remove( columnToRemove );
-
+            return true;
         }
         return false;
     }
@@ -115,7 +114,7 @@ public class Row {
     }
 
 
-    public void rowWithOneColumn() {
+    public void withOneColumn( RowDrop drop ) {
         final ComponentColumn column = createColumn();
         column.columnFromDrop( dropCommand() );
         columns.add( column );

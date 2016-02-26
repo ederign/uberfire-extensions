@@ -6,6 +6,7 @@ public class RowDrop {
     private final int rowHashCode;
     private final Orientation orientation;
 
+    //TODO should also has the place name?
     public RowDrop( int rowHashCode, Orientation orientation ) {
 
         this.rowHashCode = rowHashCode;
