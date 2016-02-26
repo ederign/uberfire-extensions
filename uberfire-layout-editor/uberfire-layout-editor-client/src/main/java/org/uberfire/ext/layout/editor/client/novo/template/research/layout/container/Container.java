@@ -1,6 +1,7 @@
 package org.uberfire.ext.layout.editor.client.novo.template.research.layout.container;
 
 import com.google.gwt.core.client.GWT;
+import org.jboss.errai.ioc.client.container.IOC;
 import org.uberfire.client.mvp.UberView;
 import org.uberfire.ext.layout.editor.client.novo.template.research.layout.infra.RepaintContainerEvent;
 import org.uberfire.ext.layout.editor.client.novo.template.research.layout.rows.EmptyDropRow;
@@ -47,7 +48,14 @@ public class Container {
 
     @PreDestroy
     public void preDestroy() {
-        //TODO destroy all rows instances
+        for ( Row row : rows ) {
+            destroy( row );
+        }
+        destroy(emptyDropRow);
+    }
+
+    void destroy( Object row ) {
+        IOC.getBeanManager().destroyBean( row );
     }
 
     public void init() {
@@ -63,15 +71,15 @@ public class Container {
 
     ParameterizedCommand<RowDrop> createEmptyDropCommand() {
         return ( drop ) -> {
-            rows.add( createFirstRow( drop ) );
+            rows.add( createRow( drop ) );
             updateView();
         };
     }
 
-    private Row createFirstRow( RowDrop drop ) {
+    private Row createRow( RowDrop drop ) {
         //TODO read DND DATA (from drop) and pass proper component as parameter-> pass for rone with oneColumn
         final Row row = rowInstance.get();
-        row.init( createRegularRowDropCommand(), existentComponentRemovalCommand() );
+        row.init( createRowDropCommand(), existentComponentRemovalCommand() );
         row.withOneColumn( drop );
         return row;
     }
@@ -95,27 +103,41 @@ public class Container {
         return !row.hasColumns();
     }
 
-    private ParameterizedCommand<RowDrop> createRegularRowDropCommand() {
+    ParameterizedCommand<RowDrop> createRowDropCommand() {
         return ( dropRow ) -> {
-            List<Row> newRows = new ArrayList<Row>();
-            for ( int i = 0; i < rows.size(); i++ ) {
-                //TODO Refator DND
-                Row row = rows.get( i );
-                if ( dropRow.getRowHashCode() == row.hashCode() ) {
-                    if ( dropRow.getOrientation() == RowDrop.Orientation.AFTER ) {
-                        newRows.add( createFirstRow( dropRow ) );
-                        newRows.add( row );
-                    } else {
-                        newRows.add( row );
-                        newRows.add( createFirstRow( dropRow ) );
-                    }
-                } else {
-                    newRows.add( row );
-                }
+            List<Row> updatedRows = new ArrayList<>();
+            for ( Row row : rows ) {
+                handleDrop( dropRow, updatedRows, row );
             }
-            rows = newRows;
+            rows = updatedRows;
             updateView();
         };
+    }
+
+    private void handleDrop( RowDrop dropRow, List<Row> updatedRows, Row row ) {
+        if ( dropIsInthisRow( row, dropRow ) ) {
+            addNewRow( row, dropRow, updatedRows );
+        } else {
+            updatedRows.add( row );
+        }
+    }
+
+    private void addNewRow( Row row, RowDrop dropRow, List<Row> newRows ) {
+        if ( newRowIsBeforeThisRow( dropRow ) ) {
+            newRows.add( createRow( dropRow ) );
+            newRows.add( row );
+        } else {
+            newRows.add( row );
+            newRows.add( createRow( dropRow ) );
+        }
+    }
+
+    private boolean newRowIsBeforeThisRow( RowDrop dropRow ) {
+        return dropRow.getOrientation() == RowDrop.Orientation.BEFORE;
+    }
+
+    private boolean dropIsInthisRow( Row row, RowDrop dropRow ) {
+        return dropRow.getRowHashCode() == row.hashCode();
     }
 
     public void repaintContainer( @Observes RepaintContainerEvent repaintContainerEvent ) {
@@ -131,7 +153,6 @@ public class Container {
     private void updateViewMaybeUfBug() {
         clearView();
         if ( !rows.isEmpty() ) {
-            GWT.log(rows.size() + " row size");
             for ( int i = 0; i < rows.size(); i++ ) {
                 Row row = rows.get( i );
                 view.addRow( row.getView() );
@@ -144,25 +165,29 @@ public class Container {
     }
 
 
-    private void swapRows( @Observes RowDnDEvent rowDndEvent ) {
+    void swapRows( @Observes RowDnDEvent rowDndEvent ) {
         int begin = -1;
         int end = -1;
 
         for ( int i = 0; i < rows.size(); i++ ) {
-            Row actual = rows.get( i );
+            Row actualRow = rows.get( i );
 
-            if ( actual.hashCode() == rowDndEvent.getRowHashCodeBegin() ) {
+            if ( actualRow.hashCode() == rowDndEvent.getRowHashCodeBegin() ) {
                 begin = i;
             }
-            if ( actual.hashCode() == rowDndEvent.getRowHashCodeEnd() ) {
+            if ( actualRow.hashCode() == rowDndEvent.getRowHashCodeEnd() ) {
                 end = i;
             }
         }
 
-        if ( begin >= 0 && end >= 0 ) {
+        if ( validSwap( begin, end ) ) {
             Collections.swap( rows, begin, end );
         }
         updateView();
+    }
+
+    private boolean validSwap( int begin, int end ) {
+        return begin >= 0 && end >= 0;
     }
 
     public interface View extends UberView<Container> {
