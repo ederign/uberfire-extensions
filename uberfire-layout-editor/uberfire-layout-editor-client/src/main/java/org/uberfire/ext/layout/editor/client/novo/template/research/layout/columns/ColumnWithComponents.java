@@ -18,14 +18,21 @@ public class ColumnWithComponents implements Column {
     private Integer size;
     private int parentHashCode;
 
-
     Row row;
 
-    @Inject
-    Instance<Row> rowInstance;
+    private Instance<Row> rowInstance;
 
-    public void setParentHashCode( int parentHashCode ) {
-        this.parentHashCode = parentHashCode;
+    @Inject
+    public ColumnWithComponents( final View view, Instance<Row> rowInstance ) {
+        this.view = view;
+        this.rowInstance = rowInstance;
+    }
+
+    public interface View extends UberView<ColumnWithComponents> {
+
+        void setSize( String size );
+        void addRow( UberView<Row> view );
+
     }
 
     public void withComponents( Column... _columns ) {
@@ -56,18 +63,6 @@ public class ColumnWithComponents implements Column {
 
     public void addColumnToRow( ComponentColumn newColumn ) {
         row.addColumns( newColumn );
-    }
-
-    public interface View extends UberView<ColumnWithComponents> {
-
-        void setSize( String size );
-
-        void addRow( UberView<Row> view );
-    }
-
-    @Inject
-    public ColumnWithComponents( final View view ) {
-        this.view = view;
     }
 
     @PostConstruct

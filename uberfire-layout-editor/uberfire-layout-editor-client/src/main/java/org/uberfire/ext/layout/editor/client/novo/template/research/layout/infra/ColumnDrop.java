@@ -1,9 +1,9 @@
 package org.uberfire.ext.layout.editor.client.novo.template.research.layout.infra;
 
-public class ColumnDrop{
+public class ColumnDrop {
 
     private final int hash;
-    private  final Orientation orientation;
+    private final Orientation orientation;
     private String dndData;
 
     public ColumnDrop( int hash,
@@ -14,7 +14,7 @@ public class ColumnDrop{
     }
 
     public enum Orientation {
-        LEFT, RIGHT, UP, DOWN, INSIDE
+        LEFT, RIGHT, UP, DOWN
     }
 
     public Orientation getOrientation() {
@@ -27,5 +27,18 @@ public class ColumnDrop{
 
     public String getDndData() {
         return dndData;
+    }
+
+    public boolean isASideDrop() {
+        return getOrientation() == ColumnDrop.Orientation.LEFT ||
+                getOrientation() == ColumnDrop.Orientation.RIGHT;
+    }
+
+    public boolean isALeftDrop() {
+        return getOrientation() == ColumnDrop.Orientation.LEFT;
+    }
+
+    public boolean isADownDrop() {
+        return getOrientation() == ColumnDrop.Orientation.DOWN;
     }
 }

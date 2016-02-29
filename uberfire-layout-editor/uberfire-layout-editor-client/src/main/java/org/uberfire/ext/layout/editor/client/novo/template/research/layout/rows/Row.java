@@ -1,6 +1,5 @@
 package org.uberfire.ext.layout.editor.client.novo.template.research.layout.rows;
 
-import com.google.gwt.core.client.GWT;
 import org.uberfire.client.mvp.UberView;
 import org.uberfire.ext.layout.editor.client.novo.template.research.layout.columns.Column;
 import org.uberfire.ext.layout.editor.client.novo.template.research.layout.columns.ColumnWithComponents;
@@ -191,20 +190,6 @@ public class Row {
         //TODO destroy all get instances
     }
 
-    private List<Column> updateInnerColumns( ColumnDrop drop, List<Column> originalColumns,
-                                             ColumnWithComponents parentColumn ) {
-        List<Column> columns = new ArrayList<>();
-
-        for ( int i = 0; i < originalColumns.size(); i++ ) {
-            final Column currentColumn = originalColumns.get( i );
-            if ( isComponentColumn( currentColumn ) ) {
-                ComponentColumn column = ( ComponentColumn ) currentColumn;
-                handleInner( drop, columns, i, column, parentColumn );
-            }
-        }
-        return columns;
-    }
-
 
     private List<Column> updateColumns( ColumnDrop drop, List<Column> originalColumns ) {
         List<Column> columns = new ArrayList<>();
@@ -215,14 +200,8 @@ public class Row {
             if ( isComponentColumn( currentColumn ) ) {
                 handleDropOnComponentColumn( drop, columns, i, currentColumn );
             } else {
-                //next test
-                ColumnWithComponents column = ( ColumnWithComponents ) currentColumn;
-                if ( column.hasRow() ) {
-                    Row row = column.getRow();
-                    //check
-                    row.columns = updateInnerColumns( drop, row.columns, column );
-                }
-                columns.add( column );
+                handleDropOnColumnWithComponents( drop, columns,
+                                                  ( ColumnWithComponents ) currentColumn );
 
             }
 
@@ -230,47 +209,103 @@ public class Row {
         return columns;
     }
 
+    private void handleDropOnColumnWithComponents( ColumnDrop drop, List<Column> columns,
+                                                   ColumnWithComponents currentColumn ) {
+        ColumnWithComponents column = currentColumn;
+        if ( column.hasRow() ) {
+            Row innerRow = column.getRow();
+            innerRow.columns = updateInnerColumns( drop, innerRow.getColumns(), column );
+        }
+        columns.add( column );
+    }
 
-    private void handleInner( ColumnDrop drop, List<Column> columns, int i, ComponentColumn column,
-                              ColumnWithComponents parentColumn ) {
-        //TODO dont drop (remove dnd) if the column size == 1
-        GWT.log( "Handle inner" );
-        if ( dropIsOn( drop, column ) && columnCanBeSplitted( column ) ) {
-            if ( isASideDrop( drop ) ) {
-                handleSideDrop( drop, columns, i, column );
+    private List<Column> updateInnerColumns( ColumnDrop drop, List<Column> originalColumns,
+                                             ColumnWithComponents parentColumn ) {
+        List<Column> columns = new ArrayList<>();
+
+        for ( int i = 0; i < originalColumns.size(); i++ ) {
+            final Column currentColumn = originalColumns.get( i );
+            if ( isComponentColumn( currentColumn ) ) {
+                handleDropInnerColumn( drop, columns, i, currentColumn, parentColumn );
+            }
+        }
+        return columns;
+    }
+
+
+    private void handleDropInnerColumn( ColumnDrop drop, List<Column> columns, int i, Column column,
+                                        ColumnWithComponents parentColumn ) {
+        ComponentColumn currentColumn = ( ComponentColumn ) column;
+        if ( dropIsOn( drop, currentColumn ) && columnCanBeSplitted( currentColumn ) ) {
+            if ( drop.isASideDrop() ) {
+                handleSideDrop( drop, columns, i, currentColumn );
             } else {
-
-                Integer originalColumnUFSize = column.getPanelSize();
-                String place = extractColumnPlace( drop );
-
-                final ComponentColumn newColumn = createColumn();
-                newColumn.init( column.getParentHashCode(), getColumnType( 0 ), COLUMN_DEFAULT_SIZE, dropCommand(),
-                                place );
-                //fixme
-                newColumn.halfParentPanelSize( originalColumnUFSize * 2 );
-                //TODO setar se foi em cima ou
-                if ( drop.getOrientation() == ColumnDrop.Orientation.DOWN ) {
-                    columns.add( column );
-                    columns.add( newColumn );
-                } else {
-                    columns.add( newColumn );
-                    columns.add( column );
-                }
-
-//                 copy of handleInnerComponentDrop( drop, columns, column );
+                handleInnerDrop( drop, columns, currentColumn );
             }
         } else {
-            columns.add( column );
+            columns.add( currentColumn );
         }
+    }
+
+    private void handleInnerDrop( ColumnDrop drop, List<Column> columns, ComponentColumn currentColumn ) {
+        final ComponentColumn newColumn = createNewInnerColumn( drop, currentColumn );
+        if ( drop.isADownDrop() ) {
+            columns.add( currentColumn );
+            columns.add( newColumn );
+        } else {
+            columns.add( newColumn );
+            columns.add( currentColumn );
+        }
+    }
+
+    private ComponentColumn createNewInnerColumn( ColumnDrop drop, ComponentColumn currentColumn ) {
+        final ComponentColumn newColumn = createColumn();
+        newColumn.init( currentColumn.getParentHashCode(), getColumnType( 0 ), COLUMN_DEFAULT_SIZE,
+                        dropCommand(),
+                        extractColumnPlace( drop ) );
+        newColumn.setSize( currentColumn.getPanelSize() );
+        return newColumn;
+    }
+
+    private void handleInnerComponentDrop( ColumnDrop drop, List<Column> columns,
+                                           ComponentColumn currentColumn ) {
+        final ColumnWithComponents columnWithComponents = createColumnWithComponents();
+        columnWithComponents.init( hashCode(), currentColumn.getSize() );
+
+        final ComponentColumn newColumn = createNewComponentColumn( drop, currentColumn );
+        currentColumn = updateCurrentColumn( currentColumn );
+
+        if ( drop.isADownDrop() ) {
+            columnWithComponents.withComponents( currentColumn, newColumn );
+        } else {
+            columnWithComponents.withComponents( newColumn, currentColumn );
+        }
+
+        columns.add( columnWithComponents );
+
+    }
+
+    private ComponentColumn updateCurrentColumn( ComponentColumn currentColumn ) {
+        currentColumn.setSize( 12 );
+        currentColumn.halfParentPanelSize( currentColumn.getPanelSize() );
+        currentColumn.recalculateSize();
+        currentColumn.setColumnType( getColumnType( 0 ) );
+        return currentColumn;
+    }
+
+    private ComponentColumn createNewComponentColumn( ColumnDrop drop, ComponentColumn currentColumn ) {
+        final ComponentColumn newColumn = createColumn();
+        newColumn.init( currentColumn.getParentHashCode(), getColumnType( 0 ), 12, dropCommand(), extractColumnPlace( drop ) );
+        newColumn.halfParentPanelSize( currentColumn.getPanelSize() );
+        return newColumn;
     }
 
     private void handleDropOnComponentColumn( ColumnDrop drop, List<Column> columns, int i, Column column ) {
         ComponentColumn componentColumn = ( ComponentColumn ) column;
         if ( dropIsOn( drop, componentColumn ) && columnCanBeSplitted( componentColumn ) ) {
-            if ( isASideDrop( drop ) ) {
+            if ( drop.isASideDrop() ) {
                 handleSideDrop( drop, columns, i, componentColumn );
             } else {
-                //Next Test
                 handleInnerComponentDrop( drop, columns, componentColumn );
             }
         } else {
@@ -290,16 +325,18 @@ public class Row {
     private void handleSideDrop( ColumnDrop drop, List<Column> columns, int columnIndex,
                                  ComponentColumn currentColumn ) {
 
-        if ( dropIsOnTheLeftOfCurrentColumn( drop ) ) {
-            final ComponentColumn newColumn = createNewComponentColumn( drop, currentColumn, columnIndex, currentColumn.getSize()/2 );
+        if ( drop.isALeftDrop() ) {
+            final ComponentColumn newColumn = createNewComponentColumn( drop, currentColumn, columnIndex,
+                                                                        currentColumn.getSize() / 2 );
             currentColumn = updateCurrentColumn( currentColumn, ( columnIndex + 1 ) );
 
             columns.add( newColumn );
             columns.add( currentColumn );
 
         } else {
-            final ComponentColumn newColumn = createNewComponentColumn( drop, currentColumn, columnIndex + 1, currentColumn.getSize()/2 );
-            currentColumn =updateCurrentColumn( currentColumn, columnIndex );
+            final ComponentColumn newColumn = createNewComponentColumn( drop, currentColumn, columnIndex + 1,
+                                                                        currentColumn.getSize() / 2 );
+            currentColumn = updateCurrentColumn( currentColumn, columnIndex );
 
             columns.add( currentColumn );
             columns.add( newColumn );
@@ -322,10 +359,6 @@ public class Row {
         return currentColumn;
     }
 
-    private boolean dropIsOnTheLeftOfCurrentColumn( ColumnDrop drop ) {
-        return drop.getOrientation() == ColumnDrop.Orientation.LEFT;
-    }
-
     private String extractColumnPlace( ColumnDrop drop ) {
         //TODO SHOULD BE REFACTORED TO REAL DATA
         return !tempIsDndDataValid( drop.getDndData() ) ? Screens.next().name() : drop.getDndData();
@@ -342,36 +375,6 @@ public class Row {
         return newColumnSize;
     }
 
-    private void handleInnerComponentDrop( ColumnDrop drop, List<Column> columns,
-                                           ComponentColumn column ) {
-        final ColumnWithComponents columnWithComponents = createColumnWithComponents();
-        columnWithComponents.init( hashCode(), column.getSize() );
-        //uf bug
-        Integer originalColumnUFSize = column.getPanelSize();
-        String place = extractColumnPlace( drop );
-
-        final ComponentColumn newColumn = createColumn();
-        newColumn.init( column.getParentHashCode(), getColumnType( 0 ), 12, dropCommand(), place );
-        newColumn.halfParentPanelSize( originalColumnUFSize );
-
-        column.setSize( 12 );
-        column.halfParentPanelSize( originalColumnUFSize );
-        column.recalculateSize();
-        column.setColumnType( getColumnType( 0 ) );
-        if ( drop.getOrientation() == ColumnDrop.Orientation.DOWN ) {
-            columnWithComponents.withComponents( column, newColumn );
-        } else {
-            columnWithComponents.withComponents( newColumn, column );
-        }
-
-        columns.add( columnWithComponents );
-
-    }
-
-    private boolean isASideDrop( ColumnDrop drop ) {
-        return drop.getOrientation() == ColumnDrop.Orientation.LEFT || drop
-                .getOrientation() == ColumnDrop.Orientation.RIGHT;
-    }
 
     private boolean dropIsOn( ColumnDrop drop, ComponentColumn column ) {
         return drop.getHash() == column.hashCode();

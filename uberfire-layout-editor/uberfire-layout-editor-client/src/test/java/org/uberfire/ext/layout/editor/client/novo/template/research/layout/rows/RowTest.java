@@ -19,34 +19,56 @@ import static org.mockito.Mockito.*;
 public class RowTest {
 
     private Row row;
+    private Row otherRow;
     private Row.View view;
     private Instance<ComponentColumn> columnInstance;
     private Instance<ColumnWithComponents> columnWithComponentsInstance;
+    private Instance<Row> rowInstance;
     private DnDManager dndManager;
     private Event<RepaintContainerEvent> repaintContainerEventEvent;
     private ParameterizedCommand<RowDrop> dropOnRowCommand;
     private ParameterizedCommand<String> existentComponentDropCommand;
-    private ComponentColumn columnMock1;
-    private ComponentColumn columnMock2;
-    private ComponentColumn columnMock3;
-    private ComponentColumn columnMock4;
+    private ComponentColumn componentColumnMock1;
+    private ComponentColumn componentColumnMock2;
+    private ComponentColumn componentColumnMock3;
+    private ComponentColumn componentColumnMock4;
+    private ColumnWithComponents columnWithComponents1;
 
     @Before
     public void setup() {
         view = mock( Row.View.class );
-        columnMock1 = new ComponentColumn( mock( ComponentColumn.View.class ) );
-        columnMock2 = new ComponentColumn( mock( ComponentColumn.View.class ) );
-        columnMock3 = new ComponentColumn( mock( ComponentColumn.View.class ) );
-        columnMock4 = new ComponentColumn( mock( ComponentColumn.View.class ) );
+        componentColumnMock1 = new ComponentColumn( mock( ComponentColumn.View.class ) );
+        componentColumnMock2 = new ComponentColumn( mock( ComponentColumn.View.class ) );
+        componentColumnMock3 = new ComponentColumn( mock( ComponentColumn.View.class ) );
+        componentColumnMock4 = new ComponentColumn( mock( ComponentColumn.View.class ) );
+        componentColumnMock4 = new ComponentColumn( mock( ComponentColumn.View.class ) );
+        rowInstance = mock( Instance.class );
+
+        columnWithComponents1 = new ColumnWithComponents( mock( ColumnWithComponents.View.class ), rowInstance );
+
         columnInstance = mock( Instance.class );
-        when( columnInstance.get() ).thenReturn( columnMock1 ).thenReturn( columnMock2 ).thenReturn( columnMock3 ).thenReturn( columnMock4 );
+        when( columnInstance.get() ).thenReturn(
+                componentColumnMock1 ).thenReturn( componentColumnMock2 ).thenReturn( componentColumnMock3 )
+                .thenReturn( componentColumnMock4 );
+
         columnWithComponentsInstance = mock( Instance.class );
+
         dndManager = mock( DnDManager.class );
         repaintContainerEventEvent = mock( Event.class );
         dropOnRowCommand = mock( ParameterizedCommand.class );
         existentComponentDropCommand = mock( ParameterizedCommand.class );
+
+
+        when( columnWithComponentsInstance.get() ).thenReturn( columnWithComponents1 );
+
         row = spy(
                 new Row( view, columnInstance, columnWithComponentsInstance, repaintContainerEventEvent, dndManager ) );
+        otherRow = spy(
+                new Row( view, columnInstance, columnWithComponentsInstance, repaintContainerEventEvent, dndManager ) );
+
+        when( rowInstance.get() ).thenReturn( otherRow );
+
+
     }
 
     @Test
@@ -76,47 +98,101 @@ public class RowTest {
     public void sideColumnDrop() {
         row.init( dropOnRowCommand, existentComponentDropCommand );
         row.withOneColumn( mock( RowDrop.class ) );
-        assertEquals( Row.COLUMN_DEFAULT_SIZE, columnMock1.getSize().intValue() );
+        assertEquals( Row.COLUMN_DEFAULT_SIZE, componentColumnMock1.getSize().intValue() );
         ParameterizedCommand<ColumnDrop> columnDropParameterizedCommand = row.dropCommand();
 
-        int dropTargetHash = columnMock1.hashCode();
 
+        //drop on the right of first column
+        int dropTargetHash = componentColumnMock1.hashCode();
         columnDropParameterizedCommand
                 .execute( new ColumnDrop( dropTargetHash, ColumnDrop.Orientation.RIGHT,
-                                          "sampleDndScreen" ) );
+                                          "sampleDndScreen1" ) );
 
         assertEquals( 2, row.getColumns().size() );
-        assertEquals( columnMock1, row.getColumns().get( 0 ) );
-        assertEquals( columnMock2, row.getColumns().get( 1 ) );
-        assertEquals( Row.COLUMN_DEFAULT_SIZE / 2, columnMock1.getSize().intValue() );
-        assertEquals( Row.COLUMN_DEFAULT_SIZE / 2, columnMock2.getSize().intValue() );
+        assertEquals( componentColumnMock1, row.getColumns().get( 0 ) );
+        assertEquals( componentColumnMock2, row.getColumns().get( 1 ) );
+        assertEquals( Row.COLUMN_DEFAULT_SIZE / 2, componentColumnMock1.getSize().intValue() );
+        assertEquals( Row.COLUMN_DEFAULT_SIZE / 2, componentColumnMock2.getSize().intValue() );
 
+        //drop on the left first column
         columnDropParameterizedCommand
                 .execute( new ColumnDrop( dropTargetHash, ColumnDrop.Orientation.LEFT,
-                                          "sampleDndScreen" ) );
+                                          "sampleDndScreen2" ) );
 
         assertEquals( 3, row.getColumns().size() );
-        assertEquals( columnMock3, row.getColumns().get( 0 ) );
-        assertEquals( columnMock1, row.getColumns().get( 1 ) );
-        assertEquals( columnMock2, row.getColumns().get( 2 ) );
-        assertEquals( Row.COLUMN_DEFAULT_SIZE / 4, columnMock3.getSize().intValue() );
-        assertEquals( Row.COLUMN_DEFAULT_SIZE / 4, columnMock1.getSize().intValue() );
-        assertEquals( Row.COLUMN_DEFAULT_SIZE / 2, columnMock2.getSize().intValue() );
+        assertEquals( componentColumnMock3, row.getColumns().get( 0 ) );
+        assertEquals( componentColumnMock1, row.getColumns().get( 1 ) );
+        assertEquals( componentColumnMock2, row.getColumns().get( 2 ) );
+        assertEquals( Row.COLUMN_DEFAULT_SIZE / 4, componentColumnMock3.getSize().intValue() );
+        assertEquals( Row.COLUMN_DEFAULT_SIZE / 4, componentColumnMock1.getSize().intValue() );
+        assertEquals( Row.COLUMN_DEFAULT_SIZE / 2, componentColumnMock2.getSize().intValue() );
 
+        //drop on the right first column
         columnDropParameterizedCommand
                 .execute( new ColumnDrop( dropTargetHash, ColumnDrop.Orientation.RIGHT,
-                                          "sampleDndScreen" ) );
+                                          "sampleDndScreen3" ) );
 
         assertEquals( 4, row.getColumns().size() );
-        assertEquals( columnMock3, row.getColumns().get( 0 ) );
-        assertEquals( columnMock1, row.getColumns().get( 1 ) );
-        assertEquals( columnMock4, row.getColumns().get( 2 ) );
-        assertEquals( columnMock2, row.getColumns().get( 3 ) );
-        assertEquals( Row.COLUMN_DEFAULT_SIZE / 4, columnMock3.getSize().intValue() );
-        assertEquals( Row.COLUMN_DEFAULT_SIZE / 6, columnMock1.getSize().intValue() );
-        assertEquals( Row.COLUMN_DEFAULT_SIZE / 12, columnMock4.getSize().intValue() );
-        assertEquals( Row.COLUMN_DEFAULT_SIZE / 2, columnMock2.getSize().intValue() );
+        assertEquals( componentColumnMock3, row.getColumns().get( 0 ) );
+        assertEquals( componentColumnMock1, row.getColumns().get( 1 ) );
+        assertEquals( componentColumnMock4, row.getColumns().get( 2 ) );
+        assertEquals( componentColumnMock2, row.getColumns().get( 3 ) );
+        assertEquals( Row.COLUMN_DEFAULT_SIZE / 4, componentColumnMock3.getSize().intValue() );
+        assertEquals( Row.COLUMN_DEFAULT_SIZE / 6, componentColumnMock1.getSize().intValue() );
+        assertEquals( Row.COLUMN_DEFAULT_SIZE / 12, componentColumnMock4.getSize().intValue() );
+        assertEquals( Row.COLUMN_DEFAULT_SIZE / 2, componentColumnMock2.getSize().intValue() );
 
         verify( row, times( 3 ) ).updateView();
+    }
+
+    @Test
+    public void innerColumnDrop() {
+        row.init( dropOnRowCommand, existentComponentDropCommand );
+        row.withOneColumn( mock( RowDrop.class ) );
+        assertEquals( Row.COLUMN_DEFAULT_SIZE, componentColumnMock1.getSize().intValue() );
+
+        ParameterizedCommand<ColumnDrop> columnDropParameterizedCommand = row.dropCommand();
+
+        //drop on the right first column
+        columnDropParameterizedCommand
+                .execute( new ColumnDrop( row.getColumns().get( 0 ).hashCode(), ColumnDrop.Orientation.RIGHT,
+                                          "sampleDndScreen1" ) );
+
+        assertEquals( 2, row.getColumns().size() );
+
+
+        //drop up second column
+        int dropTargetHash = componentColumnMock2.hashCode();
+        columnDropParameterizedCommand
+                .execute( new ColumnDrop( dropTargetHash, ColumnDrop.Orientation.UP,
+                                          "sampleDndScreen2" ) );
+
+
+        assertEquals( 2, row.getColumns().size() );
+        assertTrue( row.getColumns().get( 1 ) instanceof ColumnWithComponents );
+        ColumnWithComponents column = ( ColumnWithComponents ) row.getColumns().get( 1 );
+        assertTrue( column.hasRow() );
+        Row innerRowColumn2Component = column.getRow();
+        assertEquals(componentColumnMock3, innerRowColumn2Component.getColumns().get( 0 ));
+        assertEquals(componentColumnMock2, innerRowColumn2Component.getColumns().get( 1 ));
+
+        //other drop down second column, should keep the same column and add a component
+        columnDropParameterizedCommand
+                .execute( new ColumnDrop( componentColumnMock2.hashCode(), ColumnDrop.Orientation.DOWN,
+                                          "sampleDndScreen3" ) );
+        assertEquals( 2, row.getColumns().size() );
+        Row innerRowColumn3Components = column.getRow();
+        assertEquals(innerRowColumn2Component, innerRowColumn3Components);
+        assertEquals(componentColumnMock3, innerRowColumn2Component.getColumns().get( 0 ));
+        assertEquals(componentColumnMock2, innerRowColumn2Component.getColumns().get( 1 ));
+        assertEquals(componentColumnMock4, innerRowColumn2Component.getColumns().get( 2 ));
+    }
+
+    public void resizeColumnsTest(){
+
+    }
+
+    public void removeColumnTest(){
+        
     }
 }
