@@ -29,6 +29,7 @@ public class RowTest {
     private ComponentColumn columnMock1;
     private ComponentColumn columnMock2;
     private ComponentColumn columnMock3;
+    private ComponentColumn columnMock4;
 
     @Before
     public void setup() {
@@ -36,8 +37,9 @@ public class RowTest {
         columnMock1 = new ComponentColumn( mock( ComponentColumn.View.class ) );
         columnMock2 = new ComponentColumn( mock( ComponentColumn.View.class ) );
         columnMock3 = new ComponentColumn( mock( ComponentColumn.View.class ) );
+        columnMock4 = new ComponentColumn( mock( ComponentColumn.View.class ) );
         columnInstance = mock( Instance.class );
-        when( columnInstance.get() ).thenReturn( columnMock1 ).thenReturn( columnMock2 ).thenReturn( columnMock3 );
+        when( columnInstance.get() ).thenReturn( columnMock1 ).thenReturn( columnMock2 ).thenReturn( columnMock3 ).thenReturn( columnMock4 );
         columnWithComponentsInstance = mock( Instance.class );
         dndManager = mock( DnDManager.class );
         repaintContainerEventEvent = mock( Event.class );
@@ -101,6 +103,20 @@ public class RowTest {
         assertEquals( Row.COLUMN_DEFAULT_SIZE / 4, columnMock1.getSize().intValue() );
         assertEquals( Row.COLUMN_DEFAULT_SIZE / 2, columnMock2.getSize().intValue() );
 
-        verify( row, times( 2 ) ).updateView();
+        columnDropParameterizedCommand
+                .execute( new ColumnDrop( dropTargetHash, ColumnDrop.Orientation.RIGHT,
+                                          "sampleDndScreen" ) );
+
+        assertEquals( 4, row.getColumns().size() );
+        assertEquals( columnMock3, row.getColumns().get( 0 ) );
+        assertEquals( columnMock1, row.getColumns().get( 1 ) );
+        assertEquals( columnMock4, row.getColumns().get( 2 ) );
+        assertEquals( columnMock2, row.getColumns().get( 3 ) );
+        assertEquals( Row.COLUMN_DEFAULT_SIZE / 4, columnMock3.getSize().intValue() );
+        assertEquals( Row.COLUMN_DEFAULT_SIZE / 6, columnMock1.getSize().intValue() );
+        assertEquals( Row.COLUMN_DEFAULT_SIZE / 12, columnMock4.getSize().intValue() );
+        assertEquals( Row.COLUMN_DEFAULT_SIZE / 2, columnMock2.getSize().intValue() );
+
+        verify( row, times( 3 ) ).updateView();
     }
 }

@@ -147,8 +147,11 @@ public class ComponentColumn implements Column {
     }
 
     public void halfParentPanelSize(Integer panelSize){
-        //columns should have half of parent size
         this.panelSize = panelSize/2;
+    }
+
+    public void setPanelSize(Integer panelSize){
+        this.panelSize = panelSize;
     }
 
     public void init( int parentHashCode, Type columnType, Integer size,
