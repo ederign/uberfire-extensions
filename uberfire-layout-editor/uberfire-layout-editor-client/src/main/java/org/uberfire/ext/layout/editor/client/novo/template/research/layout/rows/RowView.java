@@ -1,5 +1,6 @@
 package org.uberfire.ext.layout.editor.client.novo.template.research.layout.rows;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.DragLeaveEvent;
 import com.google.gwt.event.dom.client.DragOverEvent;
 import com.google.gwt.event.dom.client.DropEvent;
@@ -23,28 +24,29 @@ public class RowView extends Composite
         implements UberView<Row>,
         Row.View {
 
+    static final String ROW_DROP_PREVIEW = "rowDropPreview";
+
     private Row presenter;
 
 
     @DataField
-    private Element upper = DOM.createDiv();
+    Element upper = DOM.createDiv();
+
+    @DataField
+    Element bottom = DOM.createDiv();
 
     @Inject
     @DataField
-    private FlowPanel content;
-
-    @DataField
-    private Element bottom = DOM.createDiv();
+    FlowPanel content;
 
 
-    FlowPanel rowContentWrapper = new FlowPanel();
+    FlowPanel rowContentWrapper = GWT.create( FlowPanel.class );
 
 
     @Override
     public void init( Row presenter ) {
         this.presenter = presenter;
         content.add( rowContentWrapper );
-//        content.getElement().getStyle().setCursor( Style.Cursor.MOVE );
     }
 
     @Override
@@ -61,7 +63,7 @@ public class RowView extends Composite
     public void dragOverUpper( DragOverEvent e ) {
         if ( presenter.isDropEnable() ) {
             e.preventDefault();
-            upper.addClassName( "rowDropPreview" );
+            upper.addClassName( ROW_DROP_PREVIEW );
         }
     }
 
@@ -91,7 +93,7 @@ public class RowView extends Composite
     }
 
     @EventHandler( "bottom" )
-    public void dragoverBottom( DragOverEvent e ) {
+    public void dragOverBottom( DragOverEvent e ) {
         if ( presenter.isDropEnable() ) {
             e.preventDefault();
             bottom.addClassName( "rowDropPreview" );
