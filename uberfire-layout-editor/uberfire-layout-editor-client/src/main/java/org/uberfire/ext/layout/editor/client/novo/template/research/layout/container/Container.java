@@ -92,8 +92,9 @@ public class Container {
                 if ( rowUsedToHasThisComponent ) {
                     if ( rowIsEmpty( row ) ) {
                         rows.remove( row );
-                        break;
+
                     }
+                    break;
                 }
             }
         };

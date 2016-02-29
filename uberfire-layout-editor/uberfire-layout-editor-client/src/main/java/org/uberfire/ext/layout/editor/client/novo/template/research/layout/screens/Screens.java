@@ -1,5 +1,7 @@
 package org.uberfire.ext.layout.editor.client.novo.template.research.layout.screens;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 public enum Screens {
 
     AnotherScreen,
@@ -10,7 +12,9 @@ public enum Screens {
     HomeScreen3,
     HomeScreen4,
     HomeScreen5,
-    MoodScreen;
+    MoodScreen,
+    MoodScreen2,
+    MoodScreen3;
 
     public static int next = -1;
 

@@ -6,4 +6,8 @@ public interface Column<T> {
     UberView<T> getView();
 
     Integer getSize();
+
+    void incrementSize();
+
+    void reduzeSize();
 }

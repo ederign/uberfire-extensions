@@ -119,13 +119,11 @@ public class Row {
     public boolean removeColumn( String placeName ) {
         Column columnToRemove = null;
         for ( Column column : columns ) {
-            if ( column instanceof ComponentColumn ) {
+            if ( isComponentColumn( column ) ) {
                 ComponentColumn c = ( ComponentColumn ) column;
                 if ( c.getPlace().equals( placeName ) ) {
                     columnToRemove = column;
                 }
-            } else {
-                //TODO
             }
         }
         if ( columnToRemove != null ) {
@@ -138,7 +136,7 @@ public class Row {
 
     private void setSizeOfSibilinColumn( Column columnToRemove ) {
         //write better algo and also to other types
-        if ( columnToRemove instanceof ComponentColumn ) {
+        if ( isComponentColumn( columnToRemove ) ) {
             ComponentColumn c = ( ComponentColumn ) columnToRemove;
             final int i = columns.indexOf( columnToRemove );
             final int size = c.getSize();
@@ -152,7 +150,7 @@ public class Row {
             } else {
                 if ( columns.size() >= 2 ) {
                     final Column column = columns.get( 1 );
-                    if ( column instanceof ComponentColumn ) {
+                    if ( isComponentColumn( columnToRemove ) ) {
                         ComponentColumn biggerColumn = ( ComponentColumn ) column;
                         final Integer originalSize = biggerColumn.getSize();
                         biggerColumn.setSize( originalSize + size );
@@ -295,8 +293,18 @@ public class Row {
 
     private ComponentColumn createNewComponentColumn( ColumnDrop drop, ComponentColumn currentColumn ) {
         final ComponentColumn newColumn = createColumn();
-        newColumn.init( currentColumn.getParentHashCode(), getColumnType( 0 ), 12, dropCommand(), extractColumnPlace( drop ) );
+        newColumn.init( currentColumn.getParentHashCode(), getColumnType( 0 ), 12, dropCommand(),
+                        extractColumnPlace( drop ) );
         newColumn.halfParentPanelSize( currentColumn.getPanelSize() );
+        return newColumn;
+    }
+
+    private ComponentColumn createNewComponentColumn( ColumnDrop drop, ComponentColumn currentColumn,
+                                                      int newColumnIndex, Integer columnSize ) {
+        final ComponentColumn newColumn = createColumn();
+        newColumn.init( currentColumn.getParentHashCode(), getColumnType( newColumnIndex ), columnSize, dropCommand(),
+                        extractColumnPlace( drop ) );
+        newColumn.setPanelSize( currentColumn.getPanelSize() );
         return newColumn;
     }
 
@@ -343,15 +351,6 @@ public class Row {
         }
     }
 
-    private ComponentColumn createNewComponentColumn( ColumnDrop drop, ComponentColumn currentColumn,
-                                                      int newColumnIndex, Integer columnSize ) {
-        String place = extractColumnPlace( drop );
-        final ComponentColumn newColumn = createColumn();
-        ComponentColumn.Type type = getColumnType( newColumnIndex );
-        newColumn.init( currentColumn.getParentHashCode(), type, columnSize, dropCommand(), place );
-        newColumn.setPanelSize( currentColumn.getPanelSize() );
-        return newColumn;
-    }
 
     private ComponentColumn updateCurrentColumn( ComponentColumn currentColumn, int columnIndex ) {
         currentColumn.setColumnType( getColumnType( columnIndex + 1 ) );
@@ -392,24 +391,27 @@ public class Row {
     }
 
     public void resizeColumns( @Observes ColumnResizeEvent resize ) {
-        if ( resize.getRowHashCode() == hashCode() ) {
-            //FIXME CAST
-            ComponentColumn resizeColumn = ( ComponentColumn ) getColumn( resize );
+        if ( resizeEventIsinThisRow( resize ) ) {
 
-            if ( resizeColumn != null ) {
-                ComponentColumn affectedColumn = ( ComponentColumn ) columns
-                        .get( columns.indexOf( resizeColumn ) - 1 );
+            Column resizedColumn = getColumn( resize );
 
+            if ( resizedColumn != null ) {
+                Column affectedColumn = columns
+                        .get( columns.indexOf( resizedColumn ) - 1 );
                 if ( resize.isLeft() ) {
-                    resizeColumn.incrementSize();
+                    resizedColumn.incrementSize();
                     affectedColumn.reduzeSize();
                 } else {
                     affectedColumn.incrementSize();
-                    resizeColumn.reduzeSize();
+                    resizedColumn.reduzeSize();
                 }
             }
             updateView();
         }
+    }
+
+    private boolean resizeEventIsinThisRow( @Observes ColumnResizeEvent resize ) {
+        return resize.getRowHashCode() == hashCode();
     }
 
 

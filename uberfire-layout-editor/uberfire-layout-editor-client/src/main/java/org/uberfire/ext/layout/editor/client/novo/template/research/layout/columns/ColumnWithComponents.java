@@ -28,6 +28,13 @@ public class ColumnWithComponents implements Column {
         this.rowInstance = rowInstance;
     }
 
+    public void removeIfExists( String placeName ) {
+        GWT.log( "remove if exists" );
+        if(hasRow()){
+
+        }
+    }
+
     public interface View extends UberView<ColumnWithComponents> {
 
         void setSize( String size );
@@ -81,6 +88,23 @@ public class ColumnWithComponents implements Column {
     @Override
     public Integer getSize() {
         return size;
+    }
+
+    @Override
+    public void reduzeSize() {
+        final int newSize = this.size - 1;
+        setSize( newSize );
+    }
+
+    @Override
+    public void incrementSize() {
+        final int newSize = this.size + 1;
+        setSize( newSize );
+    }
+
+    public void setSize( Integer size ) {
+        this.size = size;
+        view.setSize( size.toString() );
     }
 
     public boolean hasRow() {

@@ -6,8 +6,10 @@ import org.uberfire.ext.layout.editor.client.novo.template.research.layout.colum
 import org.uberfire.ext.layout.editor.client.novo.template.research.layout.columns.ColumnWithComponents;
 import org.uberfire.ext.layout.editor.client.novo.template.research.layout.columns.ComponentColumn;
 import org.uberfire.ext.layout.editor.client.novo.template.research.layout.infra.ColumnDrop;
+import org.uberfire.ext.layout.editor.client.novo.template.research.layout.infra.ColumnResizeEvent;
 import org.uberfire.ext.layout.editor.client.novo.template.research.layout.infra.DnDManager;
 import org.uberfire.ext.layout.editor.client.novo.template.research.layout.infra.RepaintContainerEvent;
+import org.uberfire.ext.layout.editor.client.novo.template.research.layout.screens.Screens;
 import org.uberfire.mvp.ParameterizedCommand;
 
 import javax.enterprise.event.Event;
@@ -169,6 +171,7 @@ public class RowTest {
 
 
         assertEquals( 2, row.getColumns().size() );
+
         assertTrue( row.getColumns().get( 1 ) instanceof ColumnWithComponents );
         ColumnWithComponents column = ( ColumnWithComponents ) row.getColumns().get( 1 );
         assertTrue( column.hasRow() );
@@ -186,13 +189,60 @@ public class RowTest {
         assertEquals(componentColumnMock3, innerRowColumn2Component.getColumns().get( 0 ));
         assertEquals(componentColumnMock2, innerRowColumn2Component.getColumns().get( 1 ));
         assertEquals(componentColumnMock4, innerRowColumn2Component.getColumns().get( 2 ));
+
+        verify( row, times( 3 ) ).updateView();
     }
 
-    public void resizeColumnsTest(){
-
-    }
-
+    @Test
     public void removeColumnTest(){
-        
+        row.init( dropOnRowCommand, existentComponentDropCommand );
+        row.withOneColumn( mock( RowDrop.class ) );
+        ParameterizedCommand<ColumnDrop> columnDropParameterizedCommand = row.dropCommand();
+
+        //drop on the right first column
+        columnDropParameterizedCommand
+                .execute( new ColumnDrop( row.getColumns().get( 0 ).hashCode(), ColumnDrop.Orientation.RIGHT,
+                                          Screens.AnotherScreen.name() ) );
+
+        assertEquals( 2, row.getColumns().size() );
+        assertEquals( Row.COLUMN_DEFAULT_SIZE / 2, row.getColumns().get( 0 ).getSize().intValue() );
+        assertEquals( Row.COLUMN_DEFAULT_SIZE / 2, row.getColumns().get( 1 ).getSize().intValue());
+
+        row.removeColumn( "doNothing" );
+
+        assertEquals( 2, row.getColumns().size() );
+
+        row.removeColumn(  Screens.AnotherScreen.name() );
+        assertEquals( 1, row.getColumns().size() );
+        assertEquals( Row.COLUMN_DEFAULT_SIZE , row.getColumns().get( 0 ).getSize().intValue() );
+
+        verify( row, times( 1 ) ).updateView();
+    }
+
+    @Test
+    public void resizeColumnsTest(){
+        row.init( dropOnRowCommand, existentComponentDropCommand );
+        row.withOneColumn( mock( RowDrop.class ) );
+        ParameterizedCommand<ColumnDrop> columnDropParameterizedCommand = row.dropCommand();
+
+        columnDropParameterizedCommand
+                .execute( new ColumnDrop( row.getColumns().get( 0 ).hashCode(), ColumnDrop.Orientation.RIGHT,
+                                          Screens.AnotherScreen.name() ) );
+
+        assertEquals( 2, row.getColumns().size() );
+        assertEquals( Row.COLUMN_DEFAULT_SIZE / 2, row.getColumns().get( 0 ).getSize().intValue() );
+        assertEquals( Row.COLUMN_DEFAULT_SIZE / 2, row.getColumns().get( 1 ).getSize().intValue());
+
+
+        row.resizeColumns( new ColumnResizeEvent(componentColumnMock2.hashCode(),  row.hashCode() ).right() );
+
+        assertEquals( (Row.COLUMN_DEFAULT_SIZE / 2 + 1), row.getColumns().get( 0 ).getSize().intValue() );
+        assertEquals( (Row.COLUMN_DEFAULT_SIZE / 2 - 1), row.getColumns().get( 1 ).getSize().intValue());
+
+        row.resizeColumns( new ColumnResizeEvent(componentColumnMock2.hashCode(),  row.hashCode() ).left() );
+        assertEquals( Row.COLUMN_DEFAULT_SIZE / 2, row.getColumns().get( 0 ).getSize().intValue() );
+        assertEquals( Row.COLUMN_DEFAULT_SIZE / 2, row.getColumns().get( 1 ).getSize().intValue());
+
+        verify( row, times( 3 ) ).updateView();
     }
 }

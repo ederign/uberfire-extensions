@@ -54,11 +54,13 @@ public class ComponentColumn implements Column {
         return this.size > 1;
     }
 
+    @Override
     public void reduzeSize() {
         final int newSize = this.size - 1;
         setSize( newSize );
     }
 
+    @Override
     public void incrementSize() {
         final int newSize = this.size + 1;
         setSize( newSize );
