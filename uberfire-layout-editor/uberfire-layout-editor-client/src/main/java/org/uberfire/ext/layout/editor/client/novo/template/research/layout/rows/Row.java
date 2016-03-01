@@ -82,7 +82,7 @@ public class Row {
 
     public void withOneColumn( RowDrop drop ) {
         final ComponentColumn column = createColumn();
-        column.init( hashCode(), ComponentColumn.Type.FIRST, COLUMN_DEFAULT_SIZE,
+        column.init( hashCode(), ComponentColumn.Type.FIRST_COLUMN, COLUMN_DEFAULT_SIZE,
                      dropCommand(), Screens.next().name() );
         columns.add( column );
     }
@@ -383,7 +383,7 @@ public class Row {
     private ComponentColumn.Type getColumnType( int i ) {
         ComponentColumn.Type type;
         if ( i == 0 ) {
-            type = ComponentColumn.Type.FIRST;
+            type = ComponentColumn.Type.FIRST_COLUMN;
         } else {
             type = ComponentColumn.Type.MIDDLE;
         }

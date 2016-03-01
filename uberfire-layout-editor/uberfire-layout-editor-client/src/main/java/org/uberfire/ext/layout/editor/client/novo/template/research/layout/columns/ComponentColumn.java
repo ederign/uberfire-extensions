@@ -1,13 +1,9 @@
 package org.uberfire.ext.layout.editor.client.novo.template.research.layout.columns;
 
-import com.google.gwt.core.client.GWT;
 import org.uberfire.client.mvp.UberView;
 import org.uberfire.ext.layout.editor.client.novo.template.research.layout.infra.ColumnDrop;
 import org.uberfire.ext.layout.editor.client.novo.template.research.layout.infra.DnDManager;
-import org.uberfire.ext.layout.editor.client.novo.template.research.layout.infra.MouseOverInfo;
 import org.uberfire.ext.layout.editor.client.novo.template.research.layout.rows.Row;
-import org.uberfire.ext.layout.editor.client.novo.template.research.layout.rows.RowDrop;
-import org.uberfire.ext.layout.editor.client.novo.template.research.layout.screens.Screens;
 import org.uberfire.mvp.ParameterizedCommand;
 
 import javax.annotation.PostConstruct;
@@ -18,8 +14,9 @@ import javax.inject.Inject;
 @Dependent
 public class ComponentColumn implements Column {
 
-    @Inject
-    DnDManager dndManager;
+    private DnDManager dndManager;
+
+    private Instance<Row> rowInstance;
 
     private final View view;
 
@@ -31,27 +28,48 @@ public class ComponentColumn implements Column {
 
     private ParameterizedCommand<ColumnDrop> dropCommand;
 
-    @Inject
-    Instance<Row> rowInstance;
-
-    //gambiarra pra acertar o padding de inner columns
     boolean innerColumn = false;
+
     boolean containerColumn = false;
+
     private String place;
+
     //UF BUG
     private Integer panelSize = 100;
 
+    public interface View extends UberView<ComponentColumn> {
 
-    boolean canResize() {
-        return columnType == Type.MIDDLE;
+        void setCursor();
+
+        void setSize( String size );
+
+        void calculateSize();
+
+        void setContent( String place, String size );
+
     }
 
-    boolean canMove() {
-        return columnType == Type.FIRST;
+    @Inject
+    public ComponentColumn( final View view, DnDManager dndManager, Instance<Row> rowInstance ) {
+        this.view = view;
+        this.dndManager = dndManager;
+        this.rowInstance = rowInstance;
     }
 
-    public boolean canReduceSize() {
-        return this.size > 1;
+    @PostConstruct
+    public void post() {
+        view.init( this );
+    }
+
+    public void init( int parentHashCode, Type columnType, Integer size,
+                      ParameterizedCommand<ColumnDrop> dropCommand, String place ) {
+        this.parentHashCode = parentHashCode;
+        this.columnType = columnType;
+        this.size = size;
+        this.dropCommand = dropCommand;
+        view.setSize( size.toString() );
+        view.setCursor();
+        this.place = place;
     }
 
     @Override
@@ -67,15 +85,10 @@ public class ComponentColumn implements Column {
     }
 
     public void onMouseDown( int xPosition ) {
-        GWT.log( "onMouseDown" );
         if ( canResize() ) {
-            GWT.log( "canResize" );
             dndManager.beginColumnResize( hashCode(), xPosition );
         } else if ( canMove() ) {
-            GWT.log( "canMov" );
             dndManager.beginRowMove( parentHashCode );
-        } else {
-            GWT.log( "nop" );
         }
     }
 
@@ -83,28 +96,6 @@ public class ComponentColumn implements Column {
         dndManager.endColumnResize( parentHashCode, xPosition );
     }
 
-    public void onMouseOver( MouseOverInfo mouseOverInfo ) {
-        if ( dndManager.isOnDnd() ) {
-            GWT.log( "MOUSE OVER DND: " + mouseOverInfo.toString() );
-        }
-    }
-
-    private ParameterizedCommand<RowDrop> createDropCommand() {
-        return new ParameterizedCommand<RowDrop>() {
-            @Override
-            public void execute( RowDrop parameter ) {
-                GWT.log( "TODO DROP" );
-            }
-        };
-    }
-
-    public void innerColumn() {
-        this.innerColumn = true;
-    }
-
-    public void containerColumn() {
-        this.containerColumn = true;
-    }
 
     public Integer getPanelSize() {
         return panelSize;
@@ -114,28 +105,6 @@ public class ComponentColumn implements Column {
         return place;
     }
 
-    public interface View extends UberView<ComponentColumn> {
-
-        void setCursor();
-
-        void setSize( String size );
-
-        void calculateSize();
-
-        void addRow( UberView<Row> view );
-
-        void setContent( String place, String size );
-    }
-
-    @Inject
-    public ComponentColumn( final View view ) {
-        this.view = view;
-    }
-
-    @PostConstruct
-    public void post() {
-        view.init( this );
-    }
 
     public UberView<ComponentColumn> getView() {
         view.calculateSize();
@@ -148,23 +117,12 @@ public class ComponentColumn implements Column {
         view.calculateSize();
     }
 
-    public void halfParentPanelSize(Integer panelSize){
-        this.panelSize = panelSize/2;
+    public void halfParentPanelSize( Integer panelSize ) {
+        this.panelSize = panelSize / 2;
     }
 
-    public void setPanelSize(Integer panelSize){
+    public void setPanelSize( Integer panelSize ) {
         this.panelSize = panelSize;
-    }
-
-    public void init( int parentHashCode, Type columnType, Integer size,
-                      ParameterizedCommand<ColumnDrop> dropCommand, String place  ) {
-        this.parentHashCode = parentHashCode;
-        this.columnType = columnType;
-        this.size = size;
-        this.dropCommand = dropCommand;
-        view.setSize( size.toString() );
-        view.setCursor();
-        this.place = place;
     }
 
     public int getParentHashCode() {
@@ -182,31 +140,23 @@ public class ComponentColumn implements Column {
     }
 
     public void onDrop( ColumnDrop.Orientation orientation, String dndData ) {
-        GWT.log( dndData + " <- dndData" );
         dropCommand.execute( new ColumnDrop( hashCode(), orientation, dndData ) );
     }
 
+    boolean canResize() {
+        return columnType == Type.MIDDLE;
+    }
+
+    boolean canMove() {
+        return columnType == Type.FIRST_COLUMN;
+    }
 
     public enum Type {
-        FIRST, MIDDLE;
+        FIRST_COLUMN, MIDDLE;
     }
 
     public void setColumnType( Type columnType ) {
         this.columnType = columnType;
-    }
-
-    public void setParentHashCode( int parentHashCode ) {
-        this.parentHashCode = parentHashCode;
-    }
-
-    @Override
-    public String toString() {
-        return "Column{" +
-                "size=" + size +
-                ", hashCode=" + hashCode() +
-                ", parentHashCode=" + parentHashCode +
-                ", columnType=" + columnType +
-                '}';
     }
 
     protected boolean isInnerColumn() {
