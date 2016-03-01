@@ -16,13 +16,13 @@ public class ColumnWithComponentsView extends Composite
         implements UberView<ColumnWithComponents>,
         ColumnWithComponents.View {
 
+    public static final String COL_CSS_CLASS = "col-md-";
+
     private ColumnWithComponents presenter;
 
     @Inject
     @DataField
-    private FlowPanel col;
-
-    public static final String COL_CSS_CLASS = "col-md-";
+    FlowPanel col;
     String cssSize = "";
 
     @Override
@@ -33,24 +33,21 @@ public class ColumnWithComponentsView extends Composite
 
     @Override
     public void setSize( String size ) {
-        if ( !cssSize.isEmpty() && col.getElement().hasClassName( cssSize ) ) {
+        if ( hasCssSizeClass() ) {
             col.getElement().removeClassName( cssSize );
         }
         cssSize = COL_CSS_CLASS + size;
         col.getElement().addClassName( cssSize );
-//        if ( !presenter.isInnerColumn() ) {
-//            col.addClassName( "no-padding" );
-//        } else {
-//            if ( col.hasClassName( "no-padding" ) ) {
-//                col.removeClassName( "no-padding" );
-//                col.addClassName( "innerColumnPadding" );
-//            }
-//        }
+    }
+
+    private boolean hasCssSizeClass() {
+        return !cssSize.isEmpty() && col.getElement().hasClassName( cssSize );
     }
 
     @Override
     public void addRow( UberView<Row> view ) {
         col.add( view );
     }
+
 
 }

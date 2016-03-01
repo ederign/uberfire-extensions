@@ -1,6 +1,5 @@
 package org.uberfire.ext.layout.editor.client.novo.template.research.layout.columns;
 
-import com.google.gwt.core.client.GWT;
 import org.uberfire.client.mvp.UberView;
 import org.uberfire.ext.layout.editor.client.novo.template.research.layout.rows.Row;
 import org.uberfire.ext.layout.editor.client.novo.template.research.layout.rows.RowDrop;
@@ -16,10 +15,8 @@ public class ColumnWithComponents implements Column {
 
     private final View view;
     private Integer size;
-    private int parentHashCode;
-
-    Row row;
-
+    int parentHashCode;
+    private Row row;
     private Instance<Row> rowInstance;
 
     @Inject
@@ -28,18 +25,30 @@ public class ColumnWithComponents implements Column {
         this.rowInstance = rowInstance;
     }
 
-    public void removeIfExists( String placeName ) {
-        GWT.log( "remove if exists" );
-        if(hasRow()){
-
-        }
-    }
-
     public interface View extends UberView<ColumnWithComponents> {
 
         void setSize( String size );
+
         void addRow( UberView<Row> view );
 
+    }
+
+    @PostConstruct
+    public void post() {
+        view.init( this );
+    }
+
+    public void init( Integer parentHashCode, Integer size ) {
+        this.size = size;
+        this.parentHashCode = parentHashCode;
+        view.setSize( size.toString() );
+    }
+
+
+    public void removeIfExists( String placeName ) {
+        if ( hasRow() ) {
+
+        }
     }
 
     public void withComponents( Column... _columns ) {
@@ -47,35 +56,18 @@ public class ColumnWithComponents implements Column {
         row.disableDrop();
         row.init( createDropCommand(), componentRemovalCommand() );
         row.addColumns( _columns );
-//        column.setParentHashCode( row.hashCode() );
     }
 
-    private ParameterizedCommand<String> componentRemovalCommand() {
-        return new ParameterizedCommand<String>() {
-            @Override
-            public void execute( String parameter ) {
-                GWT.log( "remove " + parameter );
-            }
+    ParameterizedCommand<String> componentRemovalCommand() {
+        return parameter -> {
         };
     }
 
-    private ParameterizedCommand<RowDrop> createDropCommand() {
-        return new ParameterizedCommand<RowDrop>() {
-            @Override
-            public void execute( RowDrop parameter ) {
-                GWT.log( "Drop Column With components" );
-            }
+    ParameterizedCommand<RowDrop> createDropCommand() {
+        return rowDrop -> {
         };
     }
 
-    public void addColumnToRow( ComponentColumn newColumn ) {
-        row.addColumns( newColumn );
-    }
-
-    @PostConstruct
-    public void post() {
-        view.init( this );
-    }
 
     @Override
     public UberView<ColumnWithComponents> getView() {
@@ -111,13 +103,12 @@ public class ColumnWithComponents implements Column {
         return row != null;
     }
 
-    public void init( Integer parentHashCode, Integer size ) {
-        this.size = size;
-        this.parentHashCode = parentHashCode;
-        view.setSize( size.toString() );
-    }
 
     public Row getRow() {
         return row;
+    }
+
+    public int getParentHashCode() {
+        return parentHashCode;
     }
 }

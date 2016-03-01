@@ -33,11 +33,11 @@ public class ComponentColumnView extends Composite
         ComponentColumn.View {
 
     public static final String COL_CSS_CLASS = "col-md-";
+
     private ComponentColumn presenter;
 
     @DataField
     private Element col = DOM.createDiv();
-
 
     @Inject
     @DataField
@@ -226,7 +226,6 @@ public class ComponentColumnView extends Composite
             colUp.getElement().removeClassName( "colPreview" );
             contentDropOrientation = ColumnDrop.Orientation.DOWN;
         }
-//        presenter.onMouseOver(new MouseOverInfo(e.getClientX(), e.getClientY()));
     }
 
     @EventHandler( "content" )
@@ -235,7 +234,6 @@ public class ComponentColumnView extends Composite
         colUp.getElement().removeClassName( "colPreview" );
         colDown.getElement().removeClassName( "colPreview" );
         contentDropOrientation = null;
-//        presenter.onMouseOver(new MouseOverInfo(e.getClientX(), e.getClientY()));
     }
 
 
