@@ -25,7 +25,6 @@ public class DnDManager {
     private int rowHashBegin;
 
     public void beginColumnResize( int columnHashCode, int beginX ) {
-        GWT.log( "beginColumnResize" );
         this.columnHashCode = columnHashCode;
         this.isOnColumnResize = true;
         this.beginColumnX = beginX;
@@ -33,11 +32,9 @@ public class DnDManager {
 
     public void endColumnResize( int rowHashCodeEnd, int endX ) {
         if ( isOnColumnResize ) {
-            GWT.log( "endColumnResize" );
             handleColumnResize( endX, rowHashCodeEnd );
             this.isOnColumnResize = false;
         } else if ( isOnRowMove ) {
-            GWT.log( "endRowMove" );
             rowDnDEvent.fire( new RowDnDEvent( rowHashBegin, rowHashCodeEnd ) );
         }
     }
@@ -62,7 +59,6 @@ public class DnDManager {
 
     public void beginRowMove( int rowHashBegin ) {
         if ( !isOnColumnResize ) {
-            GWT.log( "beginRowMove" );
             this.rowHashBegin = rowHashBegin;
             this.isOnRowMove = true;
         }
@@ -70,7 +66,6 @@ public class DnDManager {
 
     public void endRowMove( int rowHashCodeEnd ) {
         if ( isOnRowMove ) {
-            GWT.log( "endRowMove" );
             rowDnDEvent.fire( new RowDnDEvent( rowHashBegin, rowHashCodeEnd ) );
         }
     }

@@ -3,20 +3,16 @@ package org.uberfire.ext.layout.editor.client.novo.template.research.layout.colu
 import org.uberfire.client.mvp.UberView;
 import org.uberfire.ext.layout.editor.client.novo.template.research.layout.infra.ColumnDrop;
 import org.uberfire.ext.layout.editor.client.novo.template.research.layout.infra.DnDManager;
-import org.uberfire.ext.layout.editor.client.novo.template.research.layout.rows.Row;
 import org.uberfire.mvp.ParameterizedCommand;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
-import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 @Dependent
 public class ComponentColumn implements Column {
 
     private DnDManager dndManager;
-
-    private Instance<Row> rowInstance;
 
     private final View view;
 
@@ -50,10 +46,9 @@ public class ComponentColumn implements Column {
     }
 
     @Inject
-    public ComponentColumn( final View view, DnDManager dndManager, Instance<Row> rowInstance ) {
+    public ComponentColumn( final View view, DnDManager dndManager ) {
         this.view = view;
         this.dndManager = dndManager;
-        this.rowInstance = rowInstance;
     }
 
     @PostConstruct
@@ -84,6 +79,11 @@ public class ComponentColumn implements Column {
         setSize( newSize );
     }
 
+    public void setSize( Integer size ) {
+        this.size = size;
+        view.setSize( size.toString() );
+    }
+
     public void onMouseDown( int xPosition ) {
         if ( canResize() ) {
             dndManager.beginColumnResize( hashCode(), xPosition );
@@ -91,6 +91,15 @@ public class ComponentColumn implements Column {
             dndManager.beginRowMove( parentHashCode );
         }
     }
+
+    boolean canResize() {
+        return columnType == Type.MIDDLE;
+    }
+
+    boolean canMove() {
+        return columnType == Type.FIRST_COLUMN;
+    }
+
 
     public void onMouseUp( int xPosition ) {
         dndManager.endColumnResize( parentHashCode, xPosition );
@@ -134,21 +143,10 @@ public class ComponentColumn implements Column {
         return size;
     }
 
-    public void setSize( Integer size ) {
-        this.size = size;
-        view.setSize( size.toString() );
-    }
+
 
     public void onDrop( ColumnDrop.Orientation orientation, String dndData ) {
         dropCommand.execute( new ColumnDrop( hashCode(), orientation, dndData ) );
-    }
-
-    boolean canResize() {
-        return columnType == Type.MIDDLE;
-    }
-
-    boolean canMove() {
-        return columnType == Type.FIRST_COLUMN;
     }
 
     public enum Type {
