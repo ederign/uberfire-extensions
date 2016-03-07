@@ -1,6 +1,9 @@
 package org.uberfire.ext.layout.editor.client.novo.template.research.layout.rows;
 
+import com.google.gwt.event.dom.client.DropEvent;
 import org.uberfire.client.mvp.UberView;
+import org.uberfire.ext.layout.editor.client.components.LayoutDragComponent;
+import org.uberfire.ext.layout.editor.client.dnd.DndDataJSONConverter;
 import org.uberfire.ext.layout.editor.client.novo.template.research.layout.columns.Column;
 import org.uberfire.ext.layout.editor.client.novo.template.research.layout.columns.ColumnWithComponents;
 import org.uberfire.ext.layout.editor.client.novo.template.research.layout.columns.ComponentColumn;
@@ -52,6 +55,8 @@ public class Row {
 
     private boolean dropEnable = true;
 
+    private DndDataJSONConverter converter = new DndDataJSONConverter();
+
     @Inject
     public Row( View view, Instance<ComponentColumn> columnInstance,
                 Instance<ColumnWithComponents> columnWithComponentsInstance,
@@ -83,7 +88,7 @@ public class Row {
     public void withOneColumn( RowDrop drop ) {
         final ComponentColumn column = createColumn();
         column.init( hashCode(), ComponentColumn.Type.FIRST_COLUMN, COLUMN_DEFAULT_SIZE,
-                     dropCommand(), Screens.next().name() );
+                     dropCommand(), Screens.next().name(), drop.getComponent() );
         columns.add( column );
     }
 
@@ -169,8 +174,20 @@ public class Row {
         return column;
     }
 
-    public void drop( RowDrop.Orientation orientation ) {
-        dropOnRowCommand.execute( new RowDrop( hashCode(), orientation ) );
+    public void drop( DropEvent dropEvent, RowDrop.Orientation orientation ) {
+        LayoutDragComponent component = extractComponent( dropEvent );
+        if ( thereIsAComponent( component ) ) {
+            dropOnRowCommand.execute( new RowDrop( component, hashCode(), orientation ) );
+        }
+    }
+
+    private LayoutDragComponent extractComponent( DropEvent dropEvent ) {
+        return converter
+                .readJSONDragComponent( dropEvent.getData( LayoutDragComponent.FORMAT ) );
+    }
+
+    private boolean thereIsAComponent( LayoutDragComponent component ) {
+        return component != null;
     }
 
     @PostConstruct
@@ -260,7 +277,7 @@ public class Row {
         final ComponentColumn newColumn = createColumn();
         newColumn.init( currentColumn.getParentHashCode(), getColumnType( 0 ), COLUMN_DEFAULT_SIZE,
                         dropCommand(),
-                        extractColumnPlace( drop ) );
+                        extractColumnPlace( drop ), null ); //TODO ederign
         newColumn.setSize( currentColumn.getPanelSize() );
         return newColumn;
     }
@@ -294,7 +311,7 @@ public class Row {
     private ComponentColumn createNewComponentColumn( ColumnDrop drop, ComponentColumn currentColumn ) {
         final ComponentColumn newColumn = createColumn();
         newColumn.init( currentColumn.getParentHashCode(), getColumnType( 0 ), 12, dropCommand(),
-                        extractColumnPlace( drop ) );
+                        extractColumnPlace( drop ), null ); //todo ederign
         newColumn.halfParentPanelSize( currentColumn.getPanelSize() );
         return newColumn;
     }
@@ -303,7 +320,7 @@ public class Row {
                                                       int newColumnIndex, Integer columnSize ) {
         final ComponentColumn newColumn = createColumn();
         newColumn.init( currentColumn.getParentHashCode(), getColumnType( newColumnIndex ), columnSize, dropCommand(),
-                        extractColumnPlace( drop ) );
+                        extractColumnPlace( drop ), null ); //todo ederign
         newColumn.setPanelSize( currentColumn.getPanelSize() );
         return newColumn;
     }

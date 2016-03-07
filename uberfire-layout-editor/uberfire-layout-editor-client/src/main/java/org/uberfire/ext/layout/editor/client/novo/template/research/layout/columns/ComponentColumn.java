@@ -1,6 +1,11 @@
 package org.uberfire.ext.layout.editor.client.novo.template.research.layout.columns;
 
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.ui.Panel;
+import org.gwtbootstrap3.client.ui.Modal;
 import org.uberfire.client.mvp.UberView;
+import org.uberfire.ext.layout.editor.api.editor.LayoutComponent;
+import org.uberfire.ext.layout.editor.client.components.*;
 import org.uberfire.ext.layout.editor.client.novo.template.research.layout.infra.ColumnDrop;
 import org.uberfire.ext.layout.editor.client.novo.template.research.layout.infra.DnDManager;
 import org.uberfire.mvp.ParameterizedCommand;
@@ -30,6 +35,11 @@ public class ComponentColumn implements Column {
 
     private String place;
 
+    // eder
+    //We should create a Component Presenter containing view
+    //properties and etc.
+    private LayoutDragComponent component;
+
     //UF BUG
     private Integer panelSize = 100;
 
@@ -57,7 +67,7 @@ public class ComponentColumn implements Column {
     }
 
     public void init( int parentHashCode, Type columnType, Integer size,
-                      ParameterizedCommand<ColumnDrop> dropCommand, String place ) {
+                      ParameterizedCommand<ColumnDrop> dropCommand, String place, LayoutDragComponent component ) {
         this.parentHashCode = parentHashCode;
         this.columnType = columnType;
         this.size = size;
@@ -65,6 +75,33 @@ public class ComponentColumn implements Column {
         view.setSize( size.toString() );
         view.setCursor();
         this.place = place;
+        this.component = component;
+        GWT.log(component + "s");
+        if ( componentHasConfiguration( component ) ) {
+            GWT.log( " yo");
+            showConfigurationScreen( component );
+        }
+    }
+
+    private boolean componentHasConfiguration( LayoutDragComponent component ) {
+        return component instanceof HasConfiguration;
+    }
+
+    private void showConfigurationScreen( LayoutDragComponent component ) {
+        //extract to otherClassPresenter
+        LayoutComponent layoutComponent = null;
+        Panel fluidContainer = null;
+        if ( component instanceof HasModalConfiguration ) {
+            ModalConfigurationContext ctx = new ModalConfigurationContext( layoutComponent, fluidContainer, null );
+            Modal configModal = ( ( HasModalConfiguration ) component ).getConfigurationModal( ctx );
+            configModal.show();
+        } else if ( component instanceof HasPanelConfiguration ) {
+            PanelConfigurationContext ctx = new PanelConfigurationContext( layoutComponent, fluidContainer, null );
+            Panel configPanel = ( ( HasPanelConfiguration ) component ).getConfigurationPanel( ctx );
+            //TODO update view
+//            componentEditorWidget.getWidget().clear();
+//            componentEditorWidget.getWidget().add( configPanel );
+        }
     }
 
     @Override
@@ -142,7 +179,6 @@ public class ComponentColumn implements Column {
     public Integer getSize() {
         return size;
     }
-
 
 
     public void onDrop( ColumnDrop.Orientation orientation, String dndData ) {

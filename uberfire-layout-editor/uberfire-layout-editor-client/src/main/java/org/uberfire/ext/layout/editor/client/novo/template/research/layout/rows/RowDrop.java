@@ -1,14 +1,16 @@
 package org.uberfire.ext.layout.editor.client.novo.template.research.layout.rows;
 
+import org.uberfire.ext.layout.editor.client.components.LayoutDragComponent;
+
 public class RowDrop {
 
 
+    private final LayoutDragComponent component;
     private final int rowHashCode;
     private final Orientation orientation;
 
-    //TODO should also has the place name?
-    public RowDrop( int rowHashCode, Orientation orientation ) {
-
+    public RowDrop( LayoutDragComponent component, int rowHashCode, Orientation orientation ) {
+        this.component = component;
         this.rowHashCode = rowHashCode;
         this.orientation = orientation;
     }
@@ -19,6 +21,10 @@ public class RowDrop {
 
     public Orientation getOrientation() {
         return orientation;
+    }
+
+    public LayoutDragComponent getComponent() {
+        return component;
     }
 
     public enum Orientation {

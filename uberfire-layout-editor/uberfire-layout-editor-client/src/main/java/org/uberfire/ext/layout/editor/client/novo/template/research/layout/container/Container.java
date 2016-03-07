@@ -77,7 +77,6 @@ public class Container {
     }
 
     private Row createRow( RowDrop drop ) {
-        //TODO read DND DATA (from drop) and pass proper component as parameter-> pass for rone with oneColumn
         final Row row = rowInstance.get();
         row.init( createRowDropCommand(), existentComponentRemovalCommand() );
         row.withOneColumn( drop );

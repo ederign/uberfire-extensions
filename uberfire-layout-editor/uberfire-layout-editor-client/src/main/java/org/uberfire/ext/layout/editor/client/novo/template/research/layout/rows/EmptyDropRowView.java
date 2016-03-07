@@ -46,7 +46,7 @@ public class EmptyDropRowView extends Composite
     public void dropRow( DropEvent e ) {
         e.preventDefault();
         row.removeClassName( "rowDropPreview" );
-        presenter.drop( );
+        presenter.drop( e );
     }
 
 }

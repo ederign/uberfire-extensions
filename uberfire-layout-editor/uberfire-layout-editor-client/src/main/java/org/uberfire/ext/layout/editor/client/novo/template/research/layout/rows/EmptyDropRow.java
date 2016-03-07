@@ -1,6 +1,9 @@
 package org.uberfire.ext.layout.editor.client.novo.template.research.layout.rows;
 
+import com.google.gwt.event.dom.client.DropEvent;
 import org.uberfire.client.mvp.UberView;
+import org.uberfire.ext.layout.editor.client.components.LayoutDragComponent;
+import org.uberfire.ext.layout.editor.client.dnd.DndDataJSONConverter;
 import org.uberfire.ext.layout.editor.client.novo.template.research.layout.infra.RepaintContainerEvent;
 import org.uberfire.mvp.ParameterizedCommand;
 
@@ -12,6 +15,8 @@ import javax.inject.Inject;
 
 @Dependent
 public class EmptyDropRow {
+
+    private DndDataJSONConverter converter = new DndDataJSONConverter();
 
     private final View view;
 
@@ -25,8 +30,20 @@ public class EmptyDropRow {
         this.dropCommand = dropCommand;
     }
 
-    public void drop() {
-        dropCommand.execute( new RowDrop( hashCode(), RowDrop.Orientation.AFTER ) );
+    public void drop( DropEvent dropEvent ) {
+        LayoutDragComponent component = extractComponent( dropEvent );
+        if ( thereIsAComponent( component ) ) {
+            dropCommand.execute( new RowDrop( component, hashCode(), RowDrop.Orientation.AFTER ) );
+        }
+    }
+
+    private LayoutDragComponent extractComponent( DropEvent dropEvent ) {
+        return converter
+                .readJSONDragComponent( dropEvent.getData( LayoutDragComponent.FORMAT ) );
+    }
+
+    private boolean thereIsAComponent( LayoutDragComponent component ) {
+        return component != null;
     }
 
 

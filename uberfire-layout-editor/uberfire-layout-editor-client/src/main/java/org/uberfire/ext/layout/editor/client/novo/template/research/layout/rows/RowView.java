@@ -80,7 +80,7 @@ public class RowView extends Composite
         if ( presenter.isDropEnable() ) {
             e.preventDefault();
             upper.removeClassName( "rowDropPreview" );
-            presenter.drop( RowDrop.Orientation.BEFORE );
+            presenter.drop( e, RowDrop.Orientation.BEFORE );
         }
     }
 
@@ -106,7 +106,7 @@ public class RowView extends Composite
         if ( presenter.isDropEnable() ) {
             e.preventDefault();
             bottom.removeClassName( "rowDropPreview" );
-            presenter.drop( RowDrop.Orientation.AFTER );
+            presenter.drop( e, RowDrop.Orientation.AFTER );
         }
     }
 
