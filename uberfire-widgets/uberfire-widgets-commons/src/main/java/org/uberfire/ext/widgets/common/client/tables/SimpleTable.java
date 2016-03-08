@@ -55,13 +55,14 @@ import org.uberfire.ext.services.shared.preferences.UserPreferencesService;
 import org.uberfire.ext.services.shared.preferences.UserPreferencesType;
 import org.uberfire.ext.widgets.common.client.resources.CommonResources;
 import org.uberfire.client.views.pfly.widgets.DataGrid;
+import org.uberfire.ext.widgets.table.client.HelloWorld;
 
 /**
  * A composite Widget that shows rows of data (not-paged) and a "column picker"
  * to allow columns to be hidden from view. Columns can also be sorted.
  */
 public class SimpleTable<T>
-        extends Composite
+        extends HelloWorld
         implements HasData<T> {
 
     interface Binder
@@ -469,7 +470,6 @@ public class SimpleTable<T>
     }
 
     public void saveGridPreferences() {
-
         if ( gridPreferencesStore != null && preferencesService != null ) {
             gridPreferencesStore.setPreferenceKey( gridPreferencesStore.getGlobalPreferences().getKey() );
             gridPreferencesStore.setType( UserPreferencesType.GRIDPREFERENCES );

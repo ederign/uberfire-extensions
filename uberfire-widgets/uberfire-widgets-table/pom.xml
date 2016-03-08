@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <!--
   ~ Copyright 2015 JBoss, by Red Hat, Inc
   ~
@@ -25,95 +26,51 @@
     <version>0.9.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>uberfire-widgets-commons</artifactId>
-  <packaging>jar</packaging>
+  <artifactId>uberfire-widgets-table</artifactId>
 
-  <name>Uberfire Widgets Commons</name>
-  <description>Uberfire Widgets Commons</description>
+  <name>Uberfire Table Widget</name>
+  <description>Uberfire Table Widget</description>
 
   <dependencies>
-
-    <dependency>
-      <groupId>org.uberfire</groupId>
-      <artifactId>uberfire-api</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.uberfire</groupId>
-      <artifactId>uberfire-commons</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.uberfire</groupId>
-      <artifactId>uberfire-nio2-model</artifactId>
-    </dependency>
-    
-    <dependency>
-      <groupId>org.uberfire</groupId>
-      <artifactId>uberfire-widgets-service-api</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.uberfire</groupId>
-      <artifactId>uberfire-widgets-table</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.gwtbootstrap3</groupId>
-      <artifactId>gwtbootstrap3</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.gwtbootstrap3</groupId>
-      <artifactId>gwtbootstrap3-extras</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.uberfire</groupId>
-      <artifactId>uberfire-workbench-client-views-patternfly</artifactId>
-    </dependency>
-
-    <!-- Errai IoC - mandatory for entrypoint -->
-    <dependency>
-      <groupId>org.jboss.errai</groupId>
-      <artifactId>errai-ioc</artifactId>
-    </dependency>
-
-    <!-- Errai Core -->
-    <dependency>
-      <groupId>org.jboss.errai</groupId>
-      <artifactId>errai-bus</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.errai</groupId>
-      <artifactId>errai-common</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.errai</groupId>
-      <artifactId>errai-security-server</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>javax.inject</groupId>
-      <artifactId>javax.inject</artifactId>
-      <scope>provided</scope>
-    </dependency>
-
-    <!-- GWT and GWT Extensions -->
     <dependency>
       <groupId>com.google.gwt</groupId>
       <artifactId>gwt-user</artifactId>
       <scope>provided</scope>
     </dependency>
+    <!-- dependencies added because of new illegal transitive dependency check -->
+    <dependency>
+      <groupId>org.gwtbootstrap3</groupId>
+      <artifactId>gwtbootstrap3</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-workbench-client-views-patternfly</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.errai</groupId>
+      <artifactId>errai-ioc</artifactId>
+    </dependency>
 
-    <!-- Test -->
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
       <scope>test</scope>
     </dependency>
-
     <dependency>
       <groupId>com.google.gwt.gwtmockito</groupId>
       <artifactId>gwtmockito</artifactId>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>com.google.gwt</groupId>
+          <artifactId>gwt-dev</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.gwt</groupId>
+      <artifactId>gwt-dev</artifactId>
       <scope>test</scope>
     </dependency>
 
