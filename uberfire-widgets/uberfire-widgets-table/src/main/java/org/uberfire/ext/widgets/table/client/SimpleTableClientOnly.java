@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.uberfire.ext.widgets.common.client.tables;
+package org.uberfire.ext.widgets.table.client;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
@@ -33,26 +33,21 @@ import org.gwtbootstrap3.client.ui.Button;
 import org.gwtbootstrap3.client.ui.Label;
 import org.jboss.errai.common.client.api.Caller;
 import org.uberfire.client.views.pfly.widgets.DataGrid;
-import org.uberfire.ext.services.shared.preferences.*;
-import org.uberfire.ext.widgets.common.client.resources.CommonResources;
-import org.uberfire.ext.widgets.table.client.ColumnChangedHandlerClientOnly;
-import org.uberfire.ext.widgets.table.client.ColumnMetaClientOnly;
-import org.uberfire.ext.widgets.table.client.ResizableMovableHeader;
 
 import javax.inject.Inject;
 import java.util.List;
 
-/**
+/**TODO ederign
  * A composite Widget that shows rows of data (not-paged) and a "column picker"
  * to allow columns to be hidden from view. Columns can also be sorted.
  */
-public class SimpleTable<T>
+public class SimpleTableClientOnly<T>
         extends Composite
         implements HasData<T> {
 
     interface Binder
             extends
-            UiBinder<Widget, SimpleTable> {
+            UiBinder<Widget, SimpleTableClientOnly> {
 
     }
 
@@ -81,29 +76,16 @@ public class SimpleTable<T>
 
     private String emptyTableCaption;
 
-    protected ColumnPicker<T> columnPicker;
+    protected ColumnPickerClientOnly<T> columnPicker;
 
-    private GridPreferencesStore gridPreferencesStore;
-
-    @Inject
-    private Caller<UserPreferencesService> preferencesService;
-
-    public SimpleTable() {
+    public SimpleTableClientOnly() {
         createDataGrid( null );
         setupGridTable();
     }
 
-    public SimpleTable( final ProvidesKey<T> providesKey ) {
+    public SimpleTableClientOnly( final ProvidesKey<T> providesKey ) {
 
         createDataGrid( providesKey );
-        setupGridTable();
-    }
-
-    public SimpleTable( final ProvidesKey<T> providesKey,
-                        final GridGlobalPreferences gridGlobalPreferences ) {
-
-        createDataGrid( providesKey );
-        setupGridPreferencesStore( gridGlobalPreferences );
         setupGridTable();
     }
 
@@ -111,26 +93,21 @@ public class SimpleTable<T>
         dataGrid = new DataGrid<T>( providesKey );
     }
 
-    void setupGridPreferencesStore( GridGlobalPreferences gridGlobalPreferences ) {
-        if ( gridGlobalPreferences != null ) {
-            this.gridPreferencesStore = new GridPreferencesStore( gridGlobalPreferences );
-        }
-    }
-
     private void setupGridTable() {
         setupDataGrid();
         setEmptyTableWidget();
         setupColumnPicker();
-        addDataGridStyles( dataGrid.getElement(), CommonResources.INSTANCE.CSS().dataGridHeader(),
-                           CommonResources.INSTANCE.CSS().dataGridContent() );
+        //ederign
+        addDataGridStyles( dataGrid.getElement(), "dataGridHeader",
+                           "dataGridContent" );
         initWidget( makeWidget() );
     }
 
-    private void setupColumnPicker() {
-        columnPicker = new ColumnPicker<T>( dataGrid,
-                                            gridPreferencesStore );
+    protected void setupColumnPicker() {
+        columnPicker = new ColumnPickerClientOnly<>( dataGrid );
 
-        columnPicker.addColumnChangedHandler( new ColumnChangedHandler() {
+        //ederign posso apagar isto?
+        columnPicker.addColumnChangedHandler( new ColumnChangedHandlerClientOnly() {
 
             @Override
             public void beforeColumnChanged() {
@@ -138,7 +115,7 @@ public class SimpleTable<T>
 
             @Override
             public void afterColumnChanged() {
-                columnChangeHandler();
+
             }
         } );
 
@@ -150,8 +127,8 @@ public class SimpleTable<T>
         dataGrid.setSkipRowHoverStyleUpdate( false );
         dataGrid.setWidth( "100%" );
         dataGrid.setHeight( "300px" );
-        dataGrid.addStyleName( CommonResources.INSTANCE.CSS().dataGrid() );
-        dataGrid.setRowStyles( ( row, rowIndex ) -> CommonResources.INSTANCE.CSS().dataGridRow() );
+        dataGrid.addStyleName( "dataGrid" );
+        dataGrid.setRowStyles( ( row, rowIndex ) -> "dataGridRow" );
     }
 
     private void setEmptyTableWidget() {
@@ -259,10 +236,6 @@ public class SimpleTable<T>
         dataGrid.setVisibleRange( range );
     }
 
-    public void setPreferencesService( final Caller<UserPreferencesService> preferencesService ) {
-        this.preferencesService = preferencesService;
-    }
-
     @Override
     public SelectionModel<? super T> getSelectionModel() {
         return dataGrid.getSelectionModel();
@@ -343,14 +316,42 @@ public class SimpleTable<T>
     public void addColumn( final Column<T, ?> column,
                            final String caption,
                            final boolean visible ) {
-        addColumn( new ColumnMeta<T>( column,
+        addColumn( new ColumnMetaClientOnly<T>( column,
                                       caption,
                                       visible ) );
     }
 
-    protected void addColumn( final ColumnMeta<T> columnMeta ) {
+    protected void addColumn( final ColumnMetaClientOnly<T> columnMeta ) {
         setupColumnMetaHeader( columnMeta );
         columnPicker.addColumn( columnMeta );
+    }
+
+    protected ResizableMovableHeader<T> getColumnHeader( final String caption,
+                                                         final Column column ) {
+        final ResizableMovableHeader header = new ResizableMovableHeader<T>( caption,
+                                                                             dataGrid,
+                                                                             columnPicker,
+                                                                             column ) {
+            @Override
+            protected int getTableBodyHeight() {
+                return dataGrid.getOffsetHeight();
+            }
+        };
+        header.addColumnChangedHandler( new ColumnChangedHandlerClientOnly() {
+            @Override
+            public void afterColumnChanged() {
+                columnChangeHandler();
+            }
+
+            @Override
+            public void beforeColumnChanged() {
+
+            }
+        } );
+        return header;
+    }
+    protected void columnChangeHandler() {
+
     }
 
     public void setColumnWidth( final Column<T, ?> column,
@@ -417,17 +418,6 @@ public class SimpleTable<T>
         dataGrid.setRowStyles( styles );
     }
 
-    public void setGridPreferencesStore( final GridPreferencesStore gridPreferences ) {
-        // I need to update my local copy of the preferences 
-        //   if I would like to compare with the current state for changes
-        this.gridPreferencesStore = gridPreferences;
-        columnPicker.setGridPreferencesStore( gridPreferences );
-    }
-
-    public GridPreferencesStore getGridPreferencesStore() {
-        return this.gridPreferencesStore;
-    }
-
     public void addTableTitle( String tableTitle ) {
         getLeftToolbar().add( new HTML( "<h4>" + tableTitle + "</h4>" ) );
     }
@@ -436,65 +426,9 @@ public class SimpleTable<T>
         dataGrid.setAlwaysShowScrollBars( alwaysShowScrollBars );
     }
 
-    protected void columnChangeHandler() {
-        if ( gridPreferencesStore != null && thereIsAPreferencesStore() ) {
-            List<GridColumnPreference> columnsState = columnPicker.getColumnsState();
-            gridPreferencesStore.resetGridColumnPreferences();
-            for ( GridColumnPreference gcp : columnsState ) {
-                gridPreferencesStore.addGridColumnPreference( gcp );
-            }
-            saveGridPreferences();
-        }
-    }
-
-    public void saveGridPreferences() {
-        if ( gridPreferencesStore != null && thereIsAPreferencesStore() ) {
-            gridPreferencesStore.setPreferenceKey( gridPreferencesStore.getGlobalPreferences().getKey() );
-            gridPreferencesStore.setType( UserPreferencesType.GRIDPREFERENCES );
-            preferencesService.call().saveUserPreferences( gridPreferencesStore );
-        }
-    }
-
-    boolean thereIsAPreferencesStore() {
-        return preferencesService != null;
-    }
-
     public void setColumnPickerButtonVisible( final boolean show ) {
         columnPickerButton.setVisible( show );
     }
 
-    public void storeColumnToPreferences() {
-        List<GridColumnPreference> columnsState = columnPicker.getColumnsState();
-        gridPreferencesStore.resetGridColumnPreferences();
-        for ( GridColumnPreference gcp : columnsState ) {
-            gridPreferencesStore.addGridColumnPreference( gcp );
-        }
-        saveGridPreferences();
-    }
-
-    protected ResizableMovableHeader<T> getColumnHeader( final String caption,
-                                                         final Column column ) {
-        final ResizableMovableHeader header = new ResizableMovableHeader<T>( caption,
-                                                                             dataGrid,
-                                                                             columnPicker,
-                                                                             column ) {
-            @Override
-            protected int getTableBodyHeight() {
-                return dataGrid.getOffsetHeight();
-            }
-        };
-        header.addColumnChangedHandler( new ColumnChangedHandlerClientOnly() {
-            @Override
-            public void afterColumnChanged() {
-                columnChangeHandler();
-            }
-
-            @Override
-            public void beforeColumnChanged() {
-
-            }
-        } );
-        return header;
-    }
-
 }
+

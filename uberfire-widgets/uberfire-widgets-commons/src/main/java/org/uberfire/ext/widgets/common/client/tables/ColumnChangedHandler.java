@@ -16,7 +16,8 @@
 
 package org.uberfire.ext.widgets.common.client.tables;
 
-public interface ColumnChangedHandler {
-    void beforeColumnChanged();
-    void afterColumnChanged();
+import org.uberfire.ext.widgets.table.client.ColumnChangedHandlerClientOnly;
+
+public interface ColumnChangedHandler extends ColumnChangedHandlerClientOnly {
+
 }

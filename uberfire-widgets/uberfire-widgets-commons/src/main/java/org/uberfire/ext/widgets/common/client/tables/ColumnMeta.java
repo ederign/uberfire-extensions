@@ -17,100 +17,23 @@ package org.uberfire.ext.widgets.common.client.tables;
 
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.Header;
+import org.uberfire.ext.widgets.table.client.ColumnMetaClientOnly;
 
-public class ColumnMeta<T> implements Comparable {
-    private Column<T, ?> column;
-    private String caption;
-    private Header<String> header;
-    private boolean visible = true;
-    private int position = -1;
-    private boolean extraColumn;
+public class ColumnMeta<T> extends ColumnMetaClientOnly {
 
-    public ColumnMeta(Column<T, ?> column,
-                      String caption) {
-        this.column = column;
-        this.caption = caption;
+    public ColumnMeta( Column column, String caption ) {
+        super( column, caption );
     }
 
-    public ColumnMeta(Column<T, ?> column,
-                      String caption,
-                      boolean visible) {
-        this.column = column;
-        this.caption = caption;
-        this.visible = visible;
+    public ColumnMeta( Column column, String caption, boolean visible ) {
+        super( column, caption, visible );
     }
 
-    public ColumnMeta(Column<T, ?> column,
-                      String caption,
-                      boolean visible,
-                      int position) {
-        this.column = column;
-        this.caption = caption;
-        this.visible = visible;
-        this.position = position;
+    public ColumnMeta( Column column, String caption, boolean visible, int position ) {
+        super( column, caption, visible, position );
     }
 
-    public ColumnMeta(Column<T, ?> column, String caption,boolean visible, boolean extraColumn) {
-        this(column, caption, visible);
-        this.extraColumn = extraColumn;
-    }
-
-    public boolean isExtraColumn() {
-        return extraColumn;
-    }
-    
-    
-    public String getCaption() {
-        return caption;
-    }
-
-    public void setCaption(String caption) {
-        this.caption = caption;
-    }
-
-    public Header<String> getHeader() {
-        return header;
-    }
-
-    public void setHeader(Header<String> header) {
-        this.header = header;
-    }
-
-    public Column<T, ?> getColumn() {
-        return column;
-    }
-
-    public boolean isVisible() {
-        return visible;
-    }
-
-    public void setVisible(boolean visible) {
-        this.visible = visible;
-    }
-
-    public int getPosition() {
-        return position;
-    }
-
-    public void setPosition(int position) {
-        this.position = position;
-    }
-
-    @Override
-    public int compareTo(Object o) {
-        if (!(o instanceof ColumnMeta)) {
-            return 0;
-        }
-        ColumnMeta otherMeta = (ColumnMeta) o;
-        if (position == -1 && otherMeta.getPosition() == -1) return 0;
-        if (position == -1) return  1;
-        if (otherMeta.getPosition() == -1) return -1;
-        if (position < otherMeta.getPosition()) {
-            return -1;
-        } else if (position > otherMeta.getPosition()) {
-            return 1;
-        } else {
-            return 0;
-        }
+    public ColumnMeta( Column column, String caption, boolean visible, boolean extraColumn ) {
+        super( column, caption, visible, extraColumn );
     }
 }

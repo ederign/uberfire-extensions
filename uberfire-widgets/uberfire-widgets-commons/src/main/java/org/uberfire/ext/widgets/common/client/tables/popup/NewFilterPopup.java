@@ -191,7 +191,7 @@ public class NewFilterPopup extends BaseModal {
         existingFiltersPanel.clear();
         existingFiltersPanel.add( existingFiltersGrid );
         existingFiltersGrid.loadPageSizePreferences();
-        existingFiltersGrid.setcolumnPickerButtonVisibe( false );
+        existingFiltersGrid.setColumnPickerButtonVisible( false );
         existingFiltersGrid.setEmptyTableCaption( CommonConstants.INSTANCE.NoCustomFilterAvailable() );
 
     }
