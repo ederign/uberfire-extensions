@@ -1,5 +1,0 @@
-org.uberfire.ext.widgets.table.client.ColumnPickerClientOnly
-org.uberfire.ext.widgets.table.client.ColumnMetaClientOnly
-org.uberfire.ext.widgets.table.client.ResizableMovableHeader
-org.uberfire.ext.widgets.table.client.ColumnChangedHandlerClientOnly
-org.uberfire.ext.widgets.table.client.SimpleTableClientOnly
