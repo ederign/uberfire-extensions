@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package org.uberfire.ext.widgets.common.client.resources;
+package org.uberfire.ext.widgets.table.client.resources;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.ImageResource;
-import org.uberfire.ext.widgets.common.client.tables.UberfireSimplePager;
+import org.uberfire.ext.widgets.table.client.UberfireSimplePager;
 
 /**
  * A ClientBundle that provides images for this widget.

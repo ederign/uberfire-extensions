@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.uberfire.ext.widgets.common.client.tables;
+package org.uberfire.ext.widgets.table.client;
 
 public interface ColumnChangedHandler {
     void beforeColumnChanged();
