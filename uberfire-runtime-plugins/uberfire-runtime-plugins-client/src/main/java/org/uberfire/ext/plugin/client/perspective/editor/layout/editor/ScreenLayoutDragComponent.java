@@ -62,6 +62,7 @@ public class ScreenLayoutDragComponent implements PerspectiveEditorDragComponent
         if (placeName == null) return null;
 
         FlowPanel panel = new FlowPanel();
+        //remove this
         panel.setWidth("95%");
         panel.setHeight(500 + "px");
         placeManager.goTo(new DefaultPlaceRequest(placeName, properties), panel);

@@ -1,7 +1,9 @@
 package org.uberfire.ext.layout.editor.client.novo.template.research.layout.columns;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.ui.Widget;
 import org.gwtbootstrap3.client.ui.Modal;
 import org.uberfire.client.mvp.UberView;
 import org.uberfire.ext.layout.editor.api.editor.LayoutComponent;
@@ -56,7 +58,7 @@ public class ComponentColumn implements Column {
 
         void calculateSize();
 
-        void setContent( String place, String size );
+        void setContent( IsWidget widget );
 
     }
 
@@ -109,6 +111,8 @@ public class ComponentColumn implements Column {
 
     private void configurationFinish() {
         GWT.log( "config finish" );
+        //ederign widget leak
+        view.setContent(  component.getPreviewWidget( new RenderingContext( layoutComponent, null ) ) );
     }
 
     private void configurationCanceled() {
@@ -170,7 +174,11 @@ public class ComponentColumn implements Column {
     public UberView<ComponentColumn> getView() {
         view.calculateSize();
         view.setCursor();
-        view.setContent( place, panelSize.toString() );
+        //ederign
+        if(component!=null){
+            view.setContent(  component.getPreviewWidget( new RenderingContext( layoutComponent, null ) ) );
+
+        }
         return view;
     }
 

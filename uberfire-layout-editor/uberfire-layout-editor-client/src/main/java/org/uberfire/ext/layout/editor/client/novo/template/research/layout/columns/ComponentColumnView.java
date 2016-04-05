@@ -5,9 +5,9 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.*;
 import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Random;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.IsWidget;
 import org.gwtbootstrap3.client.ui.Button;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
@@ -16,12 +16,9 @@ import org.uberfire.client.mvp.PlaceManager;
 import org.uberfire.client.mvp.UberView;
 import org.uberfire.ext.layout.editor.client.components.LayoutDragComponent;
 import org.uberfire.ext.layout.editor.client.novo.template.research.layout.infra.ColumnDrop;
-import org.uberfire.mvp.impl.DefaultPlaceRequest;
 
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
-import java.util.HashMap;
-import java.util.Map;
 
 @Dependent
 @Templated
@@ -146,13 +143,17 @@ public class ComponentColumnView extends Composite
     }
 
     @Override
-    public void setContent( String place, String size ) {
+    public void setContent( IsWidget widget ) {
         content.clear();
+        //ederign
+        if(widget!=null){
+            content.add( widget );
+        }
         //FIXME UF BUG
-        content.setHeight( size + "px" );
-        Map<String, String> param = new HashMap<String, String>();
-        param.put( "key", Random.nextInt() + "" );
-        placeManager.goTo( new DefaultPlaceRequest( place, param ), content );
+        content.setHeight( "100px" );
+//        Map<String, String> param = new HashMap<String, String>();
+//        param.put( "key", Random.nextInt() + "" );
+//        placeManager.goTo( new DefaultPlaceRequest( place, param ), content );
     }
 
 
