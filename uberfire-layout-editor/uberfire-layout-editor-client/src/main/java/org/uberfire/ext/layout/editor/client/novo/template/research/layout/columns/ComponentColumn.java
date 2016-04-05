@@ -40,7 +40,12 @@ public class ComponentColumn implements Column {
     //properties and etc.
     private LayoutDragComponent component;
 
-    //UF BUG
+    //ederign properties from ^
+    //ainda nao sei pq tem isto
+    private LayoutComponent layoutComponent = new LayoutComponent();
+
+
+    //UF BUG - remove it
     private Integer panelSize = 100;
 
     public interface View extends UberView<ComponentColumn> {
@@ -76,9 +81,7 @@ public class ComponentColumn implements Column {
         view.setCursor();
         this.place = place;
         this.component = component;
-        GWT.log(component + "s");
         if ( componentHasConfiguration( component ) ) {
-            GWT.log( " yo");
             showConfigurationScreen( component );
         }
     }
@@ -89,19 +92,31 @@ public class ComponentColumn implements Column {
 
     private void showConfigurationScreen( LayoutDragComponent component ) {
         //extract to otherClassPresenter
-        LayoutComponent layoutComponent = null;
-        Panel fluidContainer = null;
         if ( component instanceof HasModalConfiguration ) {
-            ModalConfigurationContext ctx = new ModalConfigurationContext( layoutComponent, fluidContainer, null );
+            ModalConfigurationContext ctx = new ModalConfigurationContext( layoutComponent,
+                                                                           this::configurationFinish,
+                                                                           this::configurationCanceled );
             Modal configModal = ( ( HasModalConfiguration ) component ).getConfigurationModal( ctx );
             configModal.show();
         } else if ( component instanceof HasPanelConfiguration ) {
-            PanelConfigurationContext ctx = new PanelConfigurationContext( layoutComponent, fluidContainer, null );
+            PanelConfigurationContext ctx = new PanelConfigurationContext( layoutComponent, null, null );
             Panel configPanel = ( ( HasPanelConfiguration ) component ).getConfigurationPanel( ctx );
             //TODO update view
 //            componentEditorWidget.getWidget().clear();
 //            componentEditorWidget.getWidget().add( configPanel );
         }
+    }
+
+    private void configurationFinish() {
+        GWT.log( "config finish" );
+    }
+
+    private void configurationCanceled() {
+        GWT.log( "configurationCanceled" );
+    }
+
+    private LayoutComponent getLayoutComponent() {
+        return null;
     }
 
     @Override

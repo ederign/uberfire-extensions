@@ -1,6 +1,7 @@
 package org.uberfire.ext.layout.editor.client.novo.template.research.layout.container;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Window;
 import org.jboss.errai.ioc.client.container.IOC;
 import org.uberfire.client.mvp.UberView;
 import org.uberfire.ext.layout.editor.client.novo.template.research.layout.infra.RepaintContainerEvent;

@@ -1,0 +1,4 @@
+Found 3 illegal transitive type dependencies in artifact 'org.uberfire:uberfire-widgets-table:jar:0.9.0-SNAPSHOT':
+1.) org.jboss.errai.ioc.client.api.AfterInitialization
+2.) org.jboss.errai.ioc.client.api.EntryPoint
+3.) org.uberfire.commons.validation.PortablePreconditions

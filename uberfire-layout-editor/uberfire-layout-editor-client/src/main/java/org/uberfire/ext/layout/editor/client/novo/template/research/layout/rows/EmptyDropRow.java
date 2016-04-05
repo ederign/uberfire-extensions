@@ -1,6 +1,7 @@
 package org.uberfire.ext.layout.editor.client.novo.template.research.layout.rows;
 
 import com.google.gwt.event.dom.client.DropEvent;
+import com.google.gwt.user.client.Window;
 import org.uberfire.client.mvp.UberView;
 import org.uberfire.ext.layout.editor.client.components.LayoutDragComponent;
 import org.uberfire.ext.layout.editor.client.dnd.DndDataJSONConverter;

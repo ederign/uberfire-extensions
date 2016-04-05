@@ -15,17 +15,11 @@
  */
 package org.uberfire.ext.plugin.client.perspective.editor.layout.editor.popups;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Widget;
 import org.gwtbootstrap3.client.shared.event.ModalHiddenEvent;
 import org.gwtbootstrap3.client.shared.event.ModalHiddenHandler;
@@ -44,12 +38,16 @@ import org.uberfire.ext.properties.editor.model.PropertyEditorCategory;
 import org.uberfire.ext.properties.editor.model.PropertyEditorEvent;
 import org.uberfire.ext.properties.editor.model.PropertyEditorFieldInfo;
 import org.uberfire.ext.properties.editor.model.PropertyEditorType;
-import org.uberfire.ext.widgets.common.client.common.ConcurrentChangePopup;
 import org.uberfire.ext.widgets.common.client.common.popups.BaseModal;
 import org.uberfire.ext.widgets.common.client.common.popups.ButtonPressed;
 import org.uberfire.ext.widgets.common.client.common.popups.footers.ModalFooterOKCancelButtons;
 
-import static org.uberfire.ext.plugin.client.perspective.editor.layout.editor.ScreenLayoutDragComponent.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.uberfire.ext.plugin.client.perspective.editor.layout.editor.ScreenLayoutDragComponent.PLACE_NAME_PARAMETER;
 
 public class EditScreen
         extends BaseModal {
@@ -94,20 +92,10 @@ public class EditScreen
         propertyEditor.handle( generateEvent( generateScreenSettingsCategory() ) );
         saveOriginalState();
         add( new ModalFooterOKCancelButtons(
-                     new Command() {
-                         @Override
-                         public void execute() {
-                             okButton();
-                         }
-                     },
-                     new Command() {
-                         @Override
-                         public void execute() {
-                             cancelButton();
-                         }
-                     }
+                     this::okButton,
+                     this::cancelButton
              )
-           );
+        );
         addHiddenHandler();
 
     }
@@ -118,7 +106,7 @@ public class EditScreen
     }
 
     private void saveOriginalState() {
-        lastParametersSaved = new HashMap<String, String>();
+        lastParametersSaved = new HashMap<>();
         Map<String, String> layoutComponentProperties = configContext.getComponentProperties();
         for ( String key : layoutComponentProperties.keySet() ) {
             lastParametersSaved.put( key, layoutComponentProperties.get( key ) );
@@ -126,13 +114,10 @@ public class EditScreen
     }
 
     protected void addHiddenHandler() {
-        addHiddenHandler( new ModalHiddenHandler() {
-            @Override
-            public void onHidden( ModalHiddenEvent hiddenEvent ) {
-                if ( userPressedCloseOrCancel() ) {
-                    revertChanges();
-                    configContext.configurationCancelled();
-                }
+        addHiddenHandler( hiddenEvent -> {
+            if ( userPressedCloseOrCancel() ) {
+                revertChanges();
+                configContext.configurationCancelled();
             }
         } );
     }
@@ -181,7 +166,7 @@ public class EditScreen
         super.hide();
     }
 
-    @UiHandler("add")
+    @UiHandler( "add" )
     void add( final ClickEvent event ) {
         final PropertyEditorCategory property = addProperty();
         if ( property == null ) {
@@ -230,7 +215,7 @@ public class EditScreen
                     @Override
                     public boolean remove( Object o ) {
                         if ( o instanceof PropertyEditorFieldInfo ) {
-                            final PropertyEditorFieldInfo info = (PropertyEditorFieldInfo) o;
+                            final PropertyEditorFieldInfo info = ( PropertyEditorFieldInfo ) o;
                             configContext.removeComponentProperty( info.getLabel() );
                         }
                         return super.remove( o );
@@ -244,7 +229,8 @@ public class EditScreen
         String selectedScreenId = parameters.get( PLACE_NAME_PARAMETER );
 
         category.withField( new PropertyEditorFieldInfo( CommonConstants.INSTANCE.PlaceName(),
-                                                         selectedScreenId == null ? "" : selectedScreenId, PropertyEditorType.COMBO )
+                                                         selectedScreenId == null ? "" : selectedScreenId,
+                                                         PropertyEditorType.COMBO )
                                     .withComboValues( availableWorkbenchScreensIds )
                                     .withKey( configContext.hashCode() + PLACE_NAME_PARAMETER ) );
 
@@ -263,7 +249,8 @@ public class EditScreen
     }
 
     private ActivityBeansInfo getActivityBeansInfo() {
-        final SyncBeanDef<ActivityBeansInfo> activityBeansInfoIOCBeanDef = IOC.getBeanManager().lookupBean( ActivityBeansInfo.class );
+        final SyncBeanDef<ActivityBeansInfo> activityBeansInfoIOCBeanDef = IOC.getBeanManager()
+                .lookupBean( ActivityBeansInfo.class );
         return activityBeansInfoIOCBeanDef.getInstance();
     }
 

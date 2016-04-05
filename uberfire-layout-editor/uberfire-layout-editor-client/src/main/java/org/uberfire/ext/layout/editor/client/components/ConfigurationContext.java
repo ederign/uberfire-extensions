@@ -15,10 +15,11 @@
  */
 package org.uberfire.ext.layout.editor.client.components;
 
-import java.util.Map;
-
 import com.google.gwt.user.client.ui.Panel;
 import org.uberfire.ext.layout.editor.api.editor.LayoutComponent;
+import org.uberfire.mvp.Command;
+
+import java.util.Map;
 
 /**
  * This class provides the context required during a layout component configuration
@@ -26,29 +27,40 @@ import org.uberfire.ext.layout.editor.api.editor.LayoutComponent;
 public class ConfigurationContext {
 
     private LayoutComponent component;
+    private Command configurationFinish;
+    private Command configurationCanceled;
+
+    //old stuff
     private Panel container;
     private LayoutComponentView view;
 
-    public ConfigurationContext(LayoutComponent component, Panel container, LayoutComponentView view) {
+    public ConfigurationContext( LayoutComponent component, Panel container, LayoutComponentView view ) {
         this.component = component;
         this.container = container;
         this.view = view;
+    }
+
+    public ConfigurationContext( LayoutComponent component, Command configurationFinish,
+                                 Command configurationCanceled ) {
+        this.component = component;
+        this.configurationFinish = configurationFinish;
+        this.configurationCanceled = configurationCanceled;
     }
 
     public Panel getContainer() {
         return container;
     }
 
-    public void setComponentProperty(String key, String property) {
-        component.addProperty(key, property);
+    public void setComponentProperty( String key, String property ) {
+        component.addProperty( key, property );
     }
 
-    public void removeComponentProperty(String key) {
-        component.getProperties().remove(key);
+    public void removeComponentProperty( String key ) {
+        component.getProperties().remove( key );
     }
 
-    public String getComponentProperty(String key) {
-        return component.getProperties().get(key);
+    public String getComponentProperty( String key ) {
+        return component.getProperties().get( key );
     }
 
     public Map<String, String> getComponentProperties() {
@@ -60,12 +72,15 @@ public class ConfigurationContext {
     }
 
     public void configurationFinished() {
-        view.update();
+        configurationFinish.execute();
+//        view.update();
     }
 
     public void configurationCancelled() {
-        if (view.isNewComponent()) {
-            view.remove();
-        }
+        //EDERIGN TODO
+        configurationCanceled.execute();
+//        if (view.isNewComponent()) {
+//            view.remove();
+//        }
     }
 }

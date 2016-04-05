@@ -90,9 +90,9 @@ public class ScreenLayoutDragComponent implements PerspectiveEditorDragComponent
     private ModalConfigurationContext configContext;
 
     public void observeEditComponentEventFromPropertyEditor( @Observes PropertyEditorChangeEvent event ) {
-
         PropertyEditorFieldInfo property = event.getProperty();
         if ( property.getEventId().equalsIgnoreCase( EditScreen.PROPERTY_EDITOR_KEY ) ) {
+            GWT.log( property.getCurrentStringValue() );
             configContext.setComponentProperty(property.getLabel(), property.getCurrentStringValue() );
         }
     }

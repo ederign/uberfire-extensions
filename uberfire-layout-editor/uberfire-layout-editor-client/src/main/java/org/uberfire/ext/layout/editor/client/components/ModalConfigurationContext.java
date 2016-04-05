@@ -17,14 +17,19 @@ package org.uberfire.ext.layout.editor.client.components;
 
 import com.google.gwt.user.client.ui.Panel;
 import org.uberfire.ext.layout.editor.api.editor.LayoutComponent;
+import org.uberfire.mvp.Command;
 
 /**
  * This class provides the context required during to configure a layout component using a modal screen
  */
 public class ModalConfigurationContext extends ConfigurationContext {
 
-    public ModalConfigurationContext(LayoutComponent component, Panel container, LayoutComponentView view) {
+    public ModalConfigurationContext( LayoutComponent component, Panel container, LayoutComponentView view) {
         super(component, container, view);
+    }
+
+    public ModalConfigurationContext( LayoutComponent component, Command configurationFinish, Command configurationCanceled) {
+        super(component, configurationFinish, configurationCanceled);
     }
 
 }
