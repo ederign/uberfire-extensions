@@ -1,16 +1,18 @@
 package org.uberfire.ext.layout.editor.client.novo.template.research.layout.infra;
 
+import org.uberfire.ext.layout.editor.client.components.LayoutDragComponent;
+
 public class ColumnDrop {
 
+    private final LayoutDragComponent component;
     private final int hash;
     private final Orientation orientation;
-    private String dndData;
 
-    public ColumnDrop( int hash,
-                       Orientation orientation, String dndData ) {
+    public ColumnDrop( LayoutDragComponent component, int hash,
+                       Orientation orientation ) {
+        this.component = component;
         this.hash = hash;
         this.orientation = orientation;
-        this.dndData = dndData;
     }
 
     public enum Orientation {
@@ -25,8 +27,8 @@ public class ColumnDrop {
         return hash;
     }
 
-    public String getDndData() {
-        return dndData;
+    public LayoutDragComponent getComponent() {
+        return component;
     }
 
     public boolean isASideDrop() {

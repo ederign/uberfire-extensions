@@ -1,5 +1,6 @@
 package org.uberfire.ext.layout.editor.client.novo.template.research.layout.rows;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.DropEvent;
 import org.uberfire.client.mvp.UberView;
 import org.uberfire.ext.layout.editor.client.components.LayoutDragComponent;
@@ -99,9 +100,10 @@ public class Row {
 
     ParameterizedCommand<ColumnDrop> dropCommand() {
         return ( drop ) -> {
-            if ( tempIsDndDataValid( drop.getDndData() ) ) {
-                notifyThePossibilityOfDropAndExistentComponent.execute( drop.getDndData() );
-            }
+            //ederign
+//            if ( tempIsDndDataValid( drop.getDndData() ) ) {
+//                notifyThePossibilityOfDropAndExistentComponent.execute( drop.getDndData() );
+//            }
             Row.this.columns = updateColumns( drop, Row.this.columns );
             updateView();
         };
@@ -181,6 +183,7 @@ public class Row {
         }
     }
 
+    //ederign leak gwt
     private LayoutDragComponent extractComponent( DropEvent dropEvent ) {
         return converter
                 .readJSONDragComponent( dropEvent.getData( LayoutDragComponent.FORMAT ) );
@@ -277,7 +280,7 @@ public class Row {
         final ComponentColumn newColumn = createColumn();
         newColumn.init( currentColumn.getParentHashCode(), getColumnType( 0 ), COLUMN_DEFAULT_SIZE,
                         dropCommand(),
-                        extractColumnPlace( drop ), null ); //TODO ederign
+                        null, drop.getComponent() ); //TODO ederign
         newColumn.setSize( currentColumn.getPanelSize() );
         return newColumn;
     }
@@ -311,7 +314,7 @@ public class Row {
     private ComponentColumn createNewComponentColumn( ColumnDrop drop, ComponentColumn currentColumn ) {
         final ComponentColumn newColumn = createColumn();
         newColumn.init( currentColumn.getParentHashCode(), getColumnType( 0 ), 12, dropCommand(),
-                        extractColumnPlace( drop ), null ); //todo ederign
+                        null, drop.getComponent() ); //todo ederign
         newColumn.halfParentPanelSize( currentColumn.getPanelSize() );
         return newColumn;
     }
@@ -320,7 +323,7 @@ public class Row {
                                                       int newColumnIndex, Integer columnSize ) {
         final ComponentColumn newColumn = createColumn();
         newColumn.init( currentColumn.getParentHashCode(), getColumnType( newColumnIndex ), columnSize, dropCommand(),
-                        extractColumnPlace( drop ), null ); //todo ederign
+                        null, drop.getComponent() ); //todo ederign
         newColumn.setPanelSize( currentColumn.getPanelSize() );
         return newColumn;
     }
@@ -373,11 +376,6 @@ public class Row {
         currentColumn.setColumnType( getColumnType( columnIndex + 1 ) );
         setupColumnSize( currentColumn );
         return currentColumn;
-    }
-
-    private String extractColumnPlace( ColumnDrop drop ) {
-        //TODO SHOULD BE REFACTORED TO REAL DATA
-        return !tempIsDndDataValid( drop.getDndData() ) ? Screens.next().name() : drop.getDndData();
     }
 
     private Integer setupColumnSize( ComponentColumn column ) {
@@ -448,6 +446,7 @@ public class Row {
     public UberView<Row> getView() {
         view.clear();
         for ( Column column : columns ) {
+            GWT.log("getView -> " );
             view.addColumn( column.getView() );
         }
         return view;

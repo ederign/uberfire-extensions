@@ -1,5 +1,6 @@
 package org.uberfire.ext.layout.editor.client.novo.template.research.layout.columns;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style;
@@ -56,6 +57,7 @@ public class ComponentColumnView extends Composite
     @DataField
     private FlowPanel content;
 
+
     @Inject
     @DataField
     private Button file;
@@ -99,8 +101,9 @@ public class ComponentColumnView extends Composite
             right.setWidth( originalLeftRightWidth + "px" );
 
             if ( !presenter.isContainerColumn() ) {
-                left.setHeight( content.getOffsetHeight() + "px" );
-                right.setHeight( content.getOffsetHeight() + "px" );
+                //FIXME bug small then uf screen
+                left.setHeight( col.getOffsetHeight() + "px" );
+                right.setHeight( col.getOffsetHeight() + "px" );
             }
 
             content.setWidth( contentWidth + "px" );
@@ -145,15 +148,10 @@ public class ComponentColumnView extends Composite
     @Override
     public void setContent( IsWidget widget ) {
         content.clear();
-        //ederign
-        if(widget!=null){
+        if ( widget != null ) {
             content.add( widget );
         }
-        //FIXME UF BUG
-        content.setHeight( "100px" );
-//        Map<String, String> param = new HashMap<String, String>();
-//        param.put( "key", Random.nextInt() + "" );
-//        placeManager.goTo( new DefaultPlaceRequest( place, param ), content );
+        GWT.log("-< " + content.getElement().getInnerHTML() );
     }
 
 
@@ -229,20 +227,20 @@ public class ComponentColumnView extends Composite
 
 
     @EventHandler( "content" )
-    public void dropInsideColumn( DropEvent e ) {
+    public void dropInsideColumn( DropEvent drop ) {
         if ( contentDropOrientation != null ) {
-            presenter.onDrop( contentDropOrientation, e.getData( "text" ) );
+            presenter.onDrop( contentDropOrientation, drop );
         }
         colUp.getElement().removeClassName( "colPreview" );
         colDown.getElement().removeClassName( "colPreview" );
     }
 
     @EventHandler( "left" )
-    public void dropColumnRight( DropEvent e ) {
-        e.preventDefault();
+    public void dropColumnRight( DropEvent drop ) {
+        drop.preventDefault();
         left.getElement().removeClassName( "columnDropPreview dropPreview" );
         content.getElement().removeClassName( "centerPreview" );
-        presenter.onDrop( ColumnDrop.Orientation.LEFT, e.getData( "text" ) );
+        presenter.onDrop( ColumnDrop.Orientation.LEFT, drop );
     }
 
     @EventHandler( "right" )
@@ -261,11 +259,11 @@ public class ComponentColumnView extends Composite
 
 
     @EventHandler( "right" )
-    public void dropColumnRIGHT( DropEvent e ) {
-        e.preventDefault();
+    public void dropColumnRIGHT( DropEvent drop ) {
+        drop.preventDefault();
         right.getElement().removeClassName( "columnDropPreview dropPreview" );
         content.getElement().removeClassName( "centerPreview" );
-        presenter.onDrop( ColumnDrop.Orientation.RIGHT, e.getData( "text" ) );
+        presenter.onDrop( ColumnDrop.Orientation.RIGHT, drop );
     }
 
     @EventHandler( "col" )

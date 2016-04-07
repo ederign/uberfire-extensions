@@ -1,19 +1,22 @@
 package org.uberfire.ext.layout.editor.client.novo.template.research.layout.columns;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.DropEvent;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Panel;
-import com.google.gwt.user.client.ui.Widget;
 import org.gwtbootstrap3.client.ui.Modal;
 import org.uberfire.client.mvp.UberView;
 import org.uberfire.ext.layout.editor.api.editor.LayoutComponent;
 import org.uberfire.ext.layout.editor.client.components.*;
+import org.uberfire.ext.layout.editor.client.dnd.DndDataJSONConverter;
 import org.uberfire.ext.layout.editor.client.novo.template.research.layout.infra.ColumnDrop;
 import org.uberfire.ext.layout.editor.client.novo.template.research.layout.infra.DnDManager;
+import org.uberfire.ext.layout.editor.client.novo.template.research.layout.infra.RepaintContainerEvent;
 import org.uberfire.mvp.ParameterizedCommand;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 @Dependent
@@ -50,6 +53,10 @@ public class ComponentColumn implements Column {
     //UF BUG - remove it
     private Integer panelSize = 100;
 
+    private Event<RepaintContainerEvent> repaintContainerEvent;
+    //leak
+    private boolean previewWidget;
+
     public interface View extends UberView<ComponentColumn> {
 
         void setCursor();
@@ -63,9 +70,11 @@ public class ComponentColumn implements Column {
     }
 
     @Inject
-    public ComponentColumn( final View view, DnDManager dndManager ) {
+    public ComponentColumn( final View view, DnDManager dndManager,
+                            Event<RepaintContainerEvent> repaintContainerEvent ) {
         this.view = view;
         this.dndManager = dndManager;
+        this.repaintContainerEvent = repaintContainerEvent;
     }
 
     @PostConstruct
@@ -81,6 +90,7 @@ public class ComponentColumn implements Column {
         this.dropCommand = dropCommand;
         view.setSize( size.toString() );
         view.setCursor();
+        //WHY ederign
         this.place = place;
         this.component = component;
         if ( componentHasConfiguration( component ) ) {
@@ -110,9 +120,12 @@ public class ComponentColumn implements Column {
     }
 
     private void configurationFinish() {
+        this.previewWidget = true;
+        view.setContent( getPreviewWidget() );
         GWT.log( "config finish" );
-        //ederign widget leak
-        view.setContent(  component.getPreviewWidget( new RenderingContext( layoutComponent, null ) ) );
+//        //ederign widget leak
+//        view.setContent( component.getPreviewWidget( new RenderingContext( layoutComponent, null ) ) );
+//        view.calculateSize();
     }
 
     private void configurationCanceled() {
@@ -175,11 +188,12 @@ public class ComponentColumn implements Column {
         view.calculateSize();
         view.setCursor();
         //ederign
-        if(component!=null){
-            view.setContent(  component.getPreviewWidget( new RenderingContext( layoutComponent, null ) ) );
-
-        }
         return view;
+    }
+
+    private IsWidget getPreviewWidget() {
+        IsWidget previewWidget = component.getPreviewWidget( new RenderingContext( layoutComponent, null ) );
+        return previewWidget;
     }
 
     public void recalculateSize() {
@@ -204,8 +218,17 @@ public class ComponentColumn implements Column {
     }
 
 
-    public void onDrop( ColumnDrop.Orientation orientation, String dndData ) {
-        dropCommand.execute( new ColumnDrop( hashCode(), orientation, dndData ) );
+    //ederign duplicated code from row.java
+    private DndDataJSONConverter converter = new DndDataJSONConverter();
+
+    private LayoutDragComponent extractComponent( DropEvent dropEvent ) {
+        return converter
+                .readJSONDragComponent( dropEvent.getData( LayoutDragComponent.FORMAT ) );
+    }
+
+    public void onDrop( ColumnDrop.Orientation orientation, DropEvent dropEvent ) {
+        LayoutDragComponent layoutDragComponent = extractComponent( dropEvent );
+        dropCommand.execute( new ColumnDrop( layoutDragComponent, hashCode(), orientation ) );
     }
 
     public enum Type {
