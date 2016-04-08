@@ -27,13 +27,11 @@ import org.uberfire.ext.metadata.model.KObject;
 public interface SearchIndex {
 
     List<KObject> searchByAttrs( final Map<String, ?> attrs,
-                                 final int pageSize,
-                                 final int startIndex,
+                                 final IOSearchService.Filter filter,
                                  final ClusterSegment... clusterSegments );
 
     List<KObject> fullTextSearch( final String term,
-                                  final int pageSize,
-                                  final int startIndex,
+                                  final IOSearchService.Filter filter,
                                   final ClusterSegment... clusterSegments );
 
     int searchByAttrsHits( final Map<String, ?> attrs,

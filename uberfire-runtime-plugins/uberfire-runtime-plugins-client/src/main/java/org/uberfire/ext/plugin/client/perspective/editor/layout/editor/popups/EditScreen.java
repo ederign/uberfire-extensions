@@ -15,6 +15,12 @@
  */
 package org.uberfire.ext.plugin.client.perspective.editor.layout.editor.popups;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.enterprise.event.Observes;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -33,6 +39,8 @@ import org.uberfire.client.mvp.ActivityBeansInfo;
 import org.uberfire.ext.layout.editor.client.components.ModalConfigurationContext;
 import org.uberfire.ext.plugin.client.resources.i18n.CommonConstants;
 import org.uberfire.ext.plugin.client.validation.NameValidator;
+import org.uberfire.ext.plugin.event.BasePluginEvent;
+import org.uberfire.ext.plugin.event.PluginAdded;
 import org.uberfire.ext.properties.editor.client.PropertyEditorWidget;
 import org.uberfire.ext.properties.editor.model.PropertyEditorCategory;
 import org.uberfire.ext.properties.editor.model.PropertyEditorEvent;
@@ -84,8 +92,9 @@ public class EditScreen
 
     private static Binder uiBinder = GWT.create( Binder.class );
 
-    public EditScreen( ModalConfigurationContext configContext ) {
-        getScreensId();
+    public EditScreen( ModalConfigurationContext configContext,
+                       List<String> availableWorkbenchScreensIds ) {
+        this.availableWorkbenchScreensIds = availableWorkbenchScreensIds;
         this.configContext = configContext;
         setTitle( CommonConstants.INSTANCE.EditComponent() );
         setBody( uiBinder.createAndBindUi( EditScreen.this ) );
@@ -98,11 +107,6 @@ public class EditScreen
         );
         addHiddenHandler();
 
-    }
-
-    protected void getScreensId() {
-        final ActivityBeansInfo activityBeansInfo = getActivityBeansInfo();
-        availableWorkbenchScreensIds = activityBeansInfo.getAvailableWorkbenchScreensIds();
     }
 
     private void saveOriginalState() {
@@ -262,4 +266,5 @@ public class EditScreen
     protected ModalConfigurationContext getConfigContext() {
         return this.configContext;
     }
+
 }

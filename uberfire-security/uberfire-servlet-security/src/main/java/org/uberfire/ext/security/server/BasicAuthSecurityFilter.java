@@ -39,7 +39,7 @@ public class BasicAuthSecurityFilter implements Filter {
     public static final String REALM_NAME_PARAM = "realmName";
 
     @Inject
-    private AuthenticationService authenticationService;
+    AuthenticationService authenticationService;
 
     private String realmName = "UberFire Security Extension Default Realm";
 
@@ -62,6 +62,7 @@ public class BasicAuthSecurityFilter implements Filter {
         final HttpServletRequest request = (HttpServletRequest) _request;
         final HttpServletResponse response = (HttpServletResponse) _response;
 
+        HttpSession session = request.getSession(false);
         final User user = authenticationService.getUser();
         try {
             if (user == null) {
@@ -77,9 +78,13 @@ public class BasicAuthSecurityFilter implements Filter {
                 chain.doFilter(request, response);
             }
         } finally {
-            HttpSession session = request.getSession(false);
-            if (session != null) {
-                session.invalidate();
+            // invalidate session only when it did not exists before this request
+            // and was created as part of this request
+            if (session == null) {
+                session = request.getSession(false);
+                if (session != null) {
+                    session.invalidate();
+                }
             }
         }
     }

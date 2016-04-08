@@ -19,7 +19,7 @@
              xmlns:g="urn:import:com.google.gwt.user.client.ui"
              xmlns:b="urn:import:org.gwtbootstrap3.client.ui"
              xmlns:bg="urn:import:org.gwtbootstrap3.client.ui.gwt"
-             xmlns:uf="urn:import:org.uberfire.ext.widgets.common.client.tables">
+             xmlns:uf="urn:import:org.uberfire.ext.widgets.table.client">
 
   <ui:style>
     .dataGridContainer {

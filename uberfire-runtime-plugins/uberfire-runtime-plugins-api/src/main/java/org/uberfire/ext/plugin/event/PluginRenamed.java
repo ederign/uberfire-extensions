@@ -19,12 +19,13 @@ package org.uberfire.ext.plugin.event;
 import org.jboss.errai.common.client.api.annotations.MapsTo;
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.uberfire.ext.plugin.model.Plugin;
+import org.uberfire.ext.plugin.model.PluginType;
 import org.uberfire.rpc.SessionInfo;
 
 import static org.uberfire.commons.validation.PortablePreconditions.*;
 
 @Portable
-public class PluginRenamed extends BaseNewPlugin {
+public class PluginRenamed extends BasePluginEvent {
 
     private String oldPluginName;
 
@@ -37,5 +38,9 @@ public class PluginRenamed extends BaseNewPlugin {
 
     public String getOldPluginName() {
         return oldPluginName;
+    }
+
+    public PluginType getOldPluginType() {
+        return getPlugin().getType();
     }
 }

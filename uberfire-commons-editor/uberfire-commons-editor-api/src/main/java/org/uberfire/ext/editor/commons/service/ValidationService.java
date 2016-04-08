@@ -19,12 +19,20 @@ package org.uberfire.ext.editor.commons.service;
 import org.jboss.errai.bus.server.annotations.Remote;
 import org.uberfire.backend.vfs.Path;
 
+/**
+ * This service is responsible for doing general validation on files and paths.
+ */
 @Remote
 public interface ValidationService {
 
+    /**
+     * Checks if the path and file name is valid.
+     */
     boolean isFileNameValid( final Path path,
                              final String fileName );
 
+    /**
+     * Checks if the file name is valid.
+     */
     boolean isFileNameValid( final String fileName );
-
 }
