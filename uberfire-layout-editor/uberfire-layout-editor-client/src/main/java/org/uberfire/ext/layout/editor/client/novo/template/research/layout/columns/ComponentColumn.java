@@ -121,11 +121,10 @@ public class ComponentColumn implements Column {
 
     private void configurationFinish() {
         this.previewWidget = true;
-        view.setContent( getPreviewWidget() );
-        GWT.log( "config finish" );
 //        //ederign widget leak
-//        view.setContent( component.getPreviewWidget( new RenderingContext( layoutComponent, null ) ) );
-//        view.calculateSize();
+        view.setContent( getPreviewWidget() );
+        view.calculateSize();
+        GWT.log( "config finish" );
     }
 
     private void configurationCanceled() {

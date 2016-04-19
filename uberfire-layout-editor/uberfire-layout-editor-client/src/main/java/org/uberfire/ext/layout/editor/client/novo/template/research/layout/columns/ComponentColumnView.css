@@ -11,11 +11,13 @@
 .left{
     float: left;
     width: 5%;
+    background-color: blue;
 }
 
 .right{
     float: right;
     width: 5%;
+    background-color: red;;
 }
 .colUp{
     height:5px;

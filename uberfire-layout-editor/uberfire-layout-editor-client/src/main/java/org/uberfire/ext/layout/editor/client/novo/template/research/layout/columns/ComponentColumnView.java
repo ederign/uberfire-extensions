@@ -96,14 +96,22 @@ public class ComponentColumnView extends Composite
         Scheduler.get().scheduleDeferred( () -> {
             final int colWidth = col.getOffsetWidth();
 
-            final int contentWidth = colWidth - originalLeftRightWidth * 2 - 1;
+            //make this calc better, right sometimes is on second line (content > necessary)
+            int magicNumber = 2;
+            final int contentWidth = colWidth - (originalLeftRightWidth * 2) - magicNumber;
             left.setWidth( originalLeftRightWidth + "px" );
             right.setWidth( originalLeftRightWidth + "px" );
+            GWT.log( "colWid: " + colWidth );
+            GWT.log( "contentWidth: " + contentWidth );
+            GWT.log( "left: " + originalLeftRightWidth );
+            GWT.log( "right: " + originalLeftRightWidth );
+            GWT.log( "total " + (originalLeftRightWidth*2 + contentWidth) );
 
             if ( !presenter.isContainerColumn() ) {
                 //FIXME bug small then uf screen
-                left.setHeight( col.getOffsetHeight() + "px" );
-                right.setHeight( col.getOffsetHeight() + "px" );
+                GWT.log( "left/right height?" );
+                left.setHeight( content.getOffsetHeight() + "px" );
+                right.setHeight( content.getOffsetHeight() + "px" );
             }
 
             content.setWidth( contentWidth + "px" );
