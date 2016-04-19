@@ -54,8 +54,8 @@ public class ComponentColumn implements Column {
     private Integer panelSize = 100;
 
     private Event<RepaintContainerEvent> repaintContainerEvent;
-    //leak
-    private boolean previewWidget;
+    private boolean componentReady;
+
 
     public interface View extends UberView<ComponentColumn> {
 
@@ -64,6 +64,8 @@ public class ComponentColumn implements Column {
         void setSize( String size );
 
         void calculateSize();
+
+        void clearContent();
 
         void setContent( IsWidget widget );
 
@@ -120,11 +122,12 @@ public class ComponentColumn implements Column {
     }
 
     private void configurationFinish() {
-        this.previewWidget = true;
 //        //ederign widget leak
-        view.setContent( getPreviewWidget() );
-        view.calculateSize();
+//        view.setContent( getPreviewWidget() );
+//        view.calculateSize();
+        this.componentReady = true;
         GWT.log( "config finish" );
+        repaintContainerEvent.fire( new RepaintContainerEvent() );
     }
 
     private void configurationCanceled() {
@@ -184,9 +187,13 @@ public class ComponentColumn implements Column {
 
 
     public UberView<ComponentColumn> getView() {
-        view.calculateSize();
+
+        if ( componentReady ){
+            view.clearContent();
+            view.setContent( getPreviewWidget() );
+        }
         view.setCursor();
-        //ederign
+        view.calculateSize();
         return view;
     }
 

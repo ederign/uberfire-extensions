@@ -44,6 +44,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -58,7 +59,7 @@ public class ScreenLayoutDragComponent implements PerspectiveEditorDragComponent
 
     protected List<String> availableWorkbenchScreensIds = new ArrayList<String>();
 
-    private EditScreen editScreen;
+    private FlowPanel widget;
 
     @PostConstruct
     public void setup() {
@@ -76,6 +77,7 @@ public class ScreenLayoutDragComponent implements PerspectiveEditorDragComponent
 
     @Override
     public IsWidget getPreviewWidget( RenderingContext ctx ) {
+        GWT.log( "PREVIEW SCREEN" );
         return getShowWidget( ctx );
     }
 
@@ -87,10 +89,11 @@ public class ScreenLayoutDragComponent implements PerspectiveEditorDragComponent
             return null;
         }
 
-        FlowPanel panel = new FlowPanel();
-        placeManager.goTo( new DefaultPlaceRequest( placeName, properties ), panel );
-        panel.setWidth( "95%" );
-        return panel;
+        this.widget = new FlowPanel();
+        properties.put( "RANDOM", new Date().toString() );
+        placeManager.goTo( new DefaultPlaceRequest( placeName, properties ), widget );
+        widget.setWidth( "95%" );
+        return widget;
     }
 
     @Override

@@ -98,18 +98,11 @@ public class ComponentColumnView extends Composite
 
             //make this calc better, right sometimes is on second line (content > necessary)
             int magicNumber = 2;
-            final int contentWidth = colWidth - (originalLeftRightWidth * 2) - magicNumber;
+            final int contentWidth = colWidth - ( originalLeftRightWidth * 2 ) - magicNumber;
             left.setWidth( originalLeftRightWidth + "px" );
             right.setWidth( originalLeftRightWidth + "px" );
-            GWT.log( "colWid: " + colWidth );
-            GWT.log( "contentWidth: " + contentWidth );
-            GWT.log( "left: " + originalLeftRightWidth );
-            GWT.log( "right: " + originalLeftRightWidth );
-            GWT.log( "total " + (originalLeftRightWidth*2 + contentWidth) );
 
             if ( !presenter.isContainerColumn() ) {
-                //FIXME bug small then uf screen
-                GWT.log( "left/right height?" );
                 left.setHeight( content.getOffsetHeight() + "px" );
                 right.setHeight( content.getOffsetHeight() + "px" );
             }
@@ -153,13 +146,18 @@ public class ComponentColumnView extends Composite
         }
     }
 
+
+    @Override
+    public void clearContent(){
+        content.clear();
+    }
+
     @Override
     public void setContent( IsWidget widget ) {
-        content.clear();
         if ( widget != null ) {
             content.add( widget );
         }
-        GWT.log("-< " + content.getElement().getInnerHTML() );
+        GWT.log( "-< " + content.getElement().getInnerHTML() );
     }
 
 

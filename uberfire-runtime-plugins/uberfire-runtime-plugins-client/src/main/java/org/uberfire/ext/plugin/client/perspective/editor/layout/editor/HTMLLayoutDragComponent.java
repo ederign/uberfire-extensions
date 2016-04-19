@@ -49,6 +49,7 @@ public class HTMLLayoutDragComponent implements PerspectiveEditorDragComponent,
 
     @Override
     public IsWidget getPreviewWidget( RenderingContext container ) {
+        GWT.log( "PREVIEW HTML" );
         return getShowWidget( container );
     }
 

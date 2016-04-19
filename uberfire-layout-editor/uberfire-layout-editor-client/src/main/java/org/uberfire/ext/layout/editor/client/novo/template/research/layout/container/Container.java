@@ -148,7 +148,6 @@ public class Container {
     void updateView() {
         //TODO screens are not displayed in the first try UF BUG?
         updateViewMaybeUfBug();
-        updateViewMaybeUfBug();
     }
 
     private void updateViewMaybeUfBug() {
